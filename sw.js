@@ -1,5 +1,5 @@
-// Smart Farming Project — Ultra-Fast Rural PWA Service Worker (v2)
-const CACHE_NAME = 'farmer-bot-v2';
+// Smart Farming Project — Ultra-Fast Rural PWA Service Worker (v6 Mobile God-Tier)
+const CACHE_NAME = 'farmer-bot-v6-mobile-godtier';
 const CORE_ASSETS = [
   '/',
   '/index.html',
