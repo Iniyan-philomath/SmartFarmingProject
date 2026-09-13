@@ -1,5 +1,5 @@
 {
-  "name": "Farmer Assisting Bot — Smart Farming & Legal Advisory",
+  "name": "Farmer Bot — Smart Farming & AI Advisory",
   "short_name": "Farmer Bot",
   "description": "Multilingual AI Agricultural Advisor, Real-Time IoT Telemetry & Supabase Cloud Legal Repository",
   "start_url": "/",
@@ -8,12 +8,47 @@
   "orientation": "any",
   "background_color": "#050d06",
   "theme_color": "#050d06",
+  "categories": ["productivity", "utilities", "business", "education"],
+  "prefer_related_applications": false,
   "icons": [
+    {
+      "src": "/public/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/public/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/public/icon.svg",
       "sizes": "192x192 512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/public/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Smart Farming Dashboard & Real-Time AI Chat Assistant"
     }
   ]
 }
