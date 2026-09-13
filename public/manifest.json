@@ -1,0 +1,19 @@
+{
+  "name": "Farmer Assisting Bot — Smart Farming & Legal Advisory",
+  "short_name": "Farmer Bot",
+  "description": "Multilingual AI Agricultural Advisor, Real-Time IoT Telemetry & Supabase Cloud Legal Repository",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050d06",
+  "theme_color": "#050d06",
+  "icons": [
+    {
+      "src": "/public/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

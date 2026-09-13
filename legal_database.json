@@ -1,0 +1,153 @@
+[
+  {
+    "id": "seed-act-1966",
+    "title": "The Seeds Act, 1966 (Act No. 54 of 1966)",
+    "category": "Seed Quality & Compensation",
+    "authority": "Ministry of Agriculture & Farmers Welfare, Govt of India",
+    "filename": "Seed_Act_1966.pdf",
+    "summary": "Governs the quality and certification of agricultural seeds sold to Indian farmers. Protects farmers against uncertified, spurious, or low-germination seeds.",
+    "key_sections": [
+      {
+        "section": "Section 6",
+        "title": "Power to Notify Kinds or Varieties of Seeds",
+        "details": "Central Government regulates and certifies minimum germination percentages, genetic purity, and moisture limits for notified crop varieties."
+      },
+      {
+        "section": "Section 7",
+        "title": "Regulation of Sale of Notified Seeds & Mandatory Labeling",
+        "details": "No dealer or society can sell seeds without truthful labeling stating exact germination percentage, purity percentage, and expiry date."
+      },
+      {
+        "section": "Section 13",
+        "title": "Seed Inspectors & 3-Part Sample Sealing",
+        "details": "Seed Inspectors can inspect premises and take samples. The sample is divided into three sealed portions: one for the dealer/farmer, one for the State Seed Testing Laboratory, and one for Court custody."
+      },
+      {
+        "section": "Section 15",
+        "title": "Farmer Right to Full Compensation for Crop Loss",
+        "details": "If certified seeds fail to germinate or yield defective crops, the farmer has the right to file a claim before the District Consumer Commission or State Seed Authority for 100% reimbursement of seed cost, land preparation, and crop loss."
+      }
+    ],
+    "grievance_steps": "1. Preserve seed purchase bill and empty seed packet with lot number.\n2. Request the local Agricultural Officer (AO) / Seed Inspector to inspect field within 7 days.\n3. File formal compensation petition with Seed Testing Lab report before District Consumer Disputes Redressal Commission."
+  },
+  {
+    "id": "fco-1985",
+    "title": "Fertilizer (Control) Order (FCO), 1985",
+    "category": "Fertilizer Pricing & Allocation",
+    "authority": "Department of Fertilizers, Government of India",
+    "filename": "Fertiliser_Control_Order_1985.pdf",
+    "summary": "Statutory regulation prohibiting overcharging of subsidized fertilizers (Urea, DAP, NPK) and mandating fair PACS allocation for small and marginal farmers.",
+    "key_sections": [
+      {
+        "section": "Clause 3",
+        "title": "Strict Price Control & Ban on Overcharging",
+        "details": "Subsidized fertilizers must be sold strictly at government Maximum Retail Price (MRP). Charging even ₹1 above printed MRP is a non-bailable offense under Section 7 of the Essential Commodities Act, 1955."
+      },
+      {
+        "section": "Clause 14",
+        "title": "Quality Testing & Adulteration Penalties",
+        "details": "Fertilizer Inspectors collect samples from retail shops and PACS godowns. If nutrient content is below statutory tolerance limits, the dealer license is revoked with immediate criminal seizure."
+      },
+      {
+        "section": "Clause 21",
+        "title": "Mandatory 60% PACS Stock Reservation for Small/Marginal Farmers",
+        "details": "PACS must reserve at least 60% of monthly allocated fertilizer stock for small and marginal member farmers. Tying fertilizer sales with mandatory pesticide or seed purchases (tie-in sales) is strictly illegal."
+      }
+    ],
+    "grievance_steps": "1. Obtain official computerized POS receipt at time of purchase.\n2. In case of overcharging or refusal, call the National Fertilizer Helpline or complain to the Assistant Director of Agriculture (ADA Quality Control).\n3. Lodge FIR under Essential Commodities Act Section 7 with the District Collector / Sub-Divisional Magistrate."
+  },
+  {
+    "id": "model-pacs-bye-laws",
+    "title": "Model Bye-Laws for Primary Agricultural Credit Societies (PACS)",
+    "category": "Cooperative Banking & Crop Loans",
+    "authority": "Ministry of Cooperation, Government of India",
+    "filename": "Model_PACS_Bye_Laws.txt",
+    "summary": "Modern governance bylaws transforming PACS into multi-service village hubs providing crop loans, interest subventions, cold storage, and Common Service Centers.",
+    "key_sections": [
+      {
+        "section": "Chapter 1, Section 1",
+        "title": "Multi-Service Center Mandate",
+        "details": "PACS must deliver short-term crop loans, agricultural machinery custom hiring, quality agri-inputs, and CSC citizen services in rural areas."
+      },
+      {
+        "section": "Chapter 1, Section 2",
+        "title": "Universal Membership & Collateral-Free Loans",
+        "details": "Every local cultivator (including tenant farmers, sharecroppers, and oral lessees) is entitled to membership. Collateral-free short-term crop loans up to ₹1.60 Lakh are guaranteed without requiring land mortgage."
+      },
+      {
+        "section": "Chapter 1, Section 3",
+        "title": "3% Interest Subvention (Net 4% Crop Loan) & Calamity Conversion",
+        "details": "Prompt repayment within 1 year entitles the farmer to 3% interest subvention, reducing the effective annual interest to 4%. In case of flood or drought crop failure, short-term loans are automatically converted into 3 to 5 year medium-term loans without default penalties."
+      }
+    ],
+    "grievance_steps": "1. If PACS refuses membership or loan application, submit written appeal to PACS Secretary with acknowledgement.\n2. If unaddressed within 7 days, file an appeal before the Deputy Registrar of Cooperative Societies (DRCS) under Cooperative Societies Act Section 90."
+  },
+  {
+    "id": "tn-cooperative-act-1983",
+    "title": "Tamil Nadu Cooperative Societies Act, 1983 & Rules",
+    "category": "State Cooperative Rights & Dispute Resolution",
+    "authority": "Cooperation, Food & Consumer Protection Department, Govt of Tamil Nadu",
+    "filename": "TN_Cooperative_Societies_Act_Rules.txt",
+    "summary": "Empowers Tamil Nadu farmers with statutory arbitration mechanisms, free dispute adjudication, and independent auditing of PACS.",
+    "key_sections": [
+      {
+        "section": "Section 90",
+        "title": "Statutory Arbitration of Member Disputes",
+        "details": "Any dispute between a member farmer and PACS regarding loan disbursal, pledge warehouse storage, or dividend refusal must be adjudicated by the Registrar/DRCS within 90 days. Farmers pay zero court fees."
+      },
+      {
+        "section": "Section 74",
+        "title": "Right to Inspect Audited Accounts",
+        "details": "Every member farmer has the statutory right to inspect the audited balance sheet, loan disbursement registers, and stock inventory of their local PACS."
+      },
+      {
+        "section": "Section 81",
+        "title": "Statutory Inquiry into Maladministration",
+        "details": "Upon application by members, the Registrar is bound to conduct an independent statutory inquiry into misappropriation of subsidies, loan waivers, or input diversion."
+      }
+    ],
+    "grievance_steps": "1. Submit dispute application Form 1 under Section 90 to the Circle Deputy Registrar of Cooperative Societies (DRCS).\n2. DRCS issues summons to PACS committee and passes a binding award within 90 days."
+  },
+  {
+    "id": "essential-commodities-act-1955",
+    "title": "Essential Commodities Act (ECA), 1955",
+    "category": "Anti-Hoarding & Market Protection",
+    "authority": "Ministry of Consumer Affairs, Food and Public Distribution, Govt of India",
+    "filename": "Essential Commodity Act 1955.pdf",
+    "summary": "Protects farmers against artificial input shortages, black marketing of fertilizers, seeds, and predatory middleman price manipulations.",
+    "key_sections": [
+      {
+        "section": "Section 3",
+        "title": "Power to Control Production, Supply, and Distribution",
+        "details": "Central and State Governments issue mandatory stock limit orders on wholesale dealers to ensure essential farm inputs remain available in open markets."
+      },
+      {
+        "section": "Section 7",
+        "title": "Strict Penalties for Hoarding & Black Marketing",
+        "details": "Offenders hoarding fertilizers, seeds, or essential agri products face mandatory imprisonment ranging from 3 months to 7 years, forfeiture of seized goods, and permanent cancellation of commercial licenses."
+      }
+    ],
+    "grievance_steps": "Report artificial input shortages or black marketing to the District Supply Officer (DSO) or District Collector's Grievance Cell."
+  },
+  {
+    "id": "rti-act-2005",
+    "title": "Right to Information (RTI) Act, 2005 for Farmers",
+    "category": "Transparency & Fund Tracking",
+    "authority": "Central Information Commission / State Information Commissions",
+    "filename": "RTI.pdf",
+    "summary": "Enables farmers to inspect government files, trace delayed PM-KISAN or PMFBY subsidy disbursements, verify local PACS records, and demand certified soil lab tests.",
+    "key_sections": [
+      {
+        "section": "Section 6",
+        "title": "Filing Request for Agricultural Records",
+        "details": "Farmers can file an RTI application in simple regional languages with a nominal fee (₹10, waived for BPL farmers) to Public Information Officers (PIO) of Agriculture, Revenue, and Cooperative departments."
+      },
+      {
+        "section": "Section 7",
+        "title": "Mandatory 30-Day Response Timeline",
+        "details": "The PIO must provide certified copies of records, subsidy sanction orders, or test reports within 30 days. Delay attracts a personal penalty of ₹250 per day up to ₹25,000 on the officer."
+      }
+    ],
+    "grievance_steps": "Submit RTI Form A with ₹10 court fee stamp to the Public Information Officer (PIO) of the concerned Agriculture/Cooperative Department office."
+  }
+]

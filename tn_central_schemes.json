@@ -1,0 +1,358 @@
+[
+  {
+    "id": "SCH-001",
+    "name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+    "category": "Direct Benefit Transfer / Income Support",
+    "sub_type": "cash_subsidy",
+    "state_scope": "Central / All India",
+    "target_audience": "Small and Marginal Farmers owning cultivable land",
+    "benefit_summary": "₹6,000 / year direct cash",
+    "benefits": "₹6,000 per year in 3 equal installments of ₹2,000 credited directly into the farmer's Aadhaar-linked bank account.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All"],
+      "requires_land_ownership": true
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Land Patta / Chitta / Revenue Record",
+      "Aadhaar-linked Active Bank Passbook",
+      "Mobile Number (for e-KYC)"
+    ],
+    "application_process": "Self-register online at pmkisan.gov.in or through local Village Administrative Officer (VAO) / Common Service Centre (CSC).",
+    "official_link": "https://pmkisan.gov.in"
+  },
+  {
+    "id": "SCH-002",
+    "name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+    "category": "Farmer Social Security & Pension",
+    "sub_type": "pension",
+    "state_scope": "Central / All India",
+    "target_audience": "Small and Marginal Farmers aged 18 to 40 years",
+    "benefit_summary": "₹3,000 / month pension after age 60",
+    "benefits": "Assured life-long pension of ₹3,000 per month on attaining age 60. Monthly contribution ₹55 to ₹200 matched 50:50 by Central Government.",
+    "rules": {
+      "max_land_acres": 5.0,
+      "min_land_acres": 0.01,
+      "min_age": 18,
+      "max_age": 40,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All"],
+      "requires_land_ownership": true
+    },
+    "documents_required": [
+      "Aadhaar Card",
+      "Savings Bank Account / PM-KISAN Bank Account",
+      "Land holding document (Patta/Chitta)"
+    ],
+    "application_process": "Register online at pmkmy.gov.in or visit any Common Service Centre (CSC) with Aadhaar and Bank Passbook.",
+    "official_link": "https://pmkmy.gov.in"
+  },
+  {
+    "id": "SCH-003",
+    "name": "Kisan Credit Card (KCC) & Modified Interest Subvention",
+    "category": "Agricultural Credit / Micro-Finance",
+    "sub_type": "loan",
+    "state_scope": "Central / All India",
+    "target_audience": "Owner-cultivators, Tenant farmers, Sharecroppers, PACS members",
+    "benefit_summary": "Loans up to ₹3 Lakh @ 4% subsidized interest",
+    "benefits": "Short-term crop production loan up to ₹3,00,000 at effective 4% interest per annum with prompt repayment (3% subvention). No collateral required for loans up to ₹1,60,000.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All"],
+      "requires_land_ownership": false
+    },
+    "documents_required": [
+      "Filled KCC application form",
+      "Aadhaar Card & Voter ID",
+      "Land records (Patta/Chitta or lease/tenant agreement)",
+      "Crop sowing declaration from VAO"
+    ],
+    "application_process": "Apply at any Nationalized Bank, Regional Rural Bank (RRB), or local Primary Agricultural Credit Society (PACS).",
+    "official_link": "https://myscheme.gov.in/schemes/kcc"
+  },
+  {
+    "id": "SCH-004",
+    "name": "PMKSY - Per Drop More Crop (Micro Irrigation Drip & Sprinkler)",
+    "category": "Micro-Irrigation Subsidy",
+    "sub_type": "equipment_subsidy",
+    "state_scope": "Central / Tamil Nadu (100% Subsidy for SF/MF in TN)",
+    "target_audience": "Small, Marginal & Other Farmers cultivating row/horticulture crops",
+    "benefit_summary": "100% Free Drip Setup in TN (75% for others)",
+    "benefits": "100% subsidy for Small & Marginal Farmers (up to 5 acres) in Tamil Nadu (60% Central + 40% State top-up) and 75% for other farmers for installing Drip / Sprinkler systems.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.5,
+      "applicable_states": ["Tamil Nadu", "All"],
+      "applicable_crops": ["All", "Horticulture", "Paddy", "Cotton", "Sugarcane", "Vegetables"],
+      "requires_irrigation": true
+    },
+    "documents_required": [
+      "Patta / Chitta & Adangal extract",
+      "Field Measurement Book (FMB) sketch",
+      "Water source & well proof",
+      "Aadhaar Card and Soil/Water Test Report"
+    ],
+    "application_process": "Apply through the Block Agricultural Engineering / Horticulture Department or via TN Uzhavan Mobile App.",
+    "official_link": "https://pmksy.gov.in"
+  },
+  {
+    "id": "SCH-005",
+    "name": "PM-KUSUM (Component B & C Solar Agriculture Pumps)",
+    "category": "Renewable Energy & Solar Pumps",
+    "sub_type": "solar_subsidy",
+    "state_scope": "Central & State Joint",
+    "target_audience": "Farmers with functional borewells/wells without grid electrical power",
+    "benefit_summary": "Up to 60% - 70% Subsidy on Solar Pumps",
+    "benefits": "60% to 70% capital subsidy (30% Central + 40% State) for setting up 3 HP to 10 HP off-grid solar agriculture pumps and solarization of existing grid-connected agriculture pumps.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 1.0,
+      "applicable_states": ["Tamil Nadu", "All"],
+      "requires_irrigation": true
+    },
+    "documents_required": [
+      "Land Patta & Chitta",
+      "Functional well / borewell certificate",
+      "Aadhaar Card",
+      "No-objection certificate (NOC) from EB"
+    ],
+    "application_process": "Register online via state renewable energy agencies (TEDA in Tamil Nadu: teda.in) or MNRE portal.",
+    "official_link": "https://pmkusum.mnre.gov.in"
+  },
+  {
+    "id": "SCH-006",
+    "name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+    "category": "Crop Insurance",
+    "sub_type": "insurance",
+    "state_scope": "Central / Tamil Nadu Integrated",
+    "target_audience": "All farmers growing notified crops (Paddy, Cotton, Maize, Pulses, Horticulture)",
+    "benefit_summary": "Full crop loss payout (1.5% - 2% nominal premium)",
+    "benefits": "Comprehensive insurance coverage against non-preventable natural calamities (drought, flood, cyclones, pests, unseasonal rain). Farmer pays only 2% premium for Kharif, 1.5% for Rabi, and 5% for Horticulture.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All"],
+      "applicable_crops": ["Paddy", "Cotton", "Maize", "Groundnut", "Sugarcane", "Pulses", "All"]
+    },
+    "documents_required": [
+      "Land document (Patta/Chitta or lease agreement)",
+      "Sowing Certificate from Village Administrative Officer (VAO)",
+      "Aadhaar Card and Bank Passbook"
+    ],
+    "application_process": "Apply via PMFBY portal (pmfby.gov.in), PACS, Nationalized Bank branch, or CSC within the notified crop cutoff dates.",
+    "official_link": "https://pmfby.gov.in"
+  },
+  {
+    "id": "SCH-007",
+    "name": "Agriculture Infrastructure Fund (AIF)",
+    "category": "Post-Harvest Infrastructure & Cold Storage",
+    "sub_type": "infra_loan",
+    "state_scope": "Central / All India",
+    "target_audience": "Farmers, FPOs, PACS, Agri-entrepreneurs, Cooperatives",
+    "benefit_summary": "3% Interest Subvention on loans up to ₹2 Crore",
+    "benefits": "Medium to long-term debt financing for post-harvest management infrastructure (warehouses, cold storage, silos, sorting/grading units, solar dryers) with 3% interest subvention for up to 7 years.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.5,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All"]
+    },
+    "documents_required": [
+      "Project Report / DPR for infrastructure",
+      "Land ownership or long-lease document",
+      "Bank sanction letter",
+      "KYC (Aadhaar/PAN)"
+    ],
+    "application_process": "Register on the national portal agriinfra.dac.gov.in and submit Detailed Project Report (DPR).",
+    "official_link": "https://agriinfra.dac.gov.in"
+  },
+  {
+    "id": "SCH-008",
+    "name": "Sub-Mission on Agricultural Mechanization (SMAM)",
+    "category": "Farm Machinery & Mechanization Subsidy",
+    "sub_type": "machinery_subsidy",
+    "state_scope": "Central / Tamil Nadu",
+    "target_audience": "Farmers, SC/ST, Women farmers, Custom Hiring Centers (CHCs)",
+    "benefit_summary": "40% to 50% Subsidy on Tractors & Implements",
+    "benefits": "40% to 50% direct subsidy for individual farmers purchasing Tractors, Power Tillers, Rotavators, Combine Harvesters, Drone Sprayers, and up to 80% grant for establishing Custom Hiring Centers (CHC).",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 1.0,
+      "applicable_states": ["All", "Tamil Nadu"],
+      "applicable_crops": ["All"]
+    },
+    "documents_required": [
+      "Patta / Chitta document",
+      "Aadhaar Card",
+      "Bank Passbook copy",
+      "Authorized machinery dealer quotation"
+    ],
+    "application_process": "Apply online at agrimachinery.nic.in or submit through Assistant Executive Engineer (AED) office.",
+    "official_link": "https://agrimachinery.nic.in"
+  },
+  {
+    "id": "SCH-009",
+    "name": "Soil Health Card (SHC) & Balanced Fertilization Scheme",
+    "category": "Soil Fertility & Nutrient Management",
+    "sub_type": "free_service",
+    "state_scope": "Central / All India",
+    "target_audience": "All agricultural landholders and cultivators",
+    "benefit_summary": "100% Free Soil Testing across 12 parameters",
+    "benefits": "Free comprehensive soil testing (N, P, K, S, Zn, Fe, Cu, Mn, Bo, pH, EC, Organic Carbon) with customized dosage charts for fertilizers and bio-manures every 2 years.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All"]
+    },
+    "documents_required": [
+      "Soil sample from farmer field",
+      "Farmer Aadhaar and Survey Number details"
+    ],
+    "application_process": "Contact the local Agricultural Extension Officer (AEO) or Krishi Vigyan Kendra (KVK) to request field soil collection.",
+    "official_link": "https://soilhealth.dac.gov.in"
+  },
+  {
+    "id": "SCH-010",
+    "name": "Tamil Nadu Free Agricultural Electricity Scheme (TANGEDCO)",
+    "category": "State Energy Subsidy",
+    "sub_type": "free_service",
+    "state_scope": "Tamil Nadu",
+    "target_audience": "Farmers with registered agricultural borewell or open well pump sets in Tamil Nadu",
+    "benefit_summary": "100% Free Electricity for Agricultural Pumps",
+    "benefits": "Completely free electricity (zero tariff) for operating electric pump sets used exclusively for crop cultivation and irrigation across Tamil Nadu.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.5,
+      "applicable_states": ["Tamil Nadu"],
+      "requires_irrigation": true
+    },
+    "documents_required": [
+      "Patta & Chitta in applicant name",
+      "VAO certificate verifying agricultural cultivation",
+      "TANGEDCO agricultural service connection order",
+      "Aadhaar Card"
+    ],
+    "application_process": "Submit application to Assistant Engineer, TANGEDCO local section office or apply via Uzhavan App.",
+    "official_link": "https://www.tangedco.gov.in"
+  },
+  {
+    "id": "SCH-011",
+    "name": "National Food Security Mission (NFSM) Subsidized Seed Minikits",
+    "category": "Certified Seeds & Production Boost",
+    "sub_type": "seed_subsidy",
+    "state_scope": "Central / All India",
+    "target_audience": "Farmers cultivating Pulses (Blackgram, Greengram, Redgram) and Oilseeds (Groundnut, Sesame)",
+    "benefit_summary": "Free/50% Subsidized Certified High-Yield Seeds",
+    "benefits": "Distribution of certified high-yielding hybrid seed minikits at 50% to 100% subsidy along with bio-fertilizers (Rhizobium, Phosphobacteria) to enhance soil nitrogen fixation.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.25,
+      "applicable_states": ["All"],
+      "applicable_crops": ["Pulses", "Oilseeds", "Paddy", "All"]
+    },
+    "documents_required": [
+      "Patta / Chitta document",
+      "Aadhaar Card",
+      "Crop plan declaration"
+    ],
+    "application_process": "Collect directly from the local Agricultural Extension Centre (AEC) / Block Department of Agriculture.",
+    "official_link": "https://nfsm.gov.in"
+  },
+  {
+    "id": "SCH-012",
+    "name": "National Fertilizer Subsidy & Capped Statutory MRP Scheme",
+    "category": "Fertilizer Input Price Protection",
+    "sub_type": "input_subsidy",
+    "state_scope": "Central / All India",
+    "target_audience": "All Indian Farmers purchasing through POS machines in PACS/Retailers",
+    "benefit_summary": "Heavily Subsidized Capped MRP (Urea ₹266 / 45kg bag)",
+    "benefits": "Government absorbs international price volatility by releasing direct manufacturer subsidies. Neem Coated Urea capped at ₹266.50 per 45kg bag; DAP, MOP, and Complex fertilizers provided at subsidized rates.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All"]
+    },
+    "documents_required": [
+      "Aadhaar Card (authenticated via Biometric POS at fertilizer store)",
+      "Land or crop details"
+    ],
+    "application_process": "Purchase directly at any Primary Agricultural Cooperative Society (PACS) or authorized fertilizer dealer using Aadhaar biometric POS.",
+    "official_link": "https://urvarak.nic.in"
+  },
+  {
+    "id": "SCH-013",
+    "name": "State Disaster Response Fund (SDRF) Agricultural Input Subsidy",
+    "category": "Disaster Relief & Crop Loss Compensation",
+    "sub_type": "disaster_relief",
+    "state_scope": "Central & State Joint",
+    "target_audience": "Farmers suffering 33% or higher crop loss due to drought, flood, hail, or cyclone",
+    "benefit_summary": "Input subsidy up to ₹8,500/ha (Rainfed) to ₹17,000/ha (Irrigated)",
+    "benefits": "Direct financial relief assistance transferred into bank accounts for crop loss: ₹8,500/hectare for rainfed crops, ₹17,000/hectare for assured irrigated crops, and ₹22,500/hectare for perennial horticulture crops.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All", "Tamil Nadu"],
+      "applicable_crops": ["All"]
+    },
+    "documents_required": [
+      "Joint field inspection report by Revenue & Agri departments",
+      "Patta / Chitta document",
+      "Aadhaar linked bank account"
+    ],
+    "application_process": "Enumerated automatically by District Collectorate and VAO field survey following declared disaster notifications.",
+    "official_link": "https://ndmindia.mha.gov.in"
+  },
+  {
+    "id": "SCH-014",
+    "name": "Kalaignarin All Village Integrated Agricultural Development Programme",
+    "category": "State Agricultural Development & Village Infrastructure",
+    "sub_type": "integrated_subsidy",
+    "state_scope": "Tamil Nadu",
+    "target_audience": "Farmers in selected Village Panchayats across Tamil Nadu",
+    "benefit_summary": "Free seed kits, coconut saplings & drip subsidies",
+    "benefits": "Comprehensive state support: reclamation of fallow lands, distribution of certified seeds, coconut seedlings, horticultural minikits, desilting farm ponds, and community solar pump installations.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.25,
+      "applicable_states": ["Tamil Nadu"],
+      "applicable_crops": ["All"]
+    },
+    "documents_required": [
+      "Patta / Chitta document",
+      "Aadhaar Card",
+      "Smart Ration Card"
+    ],
+    "application_process": "Register via TN Uzhavan App or contact local Block Assistant Director of Agriculture (ADA) office.",
+    "official_link": "https://tnagrisnet.tn.gov.in"
+  },
+  {
+    "id": "SCH-015",
+    "name": "Animal Husbandry & Dairy Infrastructure Development Fund (AHIDF)",
+    "category": "Allied Agri & Dairy Infrastructure",
+    "sub_type": "dairy_loan",
+    "state_scope": "Central / All India",
+    "target_audience": "Dairy farmers, Farmer Producer Organizations (FPOs), Cooperative societies",
+    "benefit_summary": "3% Interest Subvention + 25% Capital Credit Guarantee",
+    "benefits": "Financial support for establishing dairy processing, meat processing, animal feed plants, and cattle breed improvement units with 3% interest subvention for up to 8 years.",
+    "rules": {
+      "max_land_acres": null,
+      "min_land_acres": 0.01,
+      "applicable_states": ["All"],
+      "applicable_crops": ["All", "Dairy", "Livestock"]
+    },
+    "documents_required": [
+      "Detailed Project Report (DPR)",
+      "Bank loan application",
+      "Land / lease document for plant setup"
+    ],
+    "application_process": "Apply online at ahidf.udyamimitra.in portal with project proposal.",
+    "official_link": "https://ahidf.udyamimitra.in"
+  }
+]

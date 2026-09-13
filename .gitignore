@@ -1,0 +1,74 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+log.json
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# API Keys and Secrets
+key.json
+*.key
+*.pem
+
+# Temporary & Build files
+dist/
+build/
+temp/
+tmp/
+.sixth/
+
+# Cloud-hosted assets (Stored in Supabase Cloud Storage ap-south-1)
+legal_docs/
+chroma_db/
+*.pdf
+
+# Obsolete legacy files excluded from deployment
+serial_to_sheet.py
+main.py
+ingest.py
+rag_bridge.py
+rag_query.py
+query_cli.py
+add_seed_act.py
+create_sample_legal_docs.py
+fetch_schemes.py
+clean_repo.js
+test_supabase.js
+sync_to_supabase.py
+receiver code.txt
+sender code.txt
+requirements.txt
