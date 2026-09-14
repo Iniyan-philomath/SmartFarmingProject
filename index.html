@@ -757,32 +757,60 @@
       display: none !important;
     }
 
-    /* Completely hide all Google Translate top frames, banners, bars, and popups */
+    /* Completely hide Google Translate top banner, white bar, and 'rate this translation' popup */
     .goog-te-banner-frame,
-    .goog-te-banner-frame.skiptranslate,
+    .goog-te-banner-frame *,
     iframe.goog-te-banner-frame,
-    iframe.skiptranslate,
-    iframe[class*="goog-te-banner"],
-    iframe[class*="VIpgJd"],
     iframe[id*=":1.container"],
     iframe[id*=":2.container"],
-    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
-    .VIpgJd-ZVi9od-OR95微-xlHxb,
+    iframe[id*=":3.container"],
+    div[id*=":1.container"],
+    div[id*=":2.container"],
+    body > .skiptranslate,
+    body > iframe.skiptranslate,
     #goog-gt-tt,
+    #goog-gt-tt *,
     .goog-te-balloon-frame,
-    .goog-te-spinner-pos {
+    .goog-te-balloon-frame *,
+    .goog-tooltip,
+    .goog-tooltip *,
+    .goog-te-spinner-pos,
+    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+    .VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+    .VIpgJd-yAWNEb-VIpgJd-FMomSd,
+    .VIpgJd-yAWNEb-L7lbkb {
       display: none !important;
       visibility: hidden !important;
       height: 0px !important;
       width: 0px !important;
+      max-height: 0px !important;
+      max-width: 0px !important;
       opacity: 0 !important;
       pointer-events: none !important;
+      position: absolute !important;
+      top: -99999px !important;
+      left: -99999px !important;
+      z-index: -99999 !important;
+    }
+
+    /* Keep language dropdown inside topbar visible and clickable */
+    .lang-switch,
+    .lang-switch *,
+    #google_translate_element,
+    #google_translate_element *,
+    .goog-te-gadget,
+    .goog-te-gadget * {
+      visibility: visible !important;
+      pointer-events: auto !important;
+      position: static !important;
+      z-index: 100 !important;
     }
 
     html, body {
       top: 0px !important;
       position: static !important;
       margin-top: 0px !important;
+      padding-top: 0px !important;
     }
 
     body.translated-ltr,
@@ -790,11 +818,13 @@
       top: 0px !important;
       position: static !important;
       margin-top: 0px !important;
+      padding-top: 0px !important;
     }
 
     .goog-text-highlight {
       background: none !important;
       box-shadow: none !important;
+      border: none !important;
     }
 
     /* PANELS */
@@ -6569,26 +6599,61 @@ ${escapeHtml(item.petitionText)}
     // GUARANTEE NO GOOGLE TRANSLATE BANNER POPUP OR BODY TOP DISPLACEMENT
     // ══════════════════════════════════════════════════════════════════
     function suppressGoogleTranslateBanner() {
-      if (document.body && document.body.style.top && document.body.style.top !== '0px') {
-        document.body.style.setProperty('top', '0px', 'important');
+      if (document.body) {
+        if (document.body.style.top && document.body.style.top !== '0px') {
+          document.body.style.setProperty('top', '0px', 'important');
+        }
+        if (document.body.style.position && document.body.style.position !== 'static') {
+          document.body.style.setProperty('position', 'static', 'important');
+        }
       }
       if (document.documentElement && document.documentElement.style.top && document.documentElement.style.top !== '0px') {
         document.documentElement.style.setProperty('top', '0px', 'important');
       }
-      const bannerFrames = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame, iframe.skiptranslate, iframe[id*=":1.container"], iframe[id*=":2.container"], iframe[class*="VIpgJd"], .VIpgJd-ZVi9od-aZ2wEe-wOHMyf');
-      bannerFrames.forEach(f => {
+      const badSelectors = [
+        '.goog-te-banner-frame',
+        'iframe.goog-te-banner-frame',
+        'iframe.skiptranslate',
+        '#goog-gt-tt',
+        '.goog-te-balloon-frame',
+        '.goog-tooltip',
+        'iframe[id*=":1.container"]',
+        'iframe[id*=":2.container"]',
+        'iframe[id*=":3.container"]',
+        'div[id*=":1.container"]',
+        'div[id*=":2.container"]',
+        '.VIpgJd-ZVi9od-aZ2wEe-wOHMyf',
+        '.VIpgJd-ZVi9od-aZ2wEe-OiiCO',
+        '.VIpgJd-yAWNEb-VIpgJd-FMomSd',
+        '.VIpgJd-yAWNEb-L7lbkb'
+      ];
+      document.querySelectorAll(badSelectors.join(', ')).forEach(f => {
         f.style.setProperty('display', 'none', 'important');
         f.style.setProperty('visibility', 'hidden', 'important');
         f.style.setProperty('height', '0px', 'important');
+        f.style.setProperty('width', '0px', 'important');
         f.style.setProperty('pointer-events', 'none', 'important');
+        f.style.setProperty('position', 'absolute', 'important');
+        f.style.setProperty('top', '-99999px', 'important');
+      });
+
+      Array.from(document.body ? document.body.children : []).forEach(child => {
+        if (child.tagName === 'IFRAME' || (child.classList.contains('skiptranslate') && !child.contains(document.getElementById('google_translate_element')) && child.id !== 'appSidebar')) {
+          child.style.setProperty('display', 'none', 'important');
+          child.style.setProperty('visibility', 'hidden', 'important');
+          child.style.setProperty('height', '0px', 'important');
+          child.style.setProperty('pointer-events', 'none', 'important');
+          child.style.setProperty('position', 'absolute', 'important');
+          child.style.setProperty('top', '-99999px', 'important');
+        }
       });
     }
     const gtBannerObserver = new MutationObserver(suppressGoogleTranslateBanner);
     if (document.body) {
-      gtBannerObserver.observe(document.body, { attributes: true, attributeFilter: ['style', 'class'] });
+      gtBannerObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
     }
     window.addEventListener('load', suppressGoogleTranslateBanner);
-    setInterval(suppressGoogleTranslateBanner, 500);
+    setInterval(suppressGoogleTranslateBanner, 300);
 
     /* ================= 10-MINUTE AUTOMATED ADVISORY DRAWER CONTROLLER ================= */
     let advisoryHistoryCache = [];
