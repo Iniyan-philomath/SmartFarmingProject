@@ -2831,33 +2831,48 @@
       pa: 'pa-IN', 'pa-in': 'pa-IN', punjabi: 'pa-IN',
       bn: 'bn-IN', 'bn-in': 'bn-IN', bengali: 'bn-IN',
       or: 'or-IN', 'or-in': 'or-IN', odia: 'or-IN',
-      ur: 'ur-PK', 'ur-pk': 'ur-PK', urdu: 'ur-PK'
+      as: 'as-IN', 'as-in': 'as-IN', assamese: 'as-IN',
+      ur: 'ur-PK', 'ur-pk': 'ur-PK', urdu: 'ur-PK',
+      sa: 'sa-IN', 'sa-in': 'sa-IN', sanskrit: 'sa-IN',
+      ne: 'ne-NP', 'ne-np': 'ne-NP', nepali: 'ne-NP',
+      mai: 'mai-IN', maithili: 'mai-IN',
+      ks: 'ks-IN', kashmiri: 'ks-IN',
+      sd: 'sd-IN', sindhi: 'sd-IN',
+      kok: 'kok-IN', konkani: 'kok-IN',
+      doi: 'doi-IN', dogri: 'doi-IN',
+      mni: 'mni-IN', manipuri: 'mni-IN',
+      sat: 'sat-IN', santali: 'sat-IN',
+      brx: 'brx-IN', bodo: 'brx-IN',
+      bho: 'bho-IN', bhojpuri: 'bho-IN'
     };
     const LANG_DEFAULT_REGIONS = {
-      en: 'IN', hi: 'IN', ta: 'IN', te: 'IN', kn: 'IN', ml: 'IN', gu: 'IN', mr: 'IN', bn: 'IN', pa: 'IN', or: 'IN', ur: 'PK',
+      en: 'IN', hi: 'IN', ta: 'IN', te: 'IN', kn: 'IN', ml: 'IN', gu: 'IN', mr: 'IN', bn: 'IN', pa: 'IN', or: 'IN', as: 'IN', ur: 'PK',
+      sa: 'IN', ne: 'NP', mai: 'IN', ks: 'IN', sd: 'IN', kok: 'IN', doi: 'IN', mni: 'IN', sat: 'IN', brx: 'IN', bho: 'IN',
       de: 'DE', fr: 'FR', es: 'ES', it: 'IT', pt: 'PT', ru: 'RU', zh: 'CN', ja: 'JP', ko: 'KR',
       ar: 'SA', tr: 'TR', nl: 'NL', pl: 'PL', sv: 'SE', no: 'NO', da: 'DK', fi: 'FI', cs: 'CZ', el: 'GR',
-      he: 'IL', th: 'TH', vi: 'VN', id: 'ID', ms: 'MY', uk: 'UA', ro: 'RO', hu: 'HU'
+      he: 'IL', th: 'TH', vi: 'VN', id: 'ID', ms: 'MY', uk: 'UA', ro: 'RO', hu: 'HU', fa: 'IR', sw: 'KE'
     };
     const LANG_LABELS = {
       'en-IN': 'English', 'hi-IN': 'Hindi', 'ta-IN': 'Tamil', 'te-IN': 'Telugu',
       'kn-IN': 'Kannada', 'ml-IN': 'Malayalam', 'mr-IN': 'Marathi', 'gu-IN': 'Gujarati',
-      'pa-IN': 'Punjabi', 'bn-IN': 'Bengali', 'or-IN': 'Odia', 'ur-PK': 'Urdu',
+      'pa-IN': 'Punjabi', 'bn-IN': 'Bengali', 'or-IN': 'Odia', 'as-IN': 'Assamese', 'ur-PK': 'Urdu',
+      'sa-IN': 'Sanskrit', 'ne-NP': 'Nepali', 'mai-IN': 'Maithili', 'ks-IN': 'Kashmiri', 'sd-IN': 'Sindhi',
+      'kok-IN': 'Konkani', 'doi-IN': 'Dogri', 'mni-IN': 'Manipuri', 'sat-IN': 'Santali', 'brx-IN': 'Bodo', 'bho-IN': 'Bhojpuri',
       'de-DE': 'German', 'fr-FR': 'French', 'es-ES': 'Spanish', 'it-IT': 'Italian', 'pt-PT': 'Portuguese',
       'ru-RU': 'Russian', 'zh-CN': 'Chinese', 'ja-JP': 'Japanese', 'ko-KR': 'Korean', 'ar-SA': 'Arabic',
       'tr-TR': 'Turkish', 'nl-NL': 'Dutch', 'pl-PL': 'Polish', 'sv-SE': 'Swedish', 'no-NO': 'Norwegian',
       'da-DK': 'Danish', 'fi-FI': 'Finnish', 'cs-CZ': 'Czech', 'el-GR': 'Greek', 'he-IL': 'Hebrew',
       'th-TH': 'Thai', 'vi-VN': 'Vietnamese', 'id-ID': 'Indonesian', 'ms-MY': 'Malay', 'uk-UA': 'Ukrainian',
-      'ro-RO': 'Romanian', 'hu-HU': 'Hungarian'
+      'ro-RO': 'Romanian', 'hu-HU': 'Hungarian', 'fa-IR': 'Persian', 'sw-KE': 'Swahili'
     };
     function normalizeLang(code) {
       const raw = String(code || '').trim().toLowerCase();
       if (LANG_ALIASES[raw]) return LANG_ALIASES[raw];
-      if (/^[a-z]{2}$/.test(raw)) {
+      if (/^[a-z]{2,3}$/.test(raw)) {
         const region = LANG_DEFAULT_REGIONS[raw] || raw.toUpperCase();
         return `${raw}-${region}`;
       }
-      if (/^[a-z]{2}-[a-z]{2}$/.test(raw)) {
+      if (/^[a-z]{2,3}-[a-z]{2}$/.test(raw)) {
         const [lang, region] = raw.split('-');
         return `${lang}-${region.toUpperCase()}`;
       }
@@ -3835,13 +3850,432 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ Your Eligible Schemes",
     inputPlaceholder: "Ask about PACS bye-laws, cooperative rights, seed/fertilizer laws or crops...",
     logout: "🚪 Logout"
+  },
+  'bn-IN': {
+    appName: "সহকার বাণী — সমবায় আইন ও সুশাসন AI",
+    sbTitleMain: "সহকার",
+    sbTitleSub: "বাণী",
+    sbPlatformSub: "সমবায় শাসন ও প্যাক্স আইনি কেন্দ্র",
+    sbBadge: "🤝 প্যাক্স সদস্য",
+    sbSecMain: "সমবায় প্রধান",
+    sbNavHealth: "ফসলের স্বাস্থ্য",
+    sbNavChat: "AI আইনি উপদেষ্টা",
+    sbNavDash: "টেলিমেট্রি ও সেন্সর",
+    sbNavSchemes: "সমবায় প্রকল্পসমূহ",
+    sbNavLaws: "প্যাক্স আইন ও অধিকার",
+    sbNavWeather: "আবহাওয়া পূর্বাভাস",
+    sbSecQuick: "আইনি দ্রুত প্রশ্ন",
+    sbNavPest: "কীট নির্ণয়",
+    sbNavFertilizer: "সার নির্দেশিকা ও MRP",
+    sbNavMySchemes: "আমার প্রকল্পসমূহ",
+    sbNavPrice: "বাজার দর",
+    sbWeatherTitle: "☁ বর্তমান আবহাওয়া",
+    sbLogoutBtn: "↩ প্রোফাইল পরিবর্তন",
+    tbStatusText: "সহকার বাণী অনলাইন • সহকার সে সমৃদ্ধি (MoC)",
+    chatTab: "💬 আইনি AI",
+    wealthTab: "💚 স্বাস্থ্য",
+    dashTab: "📊 টেলিমেট্রি",
+    schemesTab: "🏛️ প্রকল্পসমূহ",
+    lawsTab: "📜 আইন ও অধিকার",
+    weatherTab: "🌦️ আবহাওয়া",
+    onlineStatus: "● অনলাইন · সহকার সে সমৃদ্ধি",
+    welcomeSub: "প্যাক্স বাই-লজ, সমবায় আইন ও কৃষক অধিকারের জন্য আপনার ভয়েস এআই আইনি সহায়ক।",
+    totalLand: "মোট জমি",
+    primaryCrop: "প্রধান ফসল",
+    irrigation: "সেচ",
+    location: "অবস্থান",
+    kcc: "কিসান ক্রেডিট কার্ড",
+    pmkisan: "পিএম-কিসান",
+    pmfby: "পিএম ফসল বীমা",
+    farmerAge: "কৃষকের বয়স",
+    phone: "ফোন নম্বর",
+    digitalTwin: "ডিজিটাল টুইন — খামারের দৃশ্য",
+    smartAlerts: "🚨 স্মার্ট সতর্কতা",
+    farmHealth: "🧠 খামার স্বাস্থ্য বিশ্লেষণ",
+    weatherPred: "🌦️ আবহাওয়ার পূর্বাভাস",
+    eligibleSchemes: "🏛️ আপনার যোগ্য প্রকল্পসমূহ",
+    inputPlaceholder: "সমবায় আইন বা ফসল সংক্রান্ত প্রশ্ন লিখুন বা বলুন...",
+    logout: "🚪 লগআউট"
+  },
+  'pa-IN': {
+    appName: "ਸਹਿਕਾਰ ਬਾਣੀ — ਸਹਿਕਾਰੀ ਕਾਨੂੰਨੀ ਤੇ ਸ਼ਾਸਨ AI",
+    sbTitleMain: "ਸਹਿਕਾਰ",
+    sbTitleSub: "ਬਾਣੀ",
+    sbPlatformSub: "ਸਹਿਕਾਰੀ ਸ਼ਾਸਨ ਤੇ ਪੈਕਸ ਕਾਨੂੰਨੀ ਕੇਂਦਰ",
+    sbBadge: "🤝 ਪੈਕਸ ਮੈਂਬਰ",
+    sbSecMain: "ਸਹਿਕਾਰੀ ਮੁੱਖ",
+    sbNavHealth: "ਫ਼ਸਲ ਸਿਹਤ",
+    sbNavChat: "AI ਕਾਨੂੰਨੀ ਸਲਾਹਕਾਰ",
+    sbNavDash: "ਟੈਲੀਮੈਟਰੀ ਤੇ ਸੈਂਸਰ",
+    sbNavSchemes: "ਸਹਿਕਾਰੀ ਸਕੀਮਾਂ",
+    sbNavLaws: "ਪੈਕਸ ਐਕਟ ਤੇ ਅਧਿਕਾਰ",
+    sbNavWeather: "ਮੌਸਮ ਭਵਿੱਖਬਾਣੀ",
+    sbSecQuick: "ਕਾਨੂੰਨੀ ਤੇਜ਼ ਸਵਾਲ",
+    sbNavPest: "ਕੀੜੇ ਜਾਂਚ",
+    sbNavFertilizer: "ਖਾਦ ਗਾਈਡ ਤੇ MRP",
+    sbNavMySchemes: "ਮੇਰੀਆਂ ਸਕੀਮਾਂ",
+    sbNavPrice: "ਮੰਡੀ ਭਾਅ",
+    sbWeatherTitle: "☁ ਤਾਜ਼ਾ ਮੌਸਮ",
+    sbLogoutBtn: "↩ ਪ੍ਰੋਫਾਈਲ ਬਦਲੋ",
+    tbStatusText: "ਸਹਿਕਾਰ ਬਾਣੀ ਔਨਲਾਈਨ • ਸਹਿਕਾਰ ਸੇ ਸਮ੍ਰਿਧੀ (MoC)",
+    chatTab: "💬 ਕਾਨੂੰਨੀ AI",
+    wealthTab: "💚 ਸਿਹਤ",
+    dashTab: "📊 ਟੈਲੀਮੈਟਰੀ",
+    schemesTab: "🏛️ ਸਕੀਮਾਂ",
+    lawsTab: "📜 ਐਕਟ ਤੇ ਅਧਿਕਾਰ",
+    weatherTab: "🌦️ ਮੌਸਮ",
+    onlineStatus: "● ਔਨਲਾਈਨ · ਸਹਿਕਾਰ ਸੇ ਸਮ੍ਰਿਧੀ",
+    welcomeSub: "ਪੈਕਸ ਉਪ-ਨਿਯਮਾਂ, ਸਹਿਕਾਰੀ ਕਾਨੂੰਨਾਂ ਅਤੇ ਕਿਸਾਨਾਂ ਦੇ ਹੱਕਾਂ ਲਈ ਤੁਹਾਡਾ ਏਆਈ ਸਲਾਹਕਾਰ।",
+    totalLand: "ਕੁੱਲ ਜ਼ਮੀਨ",
+    primaryCrop: "ਮੁੱਖ ਫ਼ਸਲ",
+    irrigation: "ਸਿੰਚਾਈ",
+    location: "ਸਥਾਨ",
+    kcc: "ਕਿਸਾਨ ਕ੍ਰੈਡਿਟ ਕਾਰਡ",
+    pmkisan: "ਪੀਐਮ-ਕਿਸਾਨ",
+    pmfby: "ਪੀਐਮ ਫ਼ਸਲ ਬੀਮਾ",
+    farmerAge: "ਕਿਸਾਨ ਦੀ ਉਮਰ",
+    phone: "ਫ਼ੋਨ ਨੰਬਰ",
+    digitalTwin: "ਡਿਜੀਟਲ ਟਵਿਨ — ਖੇਤ ਦਾ ਦ੍ਰਿਸ਼",
+    smartAlerts: "🚨 ਸਮਾਰਟ ਅਲਰਟ",
+    farmHealth: "🧠 ਖੇਤ ਸਿਹਤ ਵਿਸ਼ਲੇਸ਼ਣ",
+    weatherPred: "🌦️ ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ",
+    eligibleSchemes: "🏛️ ਤੁਹਾਡੀਆਂ ਯੋਗ ਸਕੀਮਾਂ",
+    inputPlaceholder: "ਸਹਿਕਾਰੀ ਕਾਨੂੰਨ ਜਾਂ ਖੇਤੀ ਬਾਰੇ ਸਵਾਲ ਲਿਖੋ ਜਾਂ ਬੋਲੋ...",
+    logout: "🚪 ਲੌਗਆਉਟ"
+  },
+  'or-IN': {
+    appName: "ସହକାର ବାଣୀ — ସମବାୟ ଆଇନ ଓ ପ୍ରଶାସନ AI",
+    sbTitleMain: "ସହକାର",
+    sbTitleSub: "ବାଣୀ",
+    sbPlatformSub: "ସମବାୟ ପ୍ରଶାସନ ଓ ପ୍ୟାକ୍ସ ଆଇନ କେନ୍ଦ୍ର",
+    sbBadge: "🤝 ପ୍ୟାକ୍ସ ସଦସ୍ୟ",
+    sbSecMain: "ସମବାୟ ମୁଖ୍ୟ",
+    sbNavHealth: "ଫସଲ ସ୍ୱାସ୍ଥ୍ୟ",
+    sbNavChat: "AI ଆଇନ ପରାମର୍ଶଦାତା",
+    sbNavDash: "ଟେଲିମେଟ୍ରି ଓ ସେନସର",
+    sbNavSchemes: "ସମବାୟ ଯୋଜନା",
+    sbNavLaws: "ପ୍ୟାକ୍ସ ଆଇନ ଓ ଅଧିକାର",
+    sbNavWeather: "ପାଣିପାଗ ପୂର୍ବାନୁମାନ",
+    sbSecQuick: "ଆଇନଗତ ତୁରନ୍ତ ପ୍ରଶ୍ନ",
+    sbNavPest: "କୀଟ ନିଦାନ",
+    sbNavFertilizer: "ଖତ ଓ MRP ଅଧିକାର",
+    sbNavMySchemes: "ମୋ ଯୋଜନା",
+    sbNavPrice: "ମଣ୍ଡି ଦର",
+    sbWeatherTitle: "☁ ବର୍ତ୍ତମାନ ପାଣିପାଗ",
+    sbLogoutBtn: "↩ ପ୍ରୋଫାଇଲ୍ ପରିବର୍ତ୍ତନ",
+    tbStatusText: "ସହକାର ବାଣୀ ଅନଲାଇନ୍ • ସହକାର ସେ ସମୃଦ୍ଧି (MoC)",
+    chatTab: "💬 ଆଇନ AI",
+    wealthTab: "💚 ସ୍ୱାସ୍ଥ୍ୟ",
+    dashTab: "📊 ଟେଲିମେଟ୍ରି",
+    schemesTab: "🏛️ ଯୋଜନା",
+    lawsTab: "📜 ଆଇନ ଓ ଅଧିକାର",
+    weatherTab: "🌦️ ପାଣିପାଗ",
+    onlineStatus: "● ଅନଲାଇନ୍ · ସହକାର ସେ ସମୃଦ୍ଧି",
+    welcomeSub: "ପ୍ୟାକ୍ସ ବାଇ-ଲ’ଜ, ସମବାୟ ଆଇନ ଓ ଚାଷୀ ଅଧିକାର ପାଇଁ ଆପଣଙ୍କ AI ସହାୟକ।",
+    totalLand: "ମୋଟ ଜମି",
+    primaryCrop: "ମୁଖ୍ୟ ଫସଲ",
+    irrigation: "ଜଳସେଚନ",
+    location: "ସ୍ଥାନ",
+    kcc: "କିଷାନ କ୍ରେଡିଟ କାର୍ଡ",
+    pmkisan: "ପିଏମ-କିସାନ",
+    pmfby: "ପିଏମ ଫସଲ ବୀମା",
+    farmerAge: "ଚାଷୀଙ୍କ ବୟସ",
+    phone: "ଫୋନ ନମ୍ବର",
+    digitalTwin: "ଡିଜିଟାଲ ଟ୍ୱିନ୍ — କ୍ଷେତ୍ର ଦୃଶ୍ୟ",
+    smartAlerts: "🚨 ସ୍ମାର୍ଟ ଆଲର୍ଟ",
+    farmHealth: "🧠 କ୍ଷେତ୍ର ସ୍ୱାସ୍ଥ୍ୟ ବିଶ୍ଳେଷଣ",
+    weatherPred: "🌦️ ପାଣିପାଗ ଆକଳନ",
+    eligibleSchemes: "🏛️ ଯୋଗ୍ୟ ଯୋଜନା",
+    inputPlaceholder: "ସମବାୟ ଆଇନ ବା କୃଷି ପ୍ରଶ୍ନ ଲେଖନ୍ତୁ କିମ୍ବା କୁହନ୍ତୁ...",
+    logout: "🚪 ଲଗଆଉଟ"
+  },
+  'as-IN': {
+    appName: "সহকাৰ বাণী — সমবায় আইন আৰু প্ৰশাসন AI",
+    sbTitleMain: "সহকাৰ",
+    sbTitleSub: "বাণী",
+    sbPlatformSub: "সমবায় শাসন আৰু পেক্স আইনী কেন্দ্ৰ",
+    sbBadge: "🤝 পেক্স সদস্য",
+    sbSecMain: "সমবায় প্ৰধান",
+    sbNavHealth: "শস্যৰ স্বাস্থ্য",
+    sbNavChat: "AI আইনী পৰামৰ্শদাতা",
+    sbNavDash: "টেলিমেট্ৰী আৰু ছেনচৰ",
+    sbNavSchemes: "সমবায় আঁচনিসমূহ",
+    sbNavLaws: "পেক্স আইন আৰু অধিকাৰ",
+    sbNavWeather: "বতৰৰ পূৰ্বাভাস",
+    sbSecQuick: "আইনী প্ৰশ্ন",
+    sbNavPest: "কীট নিৰ্ণয়",
+    sbNavFertilizer: "সাৰ নিৰ্দেশিকা",
+    sbNavMySchemes: "মোৰ আঁচনিসমূহ",
+    sbNavPrice: "বজাৰ দৰ",
+    sbWeatherTitle: "☁ বৰ্তমান বতৰ",
+    sbLogoutBtn: "↩ প্ৰফাইল সলনি",
+    tbStatusText: "সহকাৰ বাণী অনলাইন • সহকাৰ সে সমৃদ্ধি (MoC)",
+    chatTab: "💬 আইনী AI",
+    wealthTab: "💚 স্বাস্থ্য",
+    dashTab: "📊 টেলিমেট্ৰী",
+    schemesTab: "🏛️ আঁচনি",
+    lawsTab: "📜 আইন আৰু অধিকাৰ",
+    weatherTab: "🌦️ বতৰ",
+    onlineStatus: "● অনলাইন · সহকাৰ সে সমৃদ্ধি",
+    welcomeSub: "পেক্স উপ-নিয়মাৱলী, সমবায় আইন আৰু কৃষক অধিকাৰৰ বাবে আপোনাৰ AI সহায়ক।",
+    totalLand: "মুঠ মাটি",
+    primaryCrop: "প্ৰধান শস্য",
+    irrigation: "জলসিঞ্চন",
+    location: "স্থান",
+    kcc: "কিষাণ ক্ৰেডিট কাৰ্ড",
+    pmkisan: "পিএম-কিষাণ",
+    pmfby: "পিএম শস্য বীমা",
+    farmerAge: "কৃষকৰ বয়স",
+    phone: "ফোন নম্বৰ",
+    digitalTwin: "ডিজিটেল টুইন — পথাৰৰ দৃশ্য",
+    smartAlerts: "🚨 স্মাৰ্ট সতৰ্কতা",
+    farmHealth: "🧠 পথাৰ স্বাস্থ্য বিশ্লেষণ",
+    weatherPred: "🌦️ বতৰ পূৰ্বাভাস",
+    eligibleSchemes: "🏛️ যোগ্য আঁচনিসমূহ",
+    inputPlaceholder: "সমবায় আইন বা কৃষি সম্পৰ্কীয় প্ৰশ্ন লিখক বা কওক...",
+    logout: "🚪 লগআউট"
+  },
+  'ur-PK': {
+    appName: "سہکار وانی — باہمی امداد باہمی قانونی و انتظامی AI",
+    sbTitleMain: "سہکار",
+    sbTitleSub: "وانی",
+    sbPlatformSub: "کوآپریٹو گورننس و پیکس قانونی اسٹیشن",
+    sbBadge: "🤝 پیکس ممبر",
+    sbSecMain: "کوآپریٹو مین",
+    sbNavHealth: "فصل کی صحت",
+    sbNavChat: "AI قانونی مشیر",
+    sbNavDash: "ٹیلی میٹری و سینسرز",
+    sbNavSchemes: "کوآپریٹو اسکیمیں",
+    sbNavLaws: "پیکس ایکٹس اور حقوق",
+    sbNavWeather: "موسم کی پیشن گوئی",
+    sbSecQuick: "فوری قانونی سوال",
+    sbNavPest: "کیڑوں کی تشخیص",
+    sbNavFertilizer: "کھاد گائیڈ اور MRP",
+    sbNavMySchemes: "میری اسکیمیں",
+    sbNavPrice: "مارکیٹ ریٹ",
+    sbWeatherTitle: "☁ موجودہ موسم",
+    sbLogoutBtn: "↩ پروفائل تبدیل کریں",
+    tbStatusText: "سہکار وانی آن لائن • سہکار سے سمردھی (MoC)",
+    chatTab: "💬 قانونی AI",
+    wealthTab: "💚 صحت",
+    dashTab: "📊 ٹیلی میٹری",
+    schemesTab: "🏛️ اسکیمیں",
+    lawsTab: "📜 ایکٹس اور حقوق",
+    weatherTab: "🌦️ موسم",
+    onlineStatus: "● آن لائن · سہکار سے سمردھی",
+    welcomeSub: "پیکس بائی لاز، کوآپریٹو قوانین اور کسانوں کے قانونی حقوق کے لیے آپ کا AI مشیر۔",
+    totalLand: "کل اراضی",
+    primaryCrop: "بنیادی فصل",
+    irrigation: "آبپاشی",
+    location: "مقام",
+    kcc: "کسان کریڈٹ کارڈ",
+    pmkisan: "پی ایم کسان",
+    pmfby: "پی ایم فصل بیمہ",
+    farmerAge: "کسان کی عمر",
+    phone: "فون نمبر",
+    digitalTwin: "ڈیجیٹل ٹوئن — فارم کا منظر",
+    smartAlerts: "🚨 سمارٹ الرٹس",
+    farmHealth: "🧠 فارم ہیلتھ تجزیہ",
+    weatherPred: "🌦️ موسم کی پیش گوئی",
+    eligibleSchemes: "🏛️ آپ کی اہل اسکیمیں",
+    inputPlaceholder: "کوآپریٹو قانون یا فصل کے بارے میں سوال لکھیں یا بولیں...",
+    logout: "🚪 لاگ آؤٹ"
+  },
+  'es-ES': {
+    appName: "Sahakar Vaani — IA Legal y Gobernanza Cooperativa",
+    sbTitleMain: "Sahakar",
+    sbTitleSub: "Vaani",
+    sbPlatformSub: "Gobernanza Cooperativa y Asesoría Legal PACS",
+    sbBadge: "🤝 Miembro PACS",
+    sbSecMain: "Principal Cooperativa",
+    sbNavHealth: "Salud del Cultivo",
+    sbNavChat: "Asesor Legal IA",
+    sbNavDash: "Telemetría y Sensores",
+    sbNavSchemes: "Planes Cooperativos",
+    sbNavLaws: "Leyes y Derechos PACS",
+    sbNavWeather: "Pronóstico del Tiempo",
+    sbSecQuick: "Consulta Legal Rápida",
+    sbNavPest: "Diagnóstico de Cultivos",
+    sbNavFertilizer: "Fertilizantes y Precios",
+    sbNavMySchemes: "Mis Planes",
+    sbNavPrice: "Precios de Mercado",
+    sbWeatherTitle: "☁ Clima Actual",
+    sbLogoutBtn: "↩ Cambiar Perfil",
+    tbStatusText: "Sahakar Vaani En Línea • Sahakar Se Samriddhi",
+    chatTab: "💬 IA Legal",
+    wealthTab: "💚 Salud",
+    dashTab: "📊 Telemetría",
+    schemesTab: "🏛️ Planes",
+    lawsTab: "📜 Leyes y Derechos",
+    weatherTab: "🌦️ Clima",
+    onlineStatus: "● En Línea · Listo para Asistir",
+    welcomeSub: "Asesor legal con IA para estatutos de PACS, leyes cooperativas y derechos de agricultores.",
+    totalLand: "Tierra Total",
+    primaryCrop: "Cultivo Principal",
+    irrigation: "Riego",
+    location: "Ubicación",
+    kcc: "KCC",
+    pmkisan: "PM-KISAN",
+    pmfby: "Seguro PMFBY",
+    farmerAge: "Edad",
+    phone: "Teléfono",
+    digitalTwin: "Digital Twin — Vista del Campo",
+    smartAlerts: "🚨 Alertas Inteligentes",
+    farmHealth: "🧠 Análisis de Salud",
+    weatherPred: "🌦️ Pronóstico",
+    eligibleSchemes: "🏛️ Planes Disponibles",
+    inputPlaceholder: "Escriba o hable sobre leyes cooperativas o cultivos...",
+    logout: "🚪 Salir"
+  },
+  'fr-FR': {
+    appName: "Sahakar Vaani — IA Juridique et Gouvernance Coopérative",
+    sbTitleMain: "Sahakar",
+    sbTitleSub: "Vaani",
+    sbPlatformSub: "Gouvernance Coopérative et Conseil Juridique PACS",
+    sbBadge: "🤝 Membre PACS",
+    sbSecMain: "Menu Coopératif",
+    sbNavHealth: "Santé des Cultures",
+    sbNavChat: "Conseiller Juridique IA",
+    sbNavDash: "Télémétrie et Capteurs",
+    sbNavSchemes: "Programmes Coopératifs",
+    sbNavLaws: "Lois et Droits PACS",
+    sbNavWeather: "Météo Agricole",
+    sbSecQuick: "Questions Juridiques",
+    sbNavPest: "Diagnostic Parasitaire",
+    sbNavFertilizer: "Engrais et Prix",
+    sbNavMySchemes: "Mes Programmes",
+    sbNavPrice: "Prix du Marché",
+    sbWeatherTitle: "☁ Météo Actuelle",
+    sbLogoutBtn: "↩ Changer de Profil",
+    tbStatusText: "Sahakar Vaani En Ligne • Sahakar Se Samriddhi",
+    chatTab: "💬 IA Juridique",
+    wealthTab: "💚 Santé",
+    dashTab: "📊 Télémétrie",
+    schemesTab: "🏛️ Programmes",
+    lawsTab: "📜 Lois et Droits",
+    weatherTab: "🌦️ Météo",
+    onlineStatus: "● En Ligne · Prêt à Aider",
+    welcomeSub: "Votre conseiller IA vocal pour les lois coopératives, les statuts PACS et les droits des agriculteurs.",
+    totalLand: "Superficie Totale",
+    primaryCrop: "Culture Principale",
+    irrigation: "Irrigation",
+    location: "Localisation",
+    kcc: "KCC",
+    pmkisan: "PM-KISAN",
+    pmfby: "Assurance PMFBY",
+    farmerAge: "Âge",
+    phone: "Téléphone",
+    digitalTwin: "Digital Twin — Vue du Domaine",
+    smartAlerts: "🚨 Alertes Intelligentes",
+    farmHealth: "🧠 Analyse Santé",
+    weatherPred: "🌦️ Prévisions Météo",
+    eligibleSchemes: "🏛️ Vos Programmes",
+    inputPlaceholder: "Posez votre question sur les coopératives ou les cultures...",
+    logout: "🚪 Déconnexion"
+  },
+  'de-DE': {
+    appName: "Sahakar Vaani — Genossenschafts- & Rechtsberatung KI",
+    sbTitleMain: "Sahakar",
+    sbTitleSub: "Vaani",
+    sbPlatformSub: "Genossenschaftsführung & PACS Rechtsberatung",
+    sbBadge: "🤝 PACS Mitglied",
+    sbSecMain: "Genossenschaft",
+    sbNavHealth: "Pflanzengesundheit",
+    sbNavChat: "KI Rechtsberater",
+    sbNavDash: "Telemetrie & Sensoren",
+    sbNavSchemes: "Förderprogramme",
+    sbNavLaws: "PACS Gesetze & Rechte",
+    sbNavWeather: "Wettervorhersage",
+    sbSecQuick: "Schnellabfrage",
+    sbNavPest: "Schädlingsdiagnose",
+    sbNavFertilizer: "Düngemittel & Preise",
+    sbNavMySchemes: "Meine Programme",
+    sbNavPrice: "Marktpreise",
+    sbWeatherTitle: "☁ Aktuelles Wetter",
+    sbLogoutBtn: "↩ Profil ändern",
+    tbStatusText: "Sahakar Vaani Online • Sahakar Se Samriddhi",
+    chatTab: "💬 KI Recht",
+    wealthTab: "💚 Gesundheit",
+    dashTab: "📊 Telemetrie",
+    schemesTab: "🏛️ Programme",
+    lawsTab: "📜 Gesetze & Rechte",
+    weatherTab: "🌦️ Wetter",
+    onlineStatus: "● Online · Bereit",
+    welcomeSub: "Sprachgestützter KI-Rechts- und Genossenschaftsberater für Satzungen, Gesetze und Landwirterechte.",
+    totalLand: "Gesamtfläche",
+    primaryCrop: "Hauptfrucht",
+    irrigation: "Bewässerung",
+    location: "Standort",
+    kcc: "KCC",
+    pmkisan: "PM-KISAN",
+    pmfby: "PMFBY Versicherung",
+    farmerAge: "Alter",
+    phone: "Telefon",
+    digitalTwin: "Digitaler Zwilling — Feldansicht",
+    smartAlerts: "🚨 Intelligente Warnungen",
+    farmHealth: "🧠 Feldgesundheitsanalyse",
+    weatherPred: "🌦️ Wettervorhersage",
+    eligibleSchemes: "🏛️ Berechtigte Förderungen",
+    inputPlaceholder: "Frage zu Genossenschaftsgesetzen oder Ernten eingeben...",
+    logout: "🚪 Abmelden"
+  },
+  'ar-SA': {
+    appName: "ساهكار فاني — مستشار الحوكمة والتشريعات التعاونية الذكي",
+    sbTitleMain: "ساهكار",
+    sbTitleSub: "فاني",
+    sbPlatformSub: "مركز الحوكمة التعاونية والمساعدة القانونية لجمعيات باكس",
+    sbBadge: "🤝 عضو باكس",
+    sbSecMain: "الرئيسية التعاونية",
+    sbNavHealth: "صحة المحصول",
+    sbNavChat: "مستشار قانوني بالذكاء الاصطناعي",
+    sbNavDash: "القياس عن بعد والمستشعرات",
+    sbNavSchemes: "المبادرات التعاونية",
+    sbNavLaws: "قوانين وحقوق باكس",
+    sbNavWeather: "توقعات الطقس",
+    sbSecQuick: "سؤال قانوني سريع",
+    sbNavPest: "تشخيص الآفات",
+    sbNavFertilizer: "دليل الأسمدة والأسعار",
+    sbNavMySchemes: "مبادراتي",
+    sbNavPrice: "أسعار السوق",
+    sbWeatherTitle: "☁ الطقس الحالي",
+    sbLogoutBtn: "↩ تغيير الملف الشخصي",
+    tbStatusText: "ساهكار فاني متصل • الرخاء من خلال التعاون",
+    chatTab: "💬 الذكاء القانوني",
+    wealthTab: "💚 الصحة",
+    dashTab: "📊 القياس",
+    schemesTab: "🏛️ المبادرات",
+    lawsTab: "📜 القوانين والحقوق",
+    weatherTab: "🌦️ الطقس",
+    onlineStatus: "● متصل · جاهز للمساعدة",
+    welcomeSub: "مستشارك القانوني الذكي للوائح جمعيات باكس والقوانين التعاونية وحقوق المزارعين.",
+    totalLand: "إجمالي الأرض",
+    primaryCrop: "المحصول الأساسي",
+    irrigation: "الري",
+    location: "الموقع",
+    kcc: "بطاقة الائتمان الزراعية",
+    pmkisan: "بي إم كيسان",
+    pmfby: "تأمين المحاصيل",
+    farmerAge: "عمر المزارع",
+    phone: "رقم الهاتف",
+    digitalTwin: "التوأم الرقمي — معاينة الحقل",
+    smartAlerts: "🚨 تنبيهات ذكية",
+    farmHealth: "🧠 تحليل صحة الحقل",
+    weatherPred: "🌦️ توقعات الطقس",
+    eligibleSchemes: "🏛️ البرامج المتاحة لك",
+    inputPlaceholder: "اكتب أو انطق سؤالك حول القوانين أو المحاصيل...",
+    logout: "🚪 تسجيل الخروج"
   }
 };
 
 let _sfLastGTLang = '';
 
 function applyUiDictionary(normalized) {
-  const dict = UI_DICTIONARIES[normalized];
+  let dict = UI_DICTIONARIES[normalized];
+  if (!dict) {
+    const base = String(normalized || '').split('-')[0].toLowerCase();
+    const matchKey = Object.keys(UI_DICTIONARIES).find(k => k.toLowerCase().startsWith(base));
+    dict = matchKey ? UI_DICTIONARIES[matchKey] : UI_DICTIONARIES['en-IN'];
+  }
   if (!dict) return;
 
   // Sidebar Elements
@@ -4487,18 +4921,36 @@ function toggleMic() {
       if (/[\u0B80-\u0BFF]/.test(clean)) return 'ta-IN'; // Tamil
       if (/[\u0900-\u097F]/.test(clean)) {
         if (/\b(आहे|नाही|शेतकरी|पिक|पाऊस|कसा|काय)\b/.test(clean)) return 'mr-IN';
-        return 'hi-IN'; // Hindi / Devanagari
+        if (/\b(অসম|কৃষি|ধান|পানী)\b/.test(clean)) return 'as-IN'; // Assamese
+        if (/\b(नेपाल|कृषि|धान|पानी)\b/.test(clean)) return 'ne-NP'; // Nepali
+        return 'hi-IN'; // Hindi / Devanagari / Sanskrit
       }
       if (/[\u0C00-\u0C7F]/.test(clean)) return 'te-IN'; // Telugu
       if (/[\u0C80-\u0CFF]/.test(clean)) return 'kn-IN'; // Kannada
       if (/[\u0D00-\u0D7F]/.test(clean)) return 'ml-IN'; // Malayalam
       if (/[\u0A80-\u0AFF]/.test(clean)) return 'gu-IN'; // Gujarati
       if (/[\u0A00-\u0A7F]/.test(clean)) return 'pa-IN'; // Punjabi (Gurmukhi)
-      if (/[\u0980-\u09FF]/.test(clean)) return 'bn-IN'; // Bengali
+      if (/[\u0980-\u09FF]/.test(clean)) {
+        if (/\b(অসম|ৰাইজ|বৰষুণ)\b/.test(clean)) return 'as-IN';
+        return 'bn-IN'; // Bengali / Assamese script
+      }
       if (/[\u0B00-\u0B7F]/.test(clean)) return 'or-IN'; // Odia
-      if (/[\u0600-\u06FF]/.test(clean)) return 'ur-PK'; // Urdu
+      if (/[\u0600-\u06FF]/.test(clean)) {
+        if (/\b(کیا|ہیں|کسان|فصل|پانی|مدد)\b/.test(clean)) return 'ur-PK'; // Urdu
+        return 'ar-SA'; // Arabic
+      }
+      if (/[\u4E00-\u9FFF]/.test(clean)) return 'zh-CN'; // Chinese
+      if (/[\u3040-\u30FF]/.test(clean)) return 'ja-JP'; // Japanese
+      if (/[\uAC00-\uD7AF]/.test(clean)) return 'ko-KR'; // Korean
+      if (/[\u0400-\u04FF]/.test(clean)) return 'ru-RU'; // Russian / Cyrillic
+      if (/[\u0E00-\u0E7F]/.test(clean)) return 'th-TH'; // Thai
 
       // 2. Common Spoken / Transliterated Keywords
+      // Global Languages
+      if (/\b(hola|buenos|dias|tardes|gracias|cultivo|cosecha|tierra|riego|cooperativa|agricultor)\b/i.test(lower)) return 'es-ES';
+      if (/\b(bonjour|merci|agriculteur|champ|culture|recolte|cooperative|loi)\b/i.test(lower)) return 'fr-FR';
+      if (/\b(guten|tag|danke|bauer|landwirtschaft|ernte|genossenschaft)\b/i.test(lower)) return 'de-DE';
+
       // Telugu
       if (/\b(vyavasaya|vyavasayam|bhoomi|bhumi|ela|elaa|undi|unnaru|cheyali|cheyyali|panta|raithu|raithulu|neellu|polam|namaskaram|bagunnara|eppudu|emi|emiti|dabbulu|dharalu|mandulu|kothalu|subhodayam|subhodhayam|cheppandi)\b/i.test(lower)) return 'te-IN';
 
@@ -4525,6 +4977,12 @@ function toggleMic() {
 
       // Punjabi
       if (/\b(sat|sri|akal|kive|ho|kisan|kheti|fasal|pani|mitti|dasso)\b/i.test(lower)) return 'pa-IN';
+
+      // Odia
+      if (/\b(namaskar|kemiti|achanti|chasa|chasi|fasala|pani|mati|kete|kahantu)\b/i.test(lower)) return 'or-IN';
+
+      // Assamese
+      if (/\b(nomoskar|kenekoi|ase|kheti|khetok|pani|mati|botiya|kiba)\b/i.test(lower)) return 'as-IN';
 
       // English
       if (/\b(hello|hi|hey|good morning|good afternoon|good evening|how are you|weather|crop|soil|farm|rain|fertilizer|pest|scheme|price|yield)\b/i.test(lower)) return 'en-IN';
@@ -4766,20 +5224,25 @@ function toggleMic() {
     function speakGreeting() {
       const activeLang = getActiveLang();
       const greetings = {
-        'hi-IN': `Namaste ${profile.name}. Main aapka Farmer Assisting Bot hoon. Aaj kheti mein main kaise madad kar sakta hoon?`,
-        'ta-IN': `Vanakkam ${profile.name}. Naan ungal Farmer Assisting Bot. Innaiku ungal vivasayathukku eppadi udhavi seyyalaam?`,
-        'te-IN': `Namaskaram ${profile.name}. Nenu mee Farmer Assisting Bot. Ee roju mee vyavasayaniki ela sahayam cheyagalanu?`,
-        'kn-IN': `Namaskara ${profile.name}. Naanu nimma Farmer Assisting Bot. Ivattu nimma krishige heghe sahaya madabahudu?`,
-        'ml-IN': `Namaskaram ${profile.name}. Njan ningalude Farmer Assisting Bot aanu. Innu ningalude krishikku engane sahayikkam?`,
-        'mr-IN': `Namaskar ${profile.name}. Mi tumcha Farmer Assisting Bot ahe. Aaj tumchya shetit mi kashi madat karu?`,
-        'gu-IN': `Namaste ${profile.name}. Hu tamaro Farmer Assisting Bot chhu. Aaje kheti ma hu kevi rite madad kari saku?`,
-        'pa-IN': `Sat Sri Akal ${profile.name}. Main tuhadda Farmer Assisting Bot haan. Ajj kheti vich main kiven madad kara?`,
-        'bn-IN': `Nomoskar ${profile.name}. Ami apnar Farmer Assisting Bot. Aaj chashe ami kivabe sahajjo korte pari?`,
-        'or-IN': `Namaskar ${profile.name}. Mu apanankara Farmer Assisting Bot. Aji chasa re mu kemiti sahajya karibi?`,
-        'ur-PK': `Assalamualaikum ${profile.name}. Main aap ka Farmer Assisting Bot hoon. Aaj kheti mein main kis tarah madad karun?`
+        'hi-IN': `Namaste ${profile.name}. Main aapka Sahakar Vaani AI Sahayak hoon. Aaj sahakari kanoon ya kheti mein main kaise madad kar sakta hoon?`,
+        'ta-IN': `Vanakkam ${profile.name}. Naan ungal Sahakar Vaani AI Sahayak. Innaiku ungal kooturavu sattam matrum vivasayathukku eppadi udhavi seyyalaam?`,
+        'te-IN': `Namaskaram ${profile.name}. Nenu mee Sahakar Vaani AI Sahayak. Ee roju mee sahakara chattam mariyu vyavasayaniki ela sahayam cheyagalanu?`,
+        'kn-IN': `Namaskara ${profile.name}. Naanu nimma Sahakar Vaani AI Sahayak. Ivattu nimma sahakari kanoonu matthu krishige heghe sahaya madabahudu?`,
+        'ml-IN': `Namaskaram ${profile.name}. Njan ningalude Sahakar Vaani AI Sahayak aanu. Innu ningalude sahakaranam matrum krishikku engane sahayikkam?`,
+        'mr-IN': `Namaskar ${profile.name}. Mi tumcha Sahakar Vaani AI Sahayak ahe. Aaj tumchya sahakari kayde va shetit mi kashi madat karu?`,
+        'gu-IN': `Namaste ${profile.name}. Hu tamaro Sahakar Vaani AI Sahayak chhu. Aaje sahakari kaydo ane kheti ma hu kevi rite madad kari saku?`,
+        'pa-IN': `Sat Sri Akal ${profile.name}. Main tuhadda Sahakar Vaani AI Sahayak haan. Ajj sahkari kanoon ate kheti vich main kiven madad kara?`,
+        'bn-IN': `Nomoskar ${profile.name}. Ami apnar Sahakar Vaani AI Sahayak. Aaj somobay ain o chashe ami kivabe sahajjo korte pari?`,
+        'or-IN': `Namaskar ${profile.name}. Mu apanankara Sahakar Vaani AI Sahayak. Aji samabaya aina o chasa re mu kemiti sahajya karibi?`,
+        'as-IN': `Nomoskar ${profile.name}. Moi apunar Sahakar Vaani AI Sahayak. Aji somobay ain aru krishit moi kenekoi xohay koribo paru?`,
+        'ur-PK': `Assalamualaikum ${profile.name}. Main aap ka Sahakar Vaani AI Sahayak hoon. Aaj cooperative qawaneen aur kheti mein main kis tarah madad karun?`,
+        'es-ES': `Hola ${profile.name}. Soy Sahakar Vaani, su asesor legal de gobernanza cooperativa y agricultura con inteligencia artificial. ¿En qué puedo asistirle hoy?`,
+        'fr-FR': `Bonjour ${profile.name}. Je suis Sahakar Vaani, votre conseiller juridique en gouvernance coopérative et agriculture. Comment puis-je vous aider aujourd'hui?`,
+        'de-DE': `Guten Tag ${profile.name}. Ich bin Sahakar Vaani, Ihr KI-Rechtsberater für Genossenschaften und Landwirtschaft. Wie kann ich Ihnen heute helfen?`,
+        'ar-SA': `مرحباً ${profile.name}. أنا ساهكار فاني، مستشارك الذكي للحوكمة التعاونية والقوانين الزراعية. كيف يمكنني مساعدتك اليوم؟`
       };
       const text = greetings[activeLang]
-        || `Good day, ${profile.name}. I am your Farmer Assisting Bot. I am fully operational and ready to assist with your farm. How may I help you today?`;
+        || `Good day, ${profile.name}. I am Sahakar Vaani, your voice-enabled AI legal and cooperative governance advisor. How may I assist you today?`;
       speak(text);
     }
 
@@ -5285,8 +5748,8 @@ function toggleMic() {
       new google.translate.TranslateElement(
         {
           pageLanguage: 'en',
-          includedLanguages: 'en,hi,ta,te,kn,ml,gu,mr,bn,pa,ur,or,de,fr,es,it,pt,ru,zh-CN,ja,ko,ar,tr,nl,pl,sv,no,da,fi,cs,el,he,th,vi,id,ms,uk,ro,hu',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
         },
         'google_translate_element'
       );

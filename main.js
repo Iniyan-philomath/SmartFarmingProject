@@ -509,7 +509,20 @@ const LANGUAGE_NAMES = {
   "mr-IN": "Marathi",
   "bn-IN": "Bengali",
   "pa-IN": "Punjabi",
+  "or-IN": "Odia",
+  "as-IN": "Assamese",
   "ur-PK": "Urdu",
+  "sa-IN": "Sanskrit",
+  "ne-NP": "Nepali",
+  "mai-IN": "Maithili",
+  "ks-IN": "Kashmiri",
+  "sd-IN": "Sindhi",
+  "kok-IN": "Konkani",
+  "doi-IN": "Dogri",
+  "mni-IN": "Manipuri",
+  "sat-IN": "Santali",
+  "brx-IN": "Bodo",
+  "bho-IN": "Bhojpuri",
   "de-DE": "German",
   "fr-FR": "French",
   "es-ES": "Spanish",
@@ -548,18 +561,33 @@ function detectMessageLanguage(text) {
   if (/[\u0B80-\u0BFF]/.test(clean)) return "ta-IN"; // Tamil
   if (/[\u0900-\u097F]/.test(clean)) {
     if (/\b(आहे|नाही|शेतकरी|पिक|पाऊस|कसा|काय)\b/.test(clean)) return "mr-IN";
-    return "hi-IN"; // Hindi / Devanagari
+    if (/\b(অসম|কৃষি|ধান|পানী)\b/.test(clean)) return "as-IN"; // Assamese
+    if (/\b(नेपाल|कृषि|ধান|पानी)\b/.test(clean)) return "ne-NP"; // Nepali
+    return "hi-IN"; // Hindi / Devanagari / Sanskrit
   }
   if (/[\u0C00-\u0C7F]/.test(clean)) return "te-IN"; // Telugu
   if (/[\u0C80-\u0CFF]/.test(clean)) return "kn-IN"; // Kannada
   if (/[\u0D00-\u0D7F]/.test(clean)) return "ml-IN"; // Malayalam
   if (/[\u0A80-\u0AFF]/.test(clean)) return "gu-IN"; // Gujarati
   if (/[\u0A00-\u0A7F]/.test(clean)) return "pa-IN"; // Punjabi
-  if (/[\u0980-\u09FF]/.test(clean)) return "bn-IN"; // Bengali
+  if (/[\u0980-\u09FF]/.test(clean)) {
+    if (/\b(অসম|ৰাইজ|বৰষুণ)\b/.test(clean)) return "as-IN";
+    return "bn-IN"; // Bengali
+  }
   if (/[\u0B00-\u0B7F]/.test(clean)) return "or-IN"; // Odia
-  if (/[\u0600-\u06FF]/.test(clean)) return "ur-PK"; // Urdu
+  if (/[\u0600-\u06FF]/.test(clean)) {
+    if (/\b(کیا|ہیں|کسان|فصل|پانی|مدد)\b/.test(clean)) return "ur-PK"; // Urdu
+    return "ar-SA"; // Arabic
+  }
+  if (/[\u4E00-\u9FFF]/.test(clean)) return "zh-CN"; // Chinese
+  if (/[\u3040-\u30FF]/.test(clean)) return "ja-JP"; // Japanese
+  if (/[\uAC00-\uD7AF]/.test(clean)) return "ko-KR"; // Korean
+  if (/[\u0400-\u04FF]/.test(clean)) return "ru-RU"; // Russian
 
   // 2. Transliterated / Phonetic keywords
+  if (/\b(hola|buenos|dias|tardes|gracias|cultivo|cooperativa)\b/i.test(lower)) return "es-ES";
+  if (/\b(bonjour|merci|agriculteur|champ|cooperative)\b/i.test(lower)) return "fr-FR";
+  if (/\b(guten|tag|danke|bauer|genossenschaft)\b/i.test(lower)) return "de-DE";
   if (/\b(vyavasaya|vyavasayam|bhoomi|bhumi|ela|elaa|undi|unnaru|cheyali|cheyyali|panta|raithu|raithulu|neellu|polam|namaskaram|bagunnara|eppudu|emi|emiti|dabbulu|dharalu|mandulu|kothalu|subhodayam)\b/i.test(lower)) return "te-IN";
   if (/\b(vanakkam|vannakam|vanakam|epdi|eppadi|irukinga|irukku|enokku|enakku|nandri|magizhchi|nalla|payir|thanni|mazhai|vivasaayam|poochi|kadan|marunthu|seiyyanum|vilai|sollunga)\b/i.test(lower)) return "ta-IN";
   if (/\b(namaste|namaskar|pranam|kaise|kya|hai|hain|hoon|shukriya|dhanyawad|kheti|fasal|kisan|paani|baarish|zameen|mitti|beej|khaad|keede|daam|mandi|batao|kariye)\b/i.test(lower)) return "hi-IN";
@@ -569,6 +597,8 @@ function detectMessageLanguage(text) {
   if (/\b(namaste|kem|cho|khedut|kheti|paak|pani|khatar|bhav|kevi|rite)\b/i.test(lower)) return "gu-IN";
   if (/\b(nomoshkar|kemon|achen|chash|krishi|mati|jol|shoshyo|dhoron|bolun)\b/i.test(lower)) return "bn-IN";
   if (/\b(sat|sri|akal|kive|ho|kisan|kheti|fasal|pani|mitti|dasso)\b/i.test(lower)) return "pa-IN";
+  if (/\b(namaskar|kemiti|achanti|chasa|chasi|fasala|pani|mati|kete|kahantu)\b/i.test(lower)) return "or-IN";
+  if (/\b(nomoskar|kenekoi|ase|kheti|khetok|pani|mati)\b/i.test(lower)) return "as-IN";
   if (/\b(hello|hi|hey|good morning|good afternoon|weather|crop|soil|farm|rain|fertilizer|pest|scheme)\b/i.test(lower)) return "en-IN";
 
   return null;
@@ -581,13 +611,16 @@ app.post("/chat", async (req, res) => {
     const hasImage = typeof imageBase64 === "string" && imageBase64.startsWith("data:image/");
     const requestedLang = String(languageCode || "en-IN").trim();
     const languageNames = LANGUAGE_NAMES;
-    const systemInstruction = `You are an expert agriculture, cooperative law, & farmer grievance assistant (SIH25088). Automatically detect the primary language of the farmer's message (e.g. Tamil, Hindi, Telugu, Kannada, Malayalam, English, etc.). Reply in the EXACT SAME language as the farmer's input. Keep answers practical, clear, concise, direct, and actionable for farmers. You ARE directly integrated with the ChromaDB legal document vector database containing the Seed Act 1966, Fertilizer Control Order, PACS Bye-Laws, and TN Cooperative Laws. Never claim that you cannot access files or the legal_docs folder.
+    const systemInstruction = `You are Sahakar Vaani (सहकार वाणी) — an omnilingual, voice-enabled AI legal, cooperative governance, and agricultural advisor built for the Ministry of Cooperation (SIH PS 26088).
+You are fluent in ALL 22 official Eighth Schedule languages of India (Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese, Urdu, Sanskrit, Nepali, Maithili, Kashmiri, Sindhi, Konkani, Dogri, Manipuri, Santali, Bodo) as well as global languages (Spanish, French, German, Arabic, Russian, Portuguese, etc.).
+Always detect the farmer's language immediately and reply naturally, accurately, and fluently in the EXACT SAME language and script they use.
+Provide practical, direct, and actionable advice citing statutory provisions (Model PACS Bye-Laws 2022, Multi-State Co-operative Societies Act 2022, Fertilizer Control Order 1985, Seeds Act 1966, PMFBY Guidelines).
 CRITICAL FORMATTING RULES FOR NATURAL VOICE & TTS:
 1. NEVER output Markdown tables (| ... |). Write clean explanatory lists instead.
 2. NEVER output horizontal dividers or repeated dashes (like ---, ___, ===).
-3. NEVER use slashes (/) between words; write 'or' or comma instead (e.g. write 'cow or cattle' instead of 'cow/cattle', write 'GPS or RFID' instead of 'GPS/RFID').
-4. NEVER use underscores (_) or asterisks (*); write clean plain text (e.g. write 'Node 2' instead of 'NODE_02').
-5. Do NOT use dashes (-) as bullet points or decor so the text-to-speech engine never speaks 'dash dash dash'. Use numbers like 1., 2. or clean sentences.`;
+3. NEVER use slashes (/) between words; write 'or' or comma instead.
+4. NEVER use underscores (_) or asterisks (*); write clean plain text.
+5. Do NOT use dashes (-) as bullet points so the text-to-speech engine never speaks 'dash dash'. Use numbers (1., 2.) or clean sentences.`;
 
     const sanitizedHistory = sanitizeHistory(history);
     const fallbackUserContent = hasImage
