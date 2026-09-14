@@ -623,8 +623,8 @@ function detectMessageLanguage(text) {
   if (/\b(nomoshkar|kemon|achen|chash|krishi|mati|jol|shoshyo|dhoron|bolun)\b/i.test(lower)) return "bn-IN";
   if (/\b(sat|sri|akal|kive|ho|kisan|kheti|fasal|pani|mitti|dasso)\b/i.test(lower)) return "pa-IN";
   if (/\b(namaskar|kemiti|achanti|chasa|chasi|fasala|pani|mati|kete|kahantu)\b/i.test(lower)) return "or-IN";
-  if (/\b(nomoskar|kenekoi|ase|kheti|khetok|pani|mati)\b/i.test(lower)) return "as-IN";
-  if (/\b(hello|hi|hey|good morning|good afternoon|weather|crop|soil|farm|rain|fertilizer|pest|scheme)\b/i.test(lower)) return "en-IN";
+  if (/\b(how are you|what is|how to|crop|soil|farm|weather|rain|fertilizer|pest|scheme|market price|subsidy|insurance|mandate|loan)\b/i.test(lower)) return "en-IN";
+  if (/\b(hello|hi|hey|good morning|good afternoon)\b/i.test(lower)) return null;
 
   return null;
 }
