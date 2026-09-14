@@ -2572,15 +2572,15 @@
       <button class="nav-btn" onclick="switchTab('weather',this)"><span class="nav-icon">🌤️</span> <span id="sbNavWeather">Weather Forecast</span></button>
       <div class="sb-section-lbl" id="sbSecQuick">Legal & Rights Quick Ask</div>
       <button class="nav-btn" onclick="quickAsk('What are my voting and election rights under Model PACS Bye-Laws 2022?')"><span
-          class="nav-icon">🗳️</span> <span>PACS Voting Rights</span></button>
+          class="nav-icon">🗳️</span> <span id="sbChipPacsVote">PACS Voting Rights</span></button>
       <button class="nav-btn" onclick="quickAsk('How to get a KCC crop loan at 4% interest through my PACS?')"><span
-          class="nav-icon">💳</span> <span>KCC 4% Interest Subvention</span></button>
+          class="nav-icon">💳</span> <span id="sbChipKcc">KCC 4% Interest Subvention</span></button>
       <button class="nav-btn" onclick="quickAsk('What are my rights under Fertilizer Control Order 1985 if PACS overcharges for urea/DAP?')"><span
-          class="nav-icon">🧪</span> <span>FCO Urea MRP Rights</span></button>
+          class="nav-icon">🧪</span> <span id="sbChipFco">FCO Urea MRP Rights</span></button>
       <button class="nav-btn" onclick="quickAsk('What are my rights under Seed Act 1966 and FCO if I get fake seeds or overcharged fertilizer?')"><span
-          class="nav-icon">⚖️</span> <span>Seed Act & PACS Rights</span></button>
+          class="nav-icon">⚖️</span> <span id="sbChipSeed">Seed Act & PACS Rights</span></button>
       <button class="nav-btn" onclick="quickAsk('How to file a PMFBY crop insurance claim within 72 hours for localized crop loss?')"><span
-          class="nav-icon">🌾</span> <span>PMFBY 72-Hr Claim</span></button>
+          class="nav-icon">🌾</span> <span id="sbChipPmfby">PMFBY 72-Hr Claim</span></button>
       <button class="nav-btn" onclick="quickAsk('What is current market price for my crop?')"><span
           class="nav-icon">💰</span> <span id="sbNavPrice">Market Price</span></button>
     </div>
@@ -2620,13 +2620,13 @@
         <!-- PWA INSTALL APP BUTTON -->
         <button id="pwaInstallBtn" class="tb-install-btn" title="Install Sahakar Vaani App" onclick="triggerPwaInstall()">
           <span>📲</span>
-          <span>Install App</span>
+          <span id="tbInstallLabel">Install App</span>
         </button>
 
         <!-- 10-MIN AUTOMATED ADVISORY BELL BUTTON -->
         <button id="tbBellBtn" class="tb-bell-btn" title="10-Minute Automated Field Advisories" onclick="toggleAdvisoryDrawer()">
           <span class="tb-bell-icon">🔔</span>
-          <span style="font-size:12px;font-weight:600;">Advisories</span>
+          <span id="tbBellLabel" style="font-size:12px;font-weight:600;">Advisories</span>
           <span id="tbBellBadge" class="tb-bell-badge" style="display:none;">0</span>
         </button>
 
@@ -3314,7 +3314,7 @@
       try {
         const detectedLang = detectTextLanguage(sentTxt);
         if (detectedLang) {
-          syncDetectedLanguage(detectedLang);
+          syncDetectedLanguage(detectedLang, true);
         }
         const activeLang = detectedLang || getActiveLang();
         const r = await fetch('/chat', {
@@ -3329,19 +3329,21 @@
           trimChatHistory();
           saveChatHistory();
           updateUndoChatBtn();
+          addBubble(reply, 'ai');
+          speak(reply);
 
-          // Transform entire dashboard if backend or reply detected another language
+          // Transform entire dashboard if backend or reply detected another language (without wiping current chat!)
           const replyLang = d.detectedLanguage || detectTextLanguage(reply);
           if (replyLang && replyLang !== getActiveLang()) {
-            syncDetectedLanguage(replyLang);
+            syncDetectedLanguage(replyLang, true);
           }
         } else {
           chatHistory.pop();
           saveChatHistory();
           updateUndoChatBtn();
+          addBubble(reply, 'ai');
+          speak(reply);
         }
-        addBubble(reply, 'ai');
-        speak(reply);
       } catch (er) {
         removeEl(tid);
         chatHistory.pop();
@@ -3541,7 +3543,15 @@ const UI_DICTIONARIES = {
     smartAlerts: "🚨 स्मार्ट अलर्ट",
     farmHealth: "🧠 खेत स्वास्थ्य विश्लेषण",
     weatherPred: "🌦️ मौसम पूर्वानुमान",
-    eligibleSchemes: "🏛️ आपकी पात्र योजनाएं",
+    financeTab: "वित्तीय सिम्युलेटर",
+    vaultTab: "शिकायत निवारण वॉल्ट",
+    advisoriesLabel: "सलाह",
+    installLabel: "ऐप इंस्टॉल",
+    chipPacsVote: "पैक्स मतदान अधिकार",
+    chipKcc: "केसीसी 4% ब्याज छूट",
+    chipFco: "एफसीओ यूरिया एमआरपी अधिकार",
+    chipSeed: "बीज अधिनियम व पैक्स अधिकार",
+    chipPmfby: "पीएमएफबीवाई 72-घंटे दावा",
     inputPlaceholder: "सहकारी कानून, पैक्स नियम या कृषि सवाल लिखें या बोलें...",
     logout: "🚪 लॉगआउट"
   },
@@ -3587,7 +3597,15 @@ const UI_DICTIONARIES = {
     smartAlerts: "🚨 ஸ்மார்ட் எச்சரிக்கைகள்",
     farmHealth: "🧠 பண்ணை ஆரோக்கிய பகுப்பாய்வு",
     weatherPred: "🌦️ வானிலை கணிப்பு",
-    eligibleSchemes: "🏛️ உங்களுக்கு தகுதியான திட்டங்கள்",
+    financeTab: "நிதி சிமுலேட்டர்",
+    vaultTab: "குறைதீர்ப்பு பெட்டகம்",
+    advisoriesLabel: "ஆலோசனைகள்",
+    installLabel: "செயலியை நிறுவு",
+    chipPacsVote: "பேக்ஸ் வாக்களிப்பு உரிமைகள்",
+    chipKcc: "KCC 4% வட்டி மானியம்",
+    chipFco: "FCO யூரியா MRP உரிமைகள்",
+    chipSeed: "விதை சட்டம் & பேக்ஸ் உரிமைகள்",
+    chipPmfby: "PMFBY 72-மணிநேர கோரிக்கை",
     inputPlaceholder: "கூட்டுறவு சட்டம் அல்லது பயிர் கேள்வியை டைப் செய்யுங்கள் அல்லது பேசுங்கள்...",
     logout: "🚪 வெளியேறு"
   },
@@ -3633,7 +3651,15 @@ const UI_DICTIONARIES = {
     smartAlerts: "🚨 స్మార్ట్ హెచ్చరికలు",
     farmHealth: "🧠 పొలం ఆరోగ్యం విశ్లేషణ",
     weatherPred: "🌦️ వాతావరణ అంచనా",
-    eligibleSchemes: "🏛️ మీ అర్హత పథకాలు",
+    financeTab: "ఆర్థిక సిమ్యులేటర్",
+    vaultTab: "ఫిర్యాదుల వాల్ట్",
+    advisoriesLabel: "సలహాలు",
+    installLabel: "యాప్ ఇన్‌స్టాల్",
+    chipPacsVote: "ప్యాక్స్ ఓటింగ్ హక్కులు",
+    chipKcc: "KCC 4% వడ్డీ రాయితీ",
+    chipFco: "FCO యూరియా MRP హక్కులు",
+    chipSeed: "విత్తన చట్టం & హక్కులు",
+    chipPmfby: "PMFBY 72-గంటల క్లెయిమ్",
     inputPlaceholder: "సహకార చట్టం లేదా పంట గురించి ప్రశ్నను టైప్ చేయండి లేదా మాట్లాడండి...",
     logout: "🚪 లాగౌట్"
   },
@@ -3680,6 +3706,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 ಜಮೀನಿನ ಆರೋಗ್ಯ ವಿಶ್ಲೇಷಣೆ",
     weatherPred: "🌦️ ಹವಾಮಾನ ಮುನ್ಸೂಚನೆ",
     eligibleSchemes: "🏛️ ನಿಮ್ಮ ಅರ್ಹ ಯೋಜನೆಗಳು",
+    financeTab: "ಹಣಕಾಸು ಸಿಮ್ಯುಲೇಟರ್",
+    vaultTab: "ದೂರು ನಿವಾರಣಾ ವಾಲ್ಟ್",
+    advisoriesLabel: "ಸಲಹೆಗಳು",
+    installLabel: "ಆ್ಯಪ್ ಸ್ಥಾಪಿಸಿ",
+    chipPacsVote: "ಪ್ಯಾಕ್ಸ್ ಮತದಾನ ಹಕ್ಕುಗಳು",
+    chipKcc: "ಕೆಸಿಸಿ 4% ಬಡ್ಡಿ ರಿಯಾಯಿತಿ",
+    chipFco: "ಎಫ್‌ಸಿಒ ಯೂರಿಯಾ ಎಂಆರ್‌ಪಿ ಹಕ್ಕುಗಳು",
+    chipSeed: "ಬೀಜ ಕಾಯ್ದೆ & ಪ್ಯಾಕ್ಸ್ ಹಕ್ಕುಗಳು",
+    chipPmfby: "ಪಿಎಂಎಫ್‌ಬಿವೈ 72-ಗಂಟೆ ಕ್ಲೈಮ್",
     inputPlaceholder: "ಸಹಕಾರಿ ಕಾನೂನು ಅಥವಾ ಕೃಷಿ ಪ್ರಶ್ನೆಯನ್ನು ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ...",
     logout: "🚪 ಲಾಗ್‌ಔಟ್"
   },
@@ -3726,6 +3761,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 ഫാം ആരോഗ്യ വിശകലനം",
     weatherPred: "🌦️ കാലാവസ്ഥാ പ്രവചനം",
     eligibleSchemes: "🏛️ നിങ്ങളുടെ യോഗ്യതാ പദ്ധതികൾ",
+    financeTab: "സാമ്പത്തിക സിമുലേറ്റർ",
+    vaultTab: "പരാതി പരിഹാര വോൾട്ട്",
+    advisoriesLabel: "നിർദ്ദേശങ്ങൾ",
+    installLabel: "ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്യുക",
+    chipPacsVote: "പാക്സ് വോട്ടവകാശം",
+    chipKcc: "കെസിസി 4% പലിശ ഇളവ്",
+    chipFco: "യൂറിയ എംആർപി അവകാശങ്ങൾ",
+    chipSeed: "വിത്ത് നിയമം & അവകാശങ്ങൾ",
+    chipPmfby: "പിഎംഎഫ്ബിവൈ 72-മണിക്കൂർ ക്ലെയിം",
     inputPlaceholder: "സഹകരണ നിയമമോ കൃഷി സംശയമോ ടൈപ്പ് ചെയ്യുക അല്ലെങ്കിൽ പറയുക...",
     logout: "ലോഗ്ഔട്ട്"
   },
@@ -3772,6 +3816,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 शेत आरोग्य विश्लेषण",
     weatherPred: "🌦️ हवामान अंदाज",
     eligibleSchemes: "🏛️ तुमच्या पात्र योजना",
+    financeTab: "आर्थिक सिम्युलेटर",
+    vaultTab: "तक्रार निवारण व्हॉल्ट",
+    advisoriesLabel: "सल्ले",
+    installLabel: "अॅप स्थापित करा",
+    chipPacsVote: "पॅक्स मतदान हक्क",
+    chipKcc: "केसीसी 4% व्याज सवलत",
+    chipFco: "एफसीओ युरिया एमआरपी हक्क",
+    chipSeed: "बियाणे कायदा व पॅक्स हक्क",
+    chipPmfby: "पीएमएफबीवाय 72-तास दावा",
     inputPlaceholder: "सहकारी कायदा किंवा शेतीविषयक प्रश्न टाइप करा किंवा बोला...",
     logout: "🚪 लॉगआउट"
   },
@@ -3818,6 +3871,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 ખેતર આરોગ્ય વિશ્લેષણ",
     weatherPred: "🌦️ હવામાન આગાહી",
     eligibleSchemes: "🏛️ તમારી યોગ્ય યોજનાઓ",
+    financeTab: "નાણાકીય સિમ્યુલેટર",
+    vaultTab: "ફરિયાદ નિવારણ વૉલ્ટ",
+    advisoriesLabel: "સલાહ",
+    installLabel: "એપ ઇન્સ્ટોલ કરો",
+    chipPacsVote: "પેક્સ મતદાન અધિકારો",
+    chipKcc: "કેસીસી 4% વ્યાજ સબવેન્શન",
+    chipFco: "યુરિયા એમઆરપી અધિકારો",
+    chipSeed: "બિયારણ કાયદો & હકો",
+    chipPmfby: "પીએમએફબીવાય 72-કલાક ક્લેમ",
     inputPlaceholder: "સહકારી કાયદો કે ખેતી વિશે પ્રશ્ન ટાઈપ કરો અથવા બોલો...",
     logout: "🚪 લોગઆઉટ"
   },
@@ -3910,6 +3972,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 খামার স্বাস্থ্য বিশ্লেষণ",
     weatherPred: "🌦️ আবহাওয়ার পূর্বাভাস",
     eligibleSchemes: "🏛️ আপনার যোগ্য প্রকল্পসমূহ",
+    financeTab: "আর্থিক সিমুলেটর",
+    vaultTab: "অভিযোগ প্রতিকার ভল্ট",
+    advisoriesLabel: "পরামর্শ",
+    installLabel: "অ্যাপ ইনস্টল করুন",
+    chipPacsVote: "প্যাকস ভোটিং অধিকার",
+    chipKcc: "কেসিসি ৪% সুদের ছাড়",
+    chipFco: "ইউরিয়া এমআরপি অধিকার",
+    chipSeed: "বীজ আইন ও অধিকার",
+    chipPmfby: "পিএমএফবিওয়াই ৭২-ঘণ্টার দাবি",
     inputPlaceholder: "সমবায় আইন বা ফসল সংক্রান্ত প্রশ্ন লিখুন বা বলুন...",
     logout: "🚪 লগআউট"
   },
@@ -3956,6 +4027,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 ਖੇਤ ਸਿਹਤ ਵਿਸ਼ਲੇਸ਼ਣ",
     weatherPred: "🌦️ ਮੌਸਮ ਦੀ ਭਵਿੱਖਬਾਣੀ",
     eligibleSchemes: "🏛️ ਤੁਹਾਡੀਆਂ ਯੋਗ ਸਕੀਮਾਂ",
+    financeTab: "ਵਿੱਤੀ ਸਿਮੂਲੇਟਰ",
+    vaultTab: "ਸ਼ਿਕਾਇਤ ਨਿਵਾਰਨ ਵਾਲਟ",
+    advisoriesLabel: "ਸਲਾਹਾਂ",
+    installLabel: "ਐਪ ਸਥਾਪਿਤ ਕਰੋ",
+    chipPacsVote: "ਪੈਕਸ ਵੋਟਿੰਗ ਅਧਿਕਾਰ",
+    chipKcc: "ਕੇਸੀਸੀ 4% ਵਿਆਜ ਸਬਸਿਡੀ",
+    chipFco: "ਯੂਰੀਆ ਐਮਆਰਪੀ ਅਧਿਕਾਰ",
+    chipSeed: "ਬੀਜ ਕਾਨੂੰਨ ਅਤੇ ਅਧਿਕਾਰ",
+    chipPmfby: "ਪੀਐਮਐਫਬੀਵਾਈ 72-ਘੰਟੇ ਦਾਅਵਾ",
     inputPlaceholder: "ਸਹਿਕਾਰੀ ਕਾਨੂੰਨ ਜਾਂ ਖੇਤੀ ਬਾਰੇ ਸਵਾਲ ਲਿਖੋ ਜਾਂ ਬੋਲੋ...",
     logout: "🚪 ਲੌਗਆਉਟ"
   },
@@ -4002,6 +4082,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 କ୍ଷେତ୍ର ସ୍ୱାସ୍ଥ୍ୟ ବିଶ୍ଳେଷଣ",
     weatherPred: "🌦️ ପାଣିପାଗ ଆକଳନ",
     eligibleSchemes: "🏛️ ଯୋଗ୍ୟ ଯୋଜନା",
+    financeTab: "ଆର୍ଥିକ ସିମୁଲେଟର",
+    vaultTab: "ଅଭିଯୋଗ ନିବାରଣ ଭଲ୍ଟ",
+    advisoriesLabel: "ପରାମର୍ଶ",
+    installLabel: "ଆପ୍ ଇନଷ୍ଟଲ କରନ୍ତୁ",
+    chipPacsVote: "ପ୍ୟାକ୍ସ ଭୋଟିଂ ଅଧିକାର",
+    chipKcc: "କେସିସି ୪% ସୁଧ ରିହାତି",
+    chipFco: "ୟୁରିଆ ଏମଆରପି ଅଧିକାର",
+    chipSeed: "ବିହନ ଆଇନ ଓ ଅଧିକାର",
+    chipPmfby: "ପିଏମଏଫବିୱାଇ ୭୨-ଘଣ୍ଟା ଦାବି",
     inputPlaceholder: "ସମବାୟ ଆଇନ ବା କୃଷି ପ୍ରଶ୍ନ ଲେଖନ୍ତୁ କିମ୍ବା କୁହନ୍ତୁ...",
     logout: "🚪 ଲଗଆଉଟ"
   },
@@ -4048,6 +4137,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 পথাৰ স্বাস্থ্য বিশ্লেষণ",
     weatherPred: "🌦️ বতৰ পূৰ্বাভাস",
     eligibleSchemes: "🏛️ যোগ্য আঁচনিসমূহ",
+    financeTab: "বিত্তীয় ছিমুলেটৰ",
+    vaultTab: "অভিযোগ প্ৰতিকাৰ ভল্ট",
+    advisoriesLabel: "পৰামৰ্শ",
+    installLabel: "এপ ইনষ্টল কৰক",
+    chipPacsVote: "পেক্স ভোটিং অধিকাৰ",
+    chipKcc: "কেচিচি ৪% সুতৰ ৰেহাই",
+    chipFco: "ইউৰিয়া এমআৰপি অধিকাৰ",
+    chipSeed: "বীজ আইন আৰু অধিকাৰ",
+    chipPmfby: "পিএমএফবিৱাই ৭২-ঘণ্টাৰ দাবী",
     inputPlaceholder: "সমবায় আইন বা কৃষি সম্পৰ্কীয় প্ৰশ্ন লিখক বা কওক...",
     logout: "🚪 লগআউট"
   },
@@ -4094,6 +4192,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 فارم ہیلتھ تجزیہ",
     weatherPred: "🌦️ موسم کی پیش گوئی",
     eligibleSchemes: "🏛️ آپ کی اہل اسکیمیں",
+    financeTab: "مالیاتی سمیلیٹر",
+    vaultTab: "شکایت ازالہ والٹ",
+    advisoriesLabel: "مشورے",
+    installLabel: "ایپ انسٹال کریں",
+    chipPacsVote: "پیکس ووٹنگ کے حقوق",
+    chipKcc: "کے سی سی 4٪ شرح سود میں رعایت",
+    chipFco: "یوریا ایم آر پی حقوق",
+    chipSeed: "بیج ایکٹ اور حقوق",
+    chipPmfby: "پی ایم ایف بی وائی 72 گھنٹے دعویٰ",
     inputPlaceholder: "کوآپریٹو قانون یا فصل کے بارے میں سوال لکھیں یا بولیں...",
     logout: "🚪 لاگ آؤٹ"
   },
@@ -4140,6 +4247,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 Análisis de Salud",
     weatherPred: "🌦️ Pronóstico",
     eligibleSchemes: "🏛️ Planes Disponibles",
+    financeTab: "Simulador Financiero",
+    vaultTab: "Bóveda de Reclamaciones",
+    advisoriesLabel: "Avisos",
+    installLabel: "Instalar App",
+    chipPacsVote: "Derechos de Voto PACS",
+    chipKcc: "Subvención de Interés KCC 4%",
+    chipFco: "Derechos de Precio FCO Urea",
+    chipSeed: "Ley de Semillas y Derechos",
+    chipPmfby: "Reclamación PMFBY 72-Horas",
     inputPlaceholder: "Escriba o hable sobre leyes cooperativas o cultivos...",
     logout: "🚪 Salir"
   },
@@ -4186,6 +4302,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 Analyse Santé",
     weatherPred: "🌦️ Prévisions Météo",
     eligibleSchemes: "🏛️ Vos Programmes",
+    financeTab: "Simulateur Financier",
+    vaultTab: "Coffre de Réclamation",
+    advisoriesLabel: "Conseils",
+    installLabel: "Installer l'App",
+    chipPacsVote: "Droits de Vote PACS",
+    chipKcc: "Subvention d'Intérêt KCC 4%",
+    chipFco: "Droits de Prix FCO Urée",
+    chipSeed: "Loi sur les Semences et Droits",
+    chipPmfby: "Réclamation PMFBY 72-Heures",
     inputPlaceholder: "Posez votre question sur les coopératives ou les cultures...",
     logout: "🚪 Déconnexion"
   },
@@ -4232,6 +4357,15 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 Feldgesundheitsanalyse",
     weatherPred: "🌦️ Wettervorhersage",
     eligibleSchemes: "🏛️ Berechtigte Förderungen",
+    financeTab: "Finanzsimulator",
+    vaultTab: "Beschwerdetresor",
+    advisoriesLabel: "Hinweise",
+    installLabel: "App installieren",
+    chipPacsVote: "PACS Stimmrechte",
+    chipKcc: "KCC 4% Zinszuschuss",
+    chipFco: "FCO Harnstoff MRP Rechte",
+    chipSeed: "Saatgutgesetz & Rechte",
+    chipPmfby: "PMFBY 72-Std Schadensmeldung",
     inputPlaceholder: "Frage zu Genossenschaftsgesetzen oder Ernten eingeben...",
     logout: "🚪 Abmelden"
   },
@@ -4278,8 +4412,72 @@ const UI_DICTIONARIES = {
     farmHealth: "🧠 تحليل صحة الحقل",
     weatherPred: "🌦️ توقعات الطقس",
     eligibleSchemes: "🏛️ البرامج المتاحة لك",
+    financeTab: "محاكي المالية",
+    vaultTab: "خزينة الشكاوى",
+    advisoriesLabel: "التنبيهات",
+    installLabel: "تثبيت التطبيق",
+    chipPacsVote: "حقوق التصويت في باكس",
+    chipKcc: "دعم فائدة بطاقة كيسان 4%",
+    chipFco: "حقوق تسعير سماد اليوريا",
+    chipSeed: "قانون البذور وحقوق المزارع",
+    chipPmfby: "مطالبة تأمين المحاصيل خلال 72 ساعة",
     inputPlaceholder: "اكتب أو انطق سؤالك حول القوانين أو المحاصيل...",
     logout: "🚪 تسجيل الخروج"
+  },
+  'en-IN': {
+    appName: "Sahakar Vaani — Cooperative Legal & Governance AI",
+    sbTitleMain: "Sahakar",
+    sbTitleSub: "Vaani",
+    sbPlatformSub: "Cooperative Governance & PACS Legal Station",
+    sbBadge: "🤝 PACS Member",
+    sbSecMain: "Cooperative Main",
+    sbNavHealth: "Farm Health",
+    sbNavChat: "AI Legal Advisor",
+    sbNavDash: "Telemetry & Sensors",
+    sbNavSchemes: "Cooperative Schemes & Sandbox",
+    sbNavLaws: "PACS Acts & Rights",
+    sbNavWeather: "Weather Forecast",
+    sbSecQuick: "Legal & Rights Quick Ask",
+    sbNavPest: "Pest Diagnostic",
+    sbNavFertilizer: "Fertilizer & MRP Rights",
+    sbNavMySchemes: "My Schemes",
+    sbNavPrice: "Market Price",
+    sbWeatherTitle: "☁ Weather Now",
+    sbLogoutBtn: "↩ Change Profile",
+    tbStatusText: "Sahakar Vaani Online • Sahakar Se Samriddhi (MoC / NCCT)",
+    chatTab: "💬 Legal AI",
+    wealthTab: "💚 Health",
+    dashTab: "📊 Telemetry",
+    schemesTab: "🏛️ Schemes & Sandbox",
+    lawsTab: "📜 Acts & Rights",
+    financeTab: "Financial Simulator",
+    vaultTab: "Grievance Vault",
+    weatherTab: "🌤️ Weather",
+    advisoriesLabel: "Advisories",
+    installLabel: "Install App",
+    chipPacsVote: "PACS Voting Rights",
+    chipKcc: "KCC 4% Interest Subvention",
+    chipFco: "FCO Urea MRP Rights",
+    chipSeed: "Seed Act & PACS Rights",
+    chipPmfby: "PMFBY 72-Hr Claim",
+    onlineStatus: "● Online · Sahakar Se Samriddhi",
+    welcomeSub: "Your voice-enabled AI legal advisor for PACS bye-laws, MSCS Act 2023, PMFBY, and farmer statutory rights.",
+    totalLand: "Total Land",
+    primaryCrop: "Primary Crop",
+    irrigation: "Irrigation",
+    location: "Location",
+    kcc: "Kisan Credit Card (KCC)",
+    pmkisan: "PM-KISAN",
+    pmfby: "PMFBY Insurance",
+    farmerAge: "Farmer Age",
+    phone: "Phone Number",
+    digitalTwin: "Digital Twin — Field View",
+    smartAlerts: "🚨 Smart Alerts",
+    farmHealth: "🧠 Farm Health Analytics",
+    weatherPred: "🌦️ Weather Forecast",
+    eligibleSchemes: "🏛️ Your Eligible Schemes",
+    inputPlaceholder: "Type or speak your question in any language…",
+    logout: "🚪 Change Profile"
   }
 };
 
@@ -4292,7 +4490,8 @@ function applyUiDictionary(normalized) {
     const matchKey = Object.keys(UI_DICTIONARIES).find(k => k.toLowerCase().startsWith(base));
     dict = matchKey ? UI_DICTIONARIES[matchKey] : UI_DICTIONARIES['en-IN'];
   }
-  if (!dict) return;
+  const defaultEn = UI_DICTIONARIES['en-IN'] || {};
+  dict = Object.assign({}, defaultEn, dict || {});
 
   // Sidebar Elements
   const sbTitleMain = document.getElementById('sbTitleMain');
@@ -4315,6 +4514,10 @@ function applyUiDictionary(normalized) {
   if (sbNavSchemes && dict.sbNavSchemes) sbNavSchemes.textContent = dict.sbNavSchemes;
   const sbNavLaws = document.getElementById('sbNavLaws');
   if (sbNavLaws && dict.sbNavLaws) sbNavLaws.textContent = dict.sbNavLaws;
+  const sbNavFinance = document.getElementById('sbNavFinance');
+  if (sbNavFinance && dict.financeTab) sbNavFinance.textContent = dict.financeTab;
+  const sbNavVault = document.getElementById('sbNavVault');
+  if (sbNavVault && dict.vaultTab) sbNavVault.textContent = dict.vaultTab;
   const sbNavWeather = document.getElementById('sbNavWeather');
   if (sbNavWeather && dict.sbNavWeather) sbNavWeather.textContent = dict.sbNavWeather;
   const sbSecQuick = document.getElementById('sbSecQuick');
@@ -4332,6 +4535,18 @@ function applyUiDictionary(normalized) {
   const sbLogoutBtn = document.getElementById('sbLogoutBtn');
   if (sbLogoutBtn && dict.sbLogoutBtn) sbLogoutBtn.textContent = dict.sbLogoutBtn;
 
+  // Sidebar Quick Chips
+  const chipPacsVote = document.getElementById('sbChipPacsVote');
+  if (chipPacsVote && dict.chipPacsVote) chipPacsVote.textContent = dict.chipPacsVote;
+  const chipKcc = document.getElementById('sbChipKcc');
+  if (chipKcc && dict.chipKcc) chipKcc.textContent = dict.chipKcc;
+  const chipFco = document.getElementById('sbChipFco');
+  if (chipFco && dict.chipFco) chipFco.textContent = dict.chipFco;
+  const chipSeed = document.getElementById('sbChipSeed');
+  if (chipSeed && dict.chipSeed) chipSeed.textContent = dict.chipSeed;
+  const chipPmfby = document.getElementById('sbChipPmfby');
+  if (chipPmfby && dict.chipPmfby) chipPmfby.textContent = dict.chipPmfby;
+
   // Topbar
   const tbStatus = document.getElementById('tbStatusText');
   if (tbStatus && dict.tbStatusText) tbStatus.textContent = dict.tbStatusText;
@@ -4345,15 +4560,25 @@ function applyUiDictionary(normalized) {
   if (tabSchemes && dict.schemesTab) tabSchemes.textContent = dict.schemesTab;
   const tabLaws = document.getElementById('tab-laws');
   if (tabLaws && dict.lawsTab) tabLaws.textContent = dict.lawsTab;
+  const tabFinance = document.getElementById('tab-finance');
+  if (tabFinance && dict.financeTab) tabFinance.textContent = '💳 ' + dict.financeTab;
+  const tabVault = document.getElementById('tab-vault');
+  if (tabVault && dict.vaultTab) tabVault.textContent = '⚖️ ' + dict.vaultTab;
   const tabWeather = document.getElementById('tab-weather');
   if (tabWeather && dict.weatherTab) tabWeather.textContent = dict.weatherTab;
+  const tbBellLabel = document.getElementById('tbBellLabel');
+  if (tbBellLabel && dict.advisoriesLabel) tbBellLabel.textContent = dict.advisoriesLabel;
+  const tbInstallLabel = document.getElementById('tbInstallLabel');
+  if (tbInstallLabel && dict.installLabel) tbInstallLabel.textContent = dict.installLabel;
+
   const msgInput = document.getElementById('msgInput');
   if (msgInput && dict.inputPlaceholder) msgInput.placeholder = dict.inputPlaceholder;
 }
 
 let isTranslatingHistory = false;
 async function translateExistingChatHistory(targetLang) {
-  if (isTranslatingHistory || !chatHistory || chatHistory.length === 0) return;
+  // Never run while AI is answering or already translating!
+  if (isTranslatingHistory || loading || !chatHistory || chatHistory.length === 0) return;
   isTranslatingHistory = true;
   try {
     const res = await fetch('/translate-history', {
@@ -4364,7 +4589,12 @@ async function translateExistingChatHistory(targetLang) {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data?.history) && data.history.length > 0) {
-        chatHistory = data.history;
+        // Update content of messages that were translated, but NEVER delete newer messages
+        data.history.forEach((entry, idx) => {
+          if (chatHistory[idx] && chatHistory[idx].role === entry.role) {
+            chatHistory[idx].content = entry.content;
+          }
+        });
         saveChatHistory();
         renderChatHistory();
       }
@@ -4376,7 +4606,7 @@ async function translateExistingChatHistory(targetLang) {
   }
 }
 
-function syncDetectedLanguage(langCode) {
+function syncDetectedLanguage(langCode, skipHistoryTranslation = false) {
   if (!langCode) return;
   const normalized = normalizeLang(langCode);
   if (!LANG_LABELS[normalized]) return;
@@ -4397,7 +4627,7 @@ function syncDetectedLanguage(langCode) {
   }
 
   // If language actually changed and there is previous chat, translate it immediately!
-  if (prevLang && prevLang !== shortCode && chatHistory && chatHistory.length > 0) {
+  if (!skipHistoryTranslation && prevLang && prevLang !== shortCode && chatHistory && chatHistory.length > 0) {
     translateExistingChatHistory(normalized);
   }
 
@@ -4426,12 +4656,6 @@ function syncDetectedLanguage(langCode) {
     if (combo) {
       combo.value = '';
       combo.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
-    // If page was previously translated to another language (e.g. French), reload cleanly so entire DOM resets to 100% original English
-    if (prevLang && prevLang !== 'en') {
-      window.location.reload();
-      return;
     }
   } else {
     // Translate entire page to selected language
@@ -4977,6 +5201,13 @@ function toggleMic() {
       if (!text || typeof text !== 'string') return null;
       const clean = text.trim();
       const lower = clean.toLowerCase();
+
+      // 0. English Greetings & short phrases (Clean distinction: 'hi', 'hello', 'hey' are English, never French)
+      if (/^(hi|hello|hey|howdy|good\s+(morning|afternoon|evening|day))[\s.?!]*$/i.test(clean) || /^(hi|hello|hey)\b/i.test(lower)) {
+        if (!/[\u0B80-\u0BFF\u0900-\u097F\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0A80-\u0AFF\u0A00-\u0A7F\u0980-\u09FF\u0B00-\u0B7F\u0600-\u06FF\u4E00-\u9FFF\u3040-\u30FF\uAC00-\uD7AF\u0400-\u04FF]/.test(clean)) {
+          return 'en-IN';
+        }
+      }
 
       // 1. Native Unicode Scripts (Highest accuracy)
       if (/[\u0B80-\u0BFF]/.test(clean)) return 'ta-IN'; // Tamil

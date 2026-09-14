@@ -582,12 +582,19 @@ function detectMessageLanguage(text) {
   const clean = text.trim();
   const lower = clean.toLowerCase();
 
+  // 0. English Greetings & short phrases (Clean distinction: 'hi', 'hello', 'hey' are English, never French)
+  if (/^(hi|hello|hey|howdy|good\s+(morning|afternoon|evening|day))[\s.?!]*$/i.test(clean) || /^(hi|hello|hey)\b/i.test(lower)) {
+    if (!/[\u0B80-\u0BFF\u0900-\u097F\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0A80-\u0AFF\u0A00-\u0A7F\u0980-\u09FF\u0B00-\u0B7F\u0600-\u06FF\u4E00-\u9FFF\u3040-\u30FF\uAC00-\uD7AF\u0400-\u04FF]/.test(clean)) {
+      return "en-IN";
+    }
+  }
+
   // 1. Native Unicode Scripts (Highest accuracy)
   if (/[\u0B80-\u0BFF]/.test(clean)) return "ta-IN"; // Tamil
   if (/[\u0900-\u097F]/.test(clean)) {
     if (/\b(आहे|नाही|शेतकरी|पिक|पाऊस|कसा|काय)\b/.test(clean)) return "mr-IN";
     if (/\b(অসম|কৃষি|ধান|পানী)\b/.test(clean)) return "as-IN"; // Assamese
-    if (/\b(नेपाल|कृषि|ধান|पानी)\b/.test(clean)) return "ne-NP"; // Nepali
+    if (/\b(नेपाल|কৃষি|ধান|पानी)\b/.test(clean)) return "ne-NP"; // Nepali
     return "hi-IN"; // Hindi / Devanagari / Sanskrit
   }
   if (/[\u0C00-\u0C7F]/.test(clean)) return "te-IN"; // Telugu
@@ -624,7 +631,6 @@ function detectMessageLanguage(text) {
   if (/\b(sat|sri|akal|kive|ho|kisan|kheti|fasal|pani|mitti|dasso)\b/i.test(lower)) return "pa-IN";
   if (/\b(namaskar|kemiti|achanti|chasa|chasi|fasala|pani|mati|kete|kahantu)\b/i.test(lower)) return "or-IN";
   if (/\b(how are you|what is|how to|crop|soil|farm|weather|rain|fertilizer|pest|scheme|market price|subsidy|insurance|mandate|loan)\b/i.test(lower)) return "en-IN";
-  if (/\b(hello|hi|hey|good morning|good afternoon)\b/i.test(lower)) return null;
 
   return null;
 }
@@ -636,6 +642,15 @@ app.post("/chat", async (req, res) => {
     const hasImage = typeof imageBase64 === "string" && imageBase64.startsWith("data:image/");
     const requestedLang = String(languageCode || "en-IN").trim();
     const languageNames = LANGUAGE_NAMES;
+
+    const isEnglishGreeting = /^(hi|hello|hey|howdy|good\s+(morning|afternoon|evening|day))[\s.?!]*$/i.test(String(message || "").trim());
+    let effectiveLang = requestedLang;
+    if (isEnglishGreeting) {
+      effectiveLang = "en-IN";
+    } else {
+      const msgDetected = detectMessageLanguage(message);
+      if (msgDetected) effectiveLang = msgDetected;
+    }
     const systemInstruction = `You are Sahakar Vaani (सहकार वाणी) — an omnilingual, voice-enabled AI legal, cooperative governance, and agricultural advisor built for the Ministry of Cooperation (SIH PS 26088).
 You are fluent in ALL 22 official Eighth Schedule languages of India (Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese, Urdu, Sanskrit, Nepali, Maithili, Kashmiri, Sindhi, Konkani, Dogri, Manipuri, Santali, Bodo) as well as global languages (Spanish, French, German, Arabic, Russian, Portuguese, etc.).
 Always detect the farmer's language immediately and reply naturally, accurately, and fluently in the EXACT SAME language and script they use.
@@ -778,6 +793,12 @@ CRITICAL FORMATTING RULES FOR NATURAL VOICE & TTS:
       });
     }
 
+    messages.push({
+      role: "system",
+      content: `Target Response Language: ${LANGUAGE_NAMES[effectiveLang] || effectiveLang} (${effectiveLang}).
+CRITICAL LANGUAGE ACCURACY: You must reply strictly in ${LANGUAGE_NAMES[effectiveLang] || effectiveLang}. If the user greeting or query is in English (such as "hi", "hello", "hey"), respond in English. Do NOT switch or default to French, Spanish, or any other language unless explicitly spoken by the user.`
+    });
+
     messages.push(
       ...(sanitizedHistory.length > 0
         ? sanitizedHistory
@@ -796,7 +817,9 @@ CRITICAL FORMATTING RULES FOR NATURAL VOICE & TTS:
       });
     }
 
-    const detectedLanguage = detectMessageLanguage(message) || detectMessageLanguage(reply);
+    const detectedLanguage = isEnglishGreeting 
+      ? "en-IN" 
+      : (detectMessageLanguage(message) || detectMessageLanguage(reply) || effectiveLang);
 
     res.json({
       reply,
