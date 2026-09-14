@@ -1,38 +1,35 @@
-# 🌾 Smart Farming Project
+# 🏛️ Sahakar Vaani (सहकार वाणी)
+### Multilingual Cooperative Governance, PACS Legal Advisor & Empirical Telemetry Station
+**Smart India Hackathon (SIH) — Problem Statement ID: 26088**  
+*Ministry of Cooperation | National Council for Cooperative Training (NCCT)*  
+*Motto: "Sahakar Se Samriddhi" (Prosperity through Cooperation)*
 
-A comprehensive IoT-based agricultural monitoring system that collects real-time sensor data from farmlands and provides intelligent analysis using AI.
-
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Platform](https://img.shields.io/badge/platform-ESP32%20|%20Node.js%20|%20Python-orange)
+![SIH Track](https://img.shields.io/badge/SIH%202024-PS%2026088-green)
+![Category](https://img.shields.io/badge/Category-Hardware%20%2B%20Software-blue)
+![Platform](https://img.shields.io/badge/Platform-PWA%20|%20Node.js%20|%20ESP32%20|%20Supabase-orange)
 
 ---
 
 ## 📋 Table of Contents
 
 - [Project Overview](#project-overview)
+- [SIH Problem Statement Mapping](#sih-problem-statement-mapping)
 - [Features](#features)
 - [System Architecture](#system-architecture)
-- [Hardware Requirements](#hardware-requirements)
-- [Software Requirements](#software-requirements)
+- [Hardware Telemetry & Dispute Proof](#hardware-telemetry)
 - [Installation Guide](#installation-guide)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [File Structure](#file-structure)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [License](#license)
 
 ---
 
 ## 🎯 Project Overview
 
-Smart Farming Project is an intelligent agricultural monitoring system that helps farmers optimize crop yield and health by providing real-time sensor data analysis and AI-powered recommendations. The system consists of:
+**Sahakar Vaani (सहकार वाणी)** is an AI-powered multilingual legal, governance, and dispute-resolution platform developed for Primary Agricultural Credit Societies (PACS) members, farmers, and rural cooperative stakeholders across India.
 
-1. **Sender ESP32**: Collects data from multiple agricultural sensors
-2. **Receiver ESP32**: Receives and relays data to the backend
-3. **Backend**: Node.js API server with AI analysis (using Groq API)
+The system combines:
+1. **Multilingual Cooperative Legal AI**: Instant conversational guidance on Model PACS Bye-Laws (2022), MSCS Act (2022), Fertilizer Control Order (1985), and Seed Act (1966).
+2. **Statutory Grievance Redressal Generator**: Automated filing formats addressed to District Deputy Registrars (RCS) and Cooperative Tribunals.
+3. **Hardware Telemetry Node & PACS Voice Station**: Dual-purpose IoT station acting as a physical voice terminal for rural members while recording objective soil/rain telemetry to protect farmers against wrongful PMFBY insurance claim rejections.
 4. **Frontend**: Web interface for farmers to view data and get recommendations
 5. **Data Pipeline**: Python-based data processing and storage
 

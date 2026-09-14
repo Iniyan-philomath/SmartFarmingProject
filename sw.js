@@ -1,5 +1,5 @@
-// Smart Farming Project — Ultra-Fast Rural PWA Service Worker (v6 Mobile God-Tier)
-const CACHE_NAME = 'farmer-bot-v6-mobile-godtier';
+// Sahakar Vaani — Multilingual Cooperative Governance & Legal PWA (v1)
+const CACHE_NAME = 'sahakar-vaani-v1';
 const CORE_ASSETS = [
   '/',
   '/index.html',
