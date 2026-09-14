@@ -757,28 +757,39 @@
       display: none !important;
     }
 
-    /* Suppress ONLY Google Translate intrusive top frame & tooltip without breaking DOM translation */
+    /* Completely hide all Google Translate top frames, banners, bars, and popups */
     .goog-te-banner-frame,
-    iframe.goog-te-banner-frame {
+    .goog-te-banner-frame.skiptranslate,
+    iframe.goog-te-banner-frame,
+    iframe.skiptranslate,
+    iframe[class*="goog-te-banner"],
+    iframe[class*="VIpgJd"],
+    iframe[id*=":1.container"],
+    iframe[id*=":2.container"],
+    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+    .VIpgJd-ZVi9od-OR95微-xlHxb,
+    #goog-gt-tt,
+    .goog-te-balloon-frame,
+    .goog-te-spinner-pos {
       display: none !important;
       visibility: hidden !important;
-      height: 0 !important;
-    }
-
-    #goog-gt-tt,
-    .goog-te-balloon-frame {
-      display: none !important;
+      height: 0px !important;
+      width: 0px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     html, body {
       top: 0px !important;
       position: static !important;
+      margin-top: 0px !important;
     }
 
     body.translated-ltr,
     body.translated-rtl {
       top: 0px !important;
       position: static !important;
+      margin-top: 0px !important;
     }
 
     .goog-text-highlight {
@@ -4360,41 +4371,68 @@ function syncDetectedLanguage(langCode) {
     translateExistingChatHistory(normalized);
   }
 
-  // Set the googtrans cookie (Google Translate reads this to translate entire page)
   const targetDomain = window.location.hostname;
-  if (shortCode !== 'en') {
-    document.cookie = 'googtrans=/en/' + shortCode + '; path=/';
-    document.cookie = 'googtrans=/en/' + shortCode + '; path=/; domain=' + targetDomain;
-  } else {
+  if (shortCode === 'en') {
+    // Reverting to English!
     document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     document.cookie = 'googtrans=; path=/; domain=' + targetDomain + '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  }
+    document.cookie = 'googtrans=; path=/; domain=.' + targetDomain + '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
-  // Translate entire DOM in-place using combo
-  const targetVal = shortCode === 'en' ? '' : shortCode;
-  function triggerCombo() {
-    const combo = document.querySelector('.goog-te-combo');
-    if (!combo) return false;
-    if (combo.value !== targetVal) {
-      combo.value = targetVal;
-      ['focus', 'mousedown', 'mouseup', 'click', 'input', 'change'].forEach(ev => {
-        combo.dispatchEvent(new Event(ev, { bubbles: true }));
+    sessionStorage.setItem('_sfLastGTLang', 'en');
+
+    // Click Google's "Show Original" if available
+    try {
+      const frames = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame, iframe.skiptranslate');
+      frames.forEach(f => {
+        try {
+          const doc = f.contentDocument || f.contentWindow?.document;
+          const origBtn = doc?.querySelector('.goog-te-button button, button[id*="restore"], #\\:1\\.restore');
+          if (origBtn) origBtn.click();
+        } catch(e) {}
       });
+    } catch(e) {}
+
+    const combo = document.querySelector('.goog-te-combo');
+    if (combo) {
+      combo.value = '';
+      combo.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    return true;
-  }
 
-  if (!triggerCombo()) {
-    let retries = 0;
-    const retryTimer = setInterval(() => {
-      retries++;
-      if (triggerCombo() || retries > 30) {
-        clearInterval(retryTimer);
+    // If page was previously translated to another language (e.g. French), reload cleanly so entire DOM resets to 100% original English
+    if (prevLang && prevLang !== 'en') {
+      window.location.reload();
+      return;
+    }
+  } else {
+    // Translate entire page to selected language
+    document.cookie = 'googtrans=/en/' + shortCode + '; path=/';
+    document.cookie = 'googtrans=/en/' + shortCode + '; path=/; domain=' + targetDomain;
+
+    const targetVal = shortCode;
+    function triggerCombo() {
+      const combo = document.querySelector('.goog-te-combo');
+      if (!combo) return false;
+      if (combo.value !== targetVal) {
+        combo.value = targetVal;
+        ['focus', 'mousedown', 'mouseup', 'click', 'input', 'change'].forEach(ev => {
+          combo.dispatchEvent(new Event(ev, { bubbles: true }));
+        });
       }
-    }, 150);
-  }
+      return true;
+    }
 
-  sessionStorage.setItem('_sfLastGTLang', shortCode);
+    if (!triggerCombo()) {
+      let retries = 0;
+      const retryTimer = setInterval(() => {
+        retries++;
+        if (triggerCombo() || retries > 30) {
+          clearInterval(retryTimer);
+        }
+      }, 150);
+    }
+
+    sessionStorage.setItem('_sfLastGTLang', shortCode);
+  }
 }
 
 window.syncDetectedLanguage = syncDetectedLanguage;
@@ -4978,9 +5016,9 @@ function toggleMic() {
       if (/\b(nomoskar|kenekoi|ase|kheti|khetok|pani|mati|botiya|kiba)\b/i.test(lower)) return 'as-IN';
 
       // English
-      if (/\b(how are you|what is|how to|crop|soil|farm|weather|rain|fertilizer|pest|scheme|price|yield|loan|government)\b/i.test(lower)) return 'en-IN';
-      if (/\b(hello|hi|hey|good morning|good afternoon|good evening)\b/i.test(lower)) {
-        return (typeof getActiveLang === 'function' ? getActiveLang() : '') || profile?.lang || 'en-IN';
+      if (/\b(how are you|what is|how to|who is|can you|tell me|explain|help|give|need|want|please|farmer|farming|crop|soil|farm|weather|rain|fertilizer|pest|scheme|price|yield|loan|government|hello|hi|hey|good morning|good afternoon|good evening|buddy|thanks|thank you|welcome|options|loan)\b/i.test(lower)) return 'en-IN';
+      if (/^[a-zA-Z0-9\s.,?!'"\-]+$/.test(clean) && /\b(is|are|am|was|were|the|and|or|not|in|on|at|to|for|with|from|by|about|like|you|your|my|i|we|they|he|she|it|do|does|did|can|will|should|would|how|what|why|where|when|who)\b/i.test(lower)) {
+        return 'en-IN';
       }
 
       return null;
@@ -6490,6 +6528,7 @@ ${escapeHtml(item.petitionText)}
       new google.translate.TranslateElement(
         {
           pageLanguage: 'en',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
           autoDisplay: false
         },
         'google_translate_element'
@@ -6531,17 +6570,17 @@ ${escapeHtml(item.petitionText)}
     // ══════════════════════════════════════════════════════════════════
     function suppressGoogleTranslateBanner() {
       if (document.body && document.body.style.top && document.body.style.top !== '0px') {
-        document.body.style.top = '0px';
+        document.body.style.setProperty('top', '0px', 'important');
       }
       if (document.documentElement && document.documentElement.style.top && document.documentElement.style.top !== '0px') {
-        document.documentElement.style.top = '0px';
+        document.documentElement.style.setProperty('top', '0px', 'important');
       }
-      const bannerFrames = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame');
+      const bannerFrames = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame, iframe.skiptranslate, iframe[id*=":1.container"], iframe[id*=":2.container"], iframe[class*="VIpgJd"], .VIpgJd-ZVi9od-aZ2wEe-wOHMyf');
       bannerFrames.forEach(f => {
-        f.style.display = 'none';
-        f.style.visibility = 'hidden';
-        f.style.height = '0';
-        f.style.pointerEvents = 'none';
+        f.style.setProperty('display', 'none', 'important');
+        f.style.setProperty('visibility', 'hidden', 'important');
+        f.style.setProperty('height', '0px', 'important');
+        f.style.setProperty('pointer-events', 'none', 'important');
       });
     }
     const gtBannerObserver = new MutationObserver(suppressGoogleTranslateBanner);
