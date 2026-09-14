@@ -1338,6 +1338,14 @@ function mapWhisperLangToCode(whisperLang) {
   if (l.includes("bn") || l.includes("bengali")) return "bn-IN";
   if (l.includes("pa") || l.includes("punjabi")) return "pa-IN";
   if (l.includes("ur") || l.includes("urdu")) return "ur-PK";
+  if (l.includes("or") || l.includes("odia") || l.includes("oriya")) return "or-IN";
+  if (l.includes("as") || l.includes("assamese")) return "as-IN";
+  if (l.includes("sa") || l.includes("sanskrit")) return "sa-IN";
+  if (l.includes("ne") || l.includes("nepali")) return "ne-NP";
+  if (l.includes("es") || l.includes("spanish")) return "es-ES";
+  if (l.includes("fr") || l.includes("french")) return "fr-FR";
+  if (l.includes("de") || l.includes("german")) return "de-DE";
+  if (l.includes("ar") || l.includes("arabic")) return "ar-SA";
   if (l.includes("en") || l.includes("english")) return "en-IN";
   return null;
 }

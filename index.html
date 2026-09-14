@@ -2684,7 +2684,7 @@
         </div>
         <div class="input-row">
           <div class="input-wrap">
-            <textarea id="msgInput" rows="1" placeholder="Type or speak your question…"
+            <textarea id="msgInput" class="notranslate" translate="no" rows="1" placeholder="Type or speak your question…"
               onkeydown="handleKey(event)"></textarea>
             <button class="iact" id="micBtn" title="Voice input" onclick="toggleMic()">🎤</button>
             <button class="iact" title="Crop photo" onclick="showCam()">📷</button>
@@ -2862,8 +2862,11 @@
       return toLang.trim().toLowerCase();
     }
     function getActiveLang() {
+      if (profile && profile.lang) {
+        return normalizeLang(profile.lang);
+      }
       const translated = getGoogleTranslateLang();
-      return translated ? normalizeLang(translated) : normalizeLang(profile.lang);
+      return translated ? normalizeLang(translated) : 'en-IN';
     }
     profile.lang = normalizeLang(profile.lang);
     document.getElementById('welcomeName').textContent = profile.name;
@@ -4845,23 +4848,27 @@ function stopAzureSpeechRecognition(manualStop = true){
 function toggleMic() {
   if (isRecording) {
     micManualStop = true;
-    if (azureUsingSdk) {
-      stopAzureSpeechRecognition(true);
-    } else if (micUsingServerStt) {
+    if (micUsingServerStt) {
       stopServerMicCapture();
+    } else if (azureUsingSdk) {
+      stopAzureSpeechRecognition(true);
     } else {
-      stopMicRecognition();
+      finishSpeechAndAutoSubmit();
     }
     return;
   }
 
-  // Primary: High-accuracy real-time Speech SDK / Native browser recognizer
-  if (window.SpeechSDK) {
+  // Primary: Omnilingual Groq Whisper STT (whisper-large-v3-turbo)
+  // Automatically detects spoken language (Tamil, Hindi, Telugu, English, etc.) in real time
+  // and transcribes in native script without being locked or overwritten by Google Translate.
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    startServerMicCapture();
+  } else if (window.SpeechSDK) {
     startAzureSpeechRecognition();
   } else if (window.SpeechRecognition || window.webkitSpeechRecognition) {
     startMicRecognition();
   } else {
-    startServerMicCapture();
+    alert("Microphone access is not supported in this browser.");
   }
 }
 
@@ -6499,8 +6506,8 @@ ${escapeHtml(item.petitionText)}
             combo.dispatchEvent(new Event('change', { bubbles: true }));
           };
           combo.addEventListener('change', () => {
-            const chosen = combo.value;
-            if (chosen && typeof syncDetectedLanguage === 'function') {
+            const chosen = combo.value ? combo.value : 'en-IN';
+            if (typeof syncDetectedLanguage === 'function') {
               syncDetectedLanguage(chosen);
             }
             setTimeout(() => {
