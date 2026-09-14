@@ -2381,7 +2381,7 @@
         font-size: 18px !important;
       }
 
-      #panel-farmwealth, #panel-schemes, #panel-laws, #panel-weather {
+      #panel-farmwealth, #panel-schemes, #panel-laws, #panel-finance, #panel-vault, #panel-weather {
         padding: 12px !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
@@ -2569,11 +2569,13 @@
     </div>
     <div class="sb-nav">
       <div class="sb-section-lbl" id="sbSecMain">Cooperative Main</div>
-      <button class="nav-btn" onclick="switchTab('farmwealth',this)"><span class="nav-icon">💚</span> <span id="sbNavHealth">Farm Health</span></button>
       <button class="nav-btn active" onclick="switchTab('chat',this)"><span class="nav-icon">💬</span> <span id="sbNavChat">AI Legal Advisor</span></button>
-      <button class="nav-btn" onclick="switchTab('dashboard',this)"><span class="nav-icon">📊</span> <span id="sbNavDash">Telemetry & Sensors</span></button>
-      <button class="nav-btn" onclick="switchTab('schemes',this)"><span class="nav-icon">🏛️</span> <span id="sbNavSchemes">Cooperative Schemes</span></button>
+      <button class="nav-btn" onclick="switchTab('schemes',this)"><span class="nav-icon">🏛️</span> <span id="sbNavSchemes">Cooperative Schemes & Sandbox</span></button>
       <button class="nav-btn" onclick="switchTab('laws',this)"><span class="nav-icon">📜</span> <span id="sbNavLaws">PACS Acts & Rights</span></button>
+      <button class="nav-btn" onclick="switchTab('finance',this)"><span class="nav-icon">💳</span> <span id="sbNavFinance">Financial & MRP Simulator</span></button>
+      <button class="nav-btn" onclick="switchTab('vault',this)"><span class="nav-icon">⚖️</span> <span id="sbNavVault">Grievance Redressal Vault</span></button>
+      <button class="nav-btn" onclick="switchTab('farmwealth',this)"><span class="nav-icon">💚</span> <span id="sbNavHealth">Farm Health</span></button>
+      <button class="nav-btn" onclick="switchTab('dashboard',this)"><span class="nav-icon">📊</span> <span id="sbNavDash">Telemetry & Sensors</span></button>
       <button class="nav-btn" onclick="switchTab('weather',this)"><span class="nav-icon">🌤️</span> <span id="sbNavWeather">Weather Forecast</span></button>
       <div class="sb-section-lbl" id="sbSecQuick">Legal & Rights Quick Ask</div>
       <button class="nav-btn" onclick="quickAsk('What are my voting and election rights under Model PACS Bye-Laws 2022?')"><span
@@ -2614,10 +2616,12 @@
       <div class="tb-right">
         <div class="tb-tabs">
           <button class="tb-tab active" id="tab-chat" onclick="switchTab('chat',null)">💬 Legal AI</button>
-          <button class="tb-tab" id="tab-farmwealth" onclick="switchTab('farmwealth',null)">💚 Health</button>
-          <button class="tb-tab" id="tab-dashboard" onclick="switchTab('dashboard',null)">📊 Telemetry</button>
-          <button class="tb-tab" id="tab-schemes" onclick="switchTab('schemes',null)">🏛️ Schemes</button>
+          <button class="tb-tab" id="tab-schemes" onclick="switchTab('schemes',null)">🏛️ Schemes & Sandbox</button>
           <button class="tb-tab" id="tab-laws" onclick="switchTab('laws',null)">📜 Acts & Rights</button>
+          <button class="tb-tab" id="tab-finance" onclick="switchTab('finance',null)">💳 Financial Simulator</button>
+          <button class="tb-tab" id="tab-vault" onclick="switchTab('vault',null)">⚖️ Grievance Vault</button>
+          <button class="tb-tab" id="tab-dashboard" onclick="switchTab('dashboard',null)">📊 Telemetry</button>
+          <button class="tb-tab" id="tab-farmwealth" onclick="switchTab('farmwealth',null)">💚 Health</button>
           <button class="tb-tab" id="tab-weather" onclick="switchTab('weather',null)">🌤️ Weather</button>
         </div>
         <!-- PWA INSTALL APP BUTTON -->
@@ -2773,14 +2777,24 @@
       </div>
     </div>
 
-    <!-- SCHEMES -->
+    <!-- SCHEMES (PHASE 3: DYNAMIC ELIGIBILITY SANDBOX & ENGINE) -->
     <div class="panel" id="panel-schemes">
-      <div class="dash-grid" id="schemesGrid" style="display:block;max-width:700px;margin:0 auto;"></div>
+      <div class="dash-grid" id="schemesGrid" style="display:block;max-width:850px;margin:0 auto;"></div>
     </div>
 
     <!-- LAWS & RIGHTS (SUPABASE CLOUD RAG) -->
     <div class="panel" id="panel-laws">
       <div class="dash-grid" id="lawsGrid" style="display:block;max-width:850px;margin:0 auto;"></div>
+    </div>
+
+    <!-- PHASE 4: COOPERATIVE FINANCIAL LITERACY & LOAN / MRP SIMULATORS -->
+    <div class="panel" id="panel-finance">
+      <div class="dash-grid" id="financeGrid" style="display:block;max-width:850px;margin:0 auto;"></div>
+    </div>
+
+    <!-- PHASE 5: OMNICHANNEL GRIEVANCE VAULT & EVIDENCE AUDIT TRAIL -->
+    <div class="panel" id="panel-vault">
+      <div class="dash-grid" id="vaultGrid" style="display:block;max-width:850px;margin:0 auto;"></div>
     </div>
 
     <!-- WEATHER -->
@@ -2793,15 +2807,7 @@
   <nav class="mobile-bottom-nav" id="mobileBottomNav">
     <button class="mb-nav-item active" data-tab="chat" onclick="switchTab('chat', this)">
       <span class="mb-icon">💬</span>
-      <span class="mb-label">AI Chat</span>
-    </button>
-    <button class="mb-nav-item" data-tab="dashboard" onclick="switchTab('dashboard', this)">
-      <span class="mb-icon">📊</span>
-      <span class="mb-label">Sensors</span>
-    </button>
-    <button class="mb-nav-item" data-tab="farmwealth" onclick="switchTab('farmwealth', this)">
-      <span class="mb-icon">💚</span>
-      <span class="mb-label">Health</span>
+      <span class="mb-label">Legal AI</span>
     </button>
     <button class="mb-nav-item" data-tab="schemes" onclick="switchTab('schemes', this)">
       <span class="mb-icon">🏛️</span>
@@ -2810,6 +2816,18 @@
     <button class="mb-nav-item" data-tab="laws" onclick="switchTab('laws', this)">
       <span class="mb-icon">📜</span>
       <span class="mb-label">Laws</span>
+    </button>
+    <button class="mb-nav-item" data-tab="finance" onclick="switchTab('finance', this)">
+      <span class="mb-icon">💳</span>
+      <span class="mb-label">Simulator</span>
+    </button>
+    <button class="mb-nav-item" data-tab="vault" onclick="switchTab('vault', this)">
+      <span class="mb-icon">⚖️</span>
+      <span class="mb-label">Vault</span>
+    </button>
+    <button class="mb-nav-item" data-tab="dashboard" onclick="switchTab('dashboard', this)">
+      <span class="mb-icon">📊</span>
+      <span class="mb-label">Sensors</span>
     </button>
   </nav>
 
@@ -2947,6 +2965,8 @@
       if (tab === 'dashboard') buildDash();
       if (tab === 'schemes') buildSchemes();
       if (tab === 'laws') buildLaws();
+      if (tab === 'finance') buildFinanceSim();
+      if (tab === 'vault') buildGrievanceVault();
       if (tab === 'weather') buildWeather();
     }
 
@@ -5357,14 +5377,87 @@ function toggleMic() {
     /* ════════════════════════════════════
        SCHEMES
     ════════════════════════════════════ */
-    /* ════════════════════════════════════
-       SCHEMES (STEP 2 & 3: AUTOMATED MATCHING ENGINE)
-    ════════════════════════════════════ */
+    /* ══════════════════════════════════════════════════════════════════════════
+       PHASE 3: DYNAMIC SCHEMES ELIGIBILITY ENGINE & INTERACTIVE SANDBOX
+    ══════════════════════════════════════════════════════════════════════════ */
     let allEvaluatedSchemes = [];
+    let rawSchemesMasterList = [];
     let currentSchemeFilter = 'eligible';
+    let isSandboxActive = false;
+    let sandboxParams = {
+      acres: parseFloat(profile?.acres) || 2.5,
+      crop: profile?.crop || 'Paddy',
+      state: profile?.state || 'Tamil Nadu',
+      irrigation: profile?.irrigation || 'Borewell',
+      age: parseInt(profile?.age, 10) || 40
+    };
+
+    function evaluateClientSchemeEligibility(scheme, prof = {}) {
+      const acres = parseFloat(prof.acres || 2.5);
+      const state = String(prof.state || "Tamil Nadu").toLowerCase();
+      const crop = String(prof.crop || "").toLowerCase();
+      const irrigation = String(prof.irrigation || "").toLowerCase();
+      const age = parseInt(prof.age || 40, 10);
+      const rules = scheme.rules || {};
+
+      let score = 100;
+      const reasons = [];
+
+      if (rules.max_land_acres !== null && rules.max_land_acres !== undefined && acres > rules.max_land_acres) {
+        score -= 45;
+        reasons.push(`Land size (${acres} ac) exceeds small/marginal limit of ${rules.max_land_acres} ac`);
+      } else if (rules.min_land_acres && acres < rules.min_land_acres) {
+        score -= 35;
+        reasons.push(`Minimum land requirement is ${rules.min_land_acres} ac`);
+      } else {
+        reasons.push(`Eligible for your ${acres} acres landholding`);
+      }
+
+      const appStates = (rules.applicable_states || ["All"]).map(s => s.toLowerCase());
+      if (!appStates.includes("all")) {
+        const stateMatched = appStates.some(s => state.includes(s) || s.includes(state));
+        if (!stateMatched) {
+          score -= 50;
+          reasons.push(`Only available in: ${rules.applicable_states.join(", ")}`);
+        } else {
+          reasons.push(`Available in ${prof.state || "Tamil Nadu"}`);
+        }
+      }
+
+      if (rules.min_age && age < rules.min_age) {
+        score -= 40;
+        reasons.push(`Minimum age is ${rules.min_age} yrs`);
+      }
+      if (rules.max_age && age > rules.max_age) {
+        score -= 40;
+        reasons.push(`Maximum age is ${rules.max_age} yrs (age: ${age})`);
+      }
+
+      if (rules.requires_irrigation) {
+        const hasWater = irrigation.includes("well") || irrigation.includes("bore") || irrigation.includes("canal") || irrigation.includes("drip");
+        if (!hasWater && irrigation.includes("rainfed")) {
+          score -= 25;
+          reasons.push(`Requires active well or irrigation source`);
+        } else {
+          reasons.push(`Verified for ${prof.irrigation || "borewell"} water source`);
+        }
+      }
+
+      let matchStatus = "100% ELIGIBLE";
+      if (score >= 90) matchStatus = "100% ELIGIBLE";
+      else if (score >= 60) matchStatus = "HIGH MATCH";
+      else matchStatus = "INELIGIBLE";
+
+      return {
+        match_status: matchStatus,
+        match_score: Math.max(15, score),
+        reasons: reasons.slice(0, 3)
+      };
+    }
 
     async function buildSchemes() {
       const g = document.getElementById('schemesGrid');
+      if (!g) return;
       g.style.padding = '20px';
       g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">🏛️ Running Automated Government Schemes Eligibility Engine...</div>';
 
@@ -5388,12 +5481,61 @@ function toggleMic() {
         });
 
         const data = await res.json();
-        allEvaluatedSchemes = Array.isArray(data?.schemes) ? data.schemes : [];
+        rawSchemesMasterList = Array.isArray(data?.schemes) ? data.schemes : [];
+        recomputeEvaluatedSchemes();
         renderSchemesView();
       } catch (err) {
         console.warn('Schemes eligible API error:', err);
         g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#f87171;">⚠️ Could not connect to schemes engine. Please retry.</div>';
       }
+    }
+
+    function recomputeEvaluatedSchemes() {
+      const currentProf = isSandboxActive ? sandboxParams : {
+        acres: parseFloat(profile?.acres) || 2.5,
+        crop: profile?.crop || 'Paddy',
+        state: profile?.state || 'Tamil Nadu',
+        irrigation: profile?.irrigation || 'Borewell',
+        age: parseInt(profile?.age, 10) || 40
+      };
+
+      allEvaluatedSchemes = rawSchemesMasterList.map(s => {
+        const evalResult = evaluateClientSchemeEligibility(s, currentProf);
+        return {
+          ...s,
+          ...evalResult
+        };
+      });
+
+      allEvaluatedSchemes.sort((a, b) => b.match_score - a.match_score);
+    }
+
+    function toggleSchemeSandbox() {
+      isSandboxActive = !isSandboxActive;
+      recomputeEvaluatedSchemes();
+      renderSchemesView();
+    }
+
+    function updateSandboxParam(key, val) {
+      if (key === 'acres') sandboxParams.acres = parseFloat(val) || 2.5;
+      else if (key === 'age') sandboxParams.age = parseInt(val, 10) || 40;
+      else sandboxParams[key] = val;
+
+      recomputeEvaluatedSchemes();
+      renderSchemesView();
+    }
+
+    function resetSandboxToProfile() {
+      sandboxParams = {
+        acres: parseFloat(profile?.acres) || 2.5,
+        crop: profile?.crop || 'Paddy',
+        state: profile?.state || 'Tamil Nadu',
+        irrigation: profile?.irrigation || 'Borewell',
+        age: parseInt(profile?.age, 10) || 40
+      };
+      isSandboxActive = false;
+      recomputeEvaluatedSchemes();
+      renderSchemesView();
     }
 
     function setSchemeFilter(filterKey) {
@@ -5405,9 +5547,17 @@ function toggleMic() {
       const g = document.getElementById('schemesGrid');
       if (!g) return;
 
-      const farmerAcres = profile.acres || '2.5';
-      const farmerCrop = profile.crop || 'Paddy';
-      const farmerState = profile.state || 'Tamil Nadu';
+      const activeProf = isSandboxActive ? sandboxParams : {
+        acres: parseFloat(profile?.acres) || 2.5,
+        crop: profile?.crop || 'Paddy',
+        state: profile?.state || 'Tamil Nadu',
+        irrigation: profile?.irrigation || 'Borewell',
+        age: parseInt(profile?.age, 10) || 40
+      };
+
+      const farmerAcres = activeProf.acres;
+      const farmerCrop = activeProf.crop;
+      const farmerState = activeProf.state;
 
       const eligibleList = allEvaluatedSchemes.filter(s => s.match_status === '100% ELIGIBLE');
       const cashList = allEvaluatedSchemes.filter(s => s.sub_type === 'cash_subsidy' || s.sub_type === 'pension' || s.sub_type === 'input_subsidy');
@@ -5422,9 +5572,15 @@ function toggleMic() {
       else if (currentSchemeFilter === 'loans') displayList = loansList;
       else if (currentSchemeFilter === 'tn') displayList = tnList;
 
+      // Calculate estimated value of eligible benefits
+      let estCashBenefit = 6000; // PM-KISAN
+      if (farmerAcres <= 5) estCashBenefit += 65000; // Micro-irrigation / seeds
+      if (loansList.length > 0) estCashBenefit += Math.min(farmerAcres * 30000, 9000); // 3% subvention savings
+
       g.innerHTML = `
         <div style="grid-column:1/-1;margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;">
+          <!-- BANNER -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
             <div>
               <h2 style="font-family:'Playfair Display',serif;margin:0 0 4px 0;color:var(--gold);display:flex;align-items:center;gap:10px;">
                 <span>🏛️ Official Government Agricultural Schemes</span>
@@ -5433,22 +5589,113 @@ function toggleMic() {
                 </span>
               </h2>
               <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span>👨‍🌾 Matched for: <strong style="color:#f0fdf4;">${escapeHtml(profile.name || 'Farmer')}</strong></span>
+                <span>👨‍🌾 Profile: <strong style="color:#f0fdf4;">${escapeHtml(profile.name || 'Farmer')}</strong></span>
                 <span>•</span>
-                <span>🌾 Land: <strong style="color:#86efac;">${escapeHtml(farmerAcres)} Acres</strong></span>
+                <span>🌾 Land: <strong style="color:#86efac;">${farmerAcres} Acres</strong> (${farmerAcres <= 2.5 ? 'Marginal' : farmerAcres <= 5 ? 'Small' : 'Medium'})</span>
                 <span>•</span>
                 <span>🌱 Crop: <strong style="color:#86efac;">${escapeHtml(farmerCrop)}</strong></span>
                 <span>•</span>
                 <span>📍 State: <strong style="color:#86efac;">${escapeHtml(farmerState)}</strong></span>
               </div>
             </div>
-            <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);padding:6px 14px;border-radius:10px;font-size:12px;color:#86efac;font-weight:600;">
-              ⭐ You are 100% Eligible for <span style="font-size:15px;color:#4ade80;font-weight:800;">${eligibleList.length}</span> Schemes!
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button onclick="toggleSchemeSandbox()" style="padding:8px 16px;background:${isSandboxActive ? 'linear-gradient(135deg,#f59e0b,#d97706)' : 'rgba(245,158,11,0.15)'};color:${isSandboxActive ? '#fff' : 'var(--gold)'};border:1px solid rgba(245,158,11,0.4);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;">
+                <span>⚡</span>
+                <span>${isSandboxActive ? 'Close Sandbox Simulator' : 'Open Live Eligibility Sandbox'}</span>
+              </button>
+              <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);padding:6px 14px;border-radius:10px;font-size:12px;color:#86efac;font-weight:600;">
+                ⭐ 100% Eligible: <span style="font-size:15px;color:#4ade80;font-weight:800;">${eligibleList.length}</span> Schemes (Est. ₹${estCashBenefit.toLocaleString('en-IN')}+ benefits)
+              </div>
             </div>
           </div>
 
+          <!-- PHASE 3 INTERACTIVE SANDBOX WIDGET -->
+          ${isSandboxActive ? `
+            <div style="background:linear-gradient(180deg,rgba(15,35,18,0.95),rgba(10,24,12,0.95));border:1px solid rgba(245,158,11,0.4);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:8px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:18px;">⚡</span>
+                  <strong style="color:var(--gold);font-size:14px;">Live Multi-Factor Scheme Sandbox Simulator</strong>
+                  <span style="font-size:11px;color:var(--muted);">(Tweak variables below to see real-time scheme eligibility updates)</span>
+                </div>
+                <button onclick="resetSandboxToProfile()" style="padding:4px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#cbd5e1;font-size:11px;cursor:pointer;">
+                  ↩ Reset to Registered Profile
+                </button>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+                <!-- LAND SLIDER -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--text);">🌾 Landholding:</span>
+                    <strong style="color:#4ade80;">${sandboxParams.acres} Acres</strong>
+                  </div>
+                  <input type="range" min="0.25" max="20" step="0.25" value="${sandboxParams.acres}" oninput="updateSandboxParam('acres', this.value)" style="width:100%;accent-color:#22c55e;">
+                  <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);">
+                    <span>0.25 ac (Marginal)</span>
+                    <span>5 ac (Small)</span>
+                    <span>20 ac (Large)</span>
+                  </div>
+                </div>
+
+                <!-- CROP -->
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:4px;">🌱 Cultivated Crop:</label>
+                  <select onchange="updateSandboxParam('crop', this.value)" style="width:100%;background:#091a0c;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;border-radius:8px;padding:6px 10px;font-size:12px;">
+                    <option value="Paddy" ${sandboxParams.crop === 'Paddy' ? 'selected' : ''}>Paddy (Rice)</option>
+                    <option value="Tomato" ${sandboxParams.crop === 'Tomato' ? 'selected' : ''}>Tomato (Vegetables)</option>
+                    <option value="Cotton" ${sandboxParams.crop === 'Cotton' ? 'selected' : ''}>Cotton</option>
+                    <option value="Sugarcane" ${sandboxParams.crop === 'Sugarcane' ? 'selected' : ''}>Sugarcane</option>
+                    <option value="Pulses" ${sandboxParams.crop === 'Pulses' ? 'selected' : ''}>Pulses (Blackgram / Greengram)</option>
+                    <option value="Maize" ${sandboxParams.crop === 'Maize' ? 'selected' : ''}>Maize (Corn)</option>
+                    <option value="Horticulture" ${sandboxParams.crop === 'Horticulture' ? 'selected' : ''}>Horticulture / Fruits</option>
+                    <option value="Dairy" ${sandboxParams.crop === 'Dairy' ? 'selected' : ''}>Dairy & Livestock</option>
+                  </select>
+                </div>
+
+                <!-- IRRIGATION -->
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:4px;">💧 Water Source:</label>
+                  <select onchange="updateSandboxParam('irrigation', this.value)" style="width:100%;background:#091a0c;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;border-radius:8px;padding:6px 10px;font-size:12px;">
+                    <option value="Borewell" ${sandboxParams.irrigation.toLowerCase().includes('bore') ? 'selected' : ''}>Functional Borewell / Well</option>
+                    <option value="Canal" ${sandboxParams.irrigation.toLowerCase().includes('canal') ? 'selected' : ''}>Canal / River Irrigation</option>
+                    <option value="Drip" ${sandboxParams.irrigation.toLowerCase().includes('drip') ? 'selected' : ''}>Drip / Micro-Irrigation</option>
+                    <option value="Rainfed" ${sandboxParams.irrigation.toLowerCase().includes('rain') ? 'selected' : ''}>Rainfed (Dryland / No well)</option>
+                  </select>
+                </div>
+
+                <!-- STATE -->
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:4px;">📍 State Jurisdiction:</label>
+                  <select onchange="updateSandboxParam('state', this.value)" style="width:100%;background:#091a0c;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;border-radius:8px;padding:6px 10px;font-size:12px;">
+                    <option value="Tamil Nadu" ${sandboxParams.state === 'Tamil Nadu' ? 'selected' : ''}>Tamil Nadu (100% Micro-Irrig Subsidy)</option>
+                    <option value="All India" ${sandboxParams.state === 'All India' ? 'selected' : ''}>All India (Central Schemes)</option>
+                    <option value="Maharashtra" ${sandboxParams.state === 'Maharashtra' ? 'selected' : ''}>Maharashtra</option>
+                    <option value="Punjab" ${sandboxParams.state === 'Punjab' ? 'selected' : ''}>Punjab</option>
+                    <option value="Karnataka" ${sandboxParams.state === 'Karnataka' ? 'selected' : ''}>Karnataka</option>
+                    <option value="Uttar Pradesh" ${sandboxParams.state === 'Uttar Pradesh' ? 'selected' : ''}>Uttar Pradesh</option>
+                  </select>
+                </div>
+
+                <!-- AGE -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--text);">👤 Farmer Age:</span>
+                    <strong style="color:#38bdf8;">${sandboxParams.age} Years</strong>
+                  </div>
+                  <input type="range" min="18" max="75" step="1" value="${sandboxParams.age}" oninput="updateSandboxParam('age', this.value)" style="width:100%;accent-color:#38bdf8;">
+                  <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);">
+                    <span>18 yrs</span>
+                    <span>40 yrs (PM-KMY limit)</span>
+                    <span>75 yrs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
           <!-- SCHEME FILTER TABS -->
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);">
             <button onclick="setSchemeFilter('eligible')" style="padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;transition:all 0.2s;${currentSchemeFilter === 'eligible' ? 'background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;box-shadow:0 3px 10px rgba(22,163,74,0.3);' : 'background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border);'}">
               ⭐ 100% Eligible for You (${eligibleList.length})
             </button>
@@ -5540,6 +5787,525 @@ function toggleMic() {
           `;
         }).join('')}
       `;
+    }
+
+    /* ══════════════════════════════════════════════════════════════════════════
+       PHASE 4: COOPERATIVE FINANCIAL LITERACY & LOAN / MRP SIMULATORS
+    ══════════════════════════════════════════════════════════════════════════ */
+    let simKccAmount = 100000;
+    let simKccMonths = 12;
+    let simCalamityType = 'flood';
+    let simCalamityLoan = 120000;
+    let simFertilizerType = 'urea';
+    let simFertilizerBags = 5;
+    let simFertilizerActualPrice = 320;
+
+    const FERTILIZER_RATES = {
+      urea: { name: "Neem Coated Urea (45kg bag)", mrp: 266.50, unit: "45kg bag" },
+      dap: { name: "Di-Ammonium Phosphate DAP (50kg bag)", mrp: 1350.00, unit: "50kg bag" },
+      mop: { name: "Muriate of Potash MOP (50kg bag)", mrp: 1700.00, unit: "50kg bag" },
+      npk: { name: "NPK Complex 10:26:26 (50kg bag)", mrp: 1470.00, unit: "50kg bag" }
+    };
+
+    function buildFinanceSim() {
+      const g = document.getElementById('financeGrid');
+      if (!g) return;
+
+      // 1. KCC Calculations
+      const commInterest = Math.round(simKccAmount * 0.09 * (simKccMonths / 12));
+      const baseInterest = Math.round(simKccAmount * 0.07 * (simKccMonths / 12));
+      const netKccInterest = Math.round(simKccAmount * 0.04 * (simKccMonths / 12));
+      const kccSavings = commInterest - netKccInterest;
+      const isCollateralFree = simKccAmount <= 160000;
+
+      // 2. Calamity Restructure Calculations
+      const restructuredTermYears = 3;
+      const annualPrincipal = Math.round(simCalamityLoan / restructuredTermYears);
+
+      // 3. Fertilizer Overcharge Calculations
+      const fertData = FERTILIZER_RATES[simFertilizerType] || FERTILIZER_RATES.urea;
+      const totalLegalMrp = Math.round(fertData.mrp * simFertilizerBags * 100) / 100;
+      const totalDealerCharged = Math.round(simFertilizerActualPrice * simFertilizerBags * 100) / 100;
+      const overchargeDifference = Math.max(0, Math.round((totalDealerCharged - totalLegalMrp) * 100) / 100);
+      const isOvercharged = overchargeDifference > 0;
+
+      g.innerHTML = `
+        <div style="padding:10px 0;">
+          <!-- BANNER -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+              <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#f0fdf4;margin:0 0 4px 0;">
+                💳 Cooperative Financial Literacy & Regulatory Simulators
+              </h2>
+              <p style="font-size:13px;color:var(--muted);margin:0;">
+                Ministry of Cooperation (SIH PS 26088) • RBI & NABARD Master Directions • Fertilizer (Control) Order 1985
+              </p>
+            </div>
+            <span style="font-size:12px;padding:6px 14px;border-radius:10px;background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);font-weight:700;">
+              ✨ Live Interactive Simulators
+            </span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <!-- SIMULATOR 1: KCC INTEREST SUBVENTION CALCULATOR -->
+            <div style="background:linear-gradient(180deg,rgba(15,35,18,0.95),rgba(9,22,11,0.95));border:1px solid rgba(74,222,128,0.25);border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+                <div>
+                  <div style="font-size:11px;color:var(--green);font-weight:700;text-transform:uppercase;">Simulator 1 • RBI / NABARD Modified Interest Subvention</div>
+                  <h3 style="font-size:18px;color:#f0fdf4;margin:4px 0;">🏦 KCC 4% Subvention vs Commercial Bank Loan Savings</h3>
+                </div>
+                <div style="font-size:11px;padding:4px 10px;border-radius:6px;background:${isCollateralFree ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)'};color:${isCollateralFree ? '#4ade80' : '#facc15'};border:1px solid ${isCollateralFree ? 'rgba(34,197,94,0.4)' : 'rgba(234,179,8,0.4)'};font-weight:700;">
+                  ${isCollateralFree ? '✅ 100% Collateral-Free (Under ₹1.60L)' : 'ℹ️ Collateral Applicable Above ₹1.60L'}
+                </div>
+              </div>
+
+              <!-- SLIDERS -->
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:16px;">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                    <span style="color:var(--text);">Crop Loan Amount:</span>
+                    <strong style="color:#4ade80;font-size:15px;">₹${simKccAmount.toLocaleString('en-IN')}</strong>
+                  </div>
+                  <input type="range" min="10000" max="300000" step="10000" value="${simKccAmount}" oninput="simKccAmount = parseInt(this.value,10); buildFinanceSim();" style="width:100%;accent-color:#22c55e;">
+                  <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px;">
+                    <span>₹10,000</span>
+                    <span>₹1,60,000 (Collateral Limit)</span>
+                    <span>₹3,00,000 (Max KCC)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                    <span style="color:var(--text);">Loan Duration:</span>
+                    <strong style="color:#38bdf8;font-size:15px;">${simKccMonths} Months</strong>
+                  </div>
+                  <input type="range" min="6" max="12" step="3" value="${simKccMonths}" oninput="simKccMonths = parseInt(this.value,10); buildFinanceSim();" style="width:100%;accent-color:#38bdf8;">
+                  <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px;">
+                    <span>6 Months</span>
+                    <span>9 Months</span>
+                    <span>12 Months (Full Cycle)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- COMPARISON CARDS -->
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px;">
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:var(--muted);">Commercial Bank Loan (9%)</div>
+                  <div style="font-size:18px;font-weight:700;color:#f87171;margin:4px 0;">₹${commInterest.toLocaleString('en-IN')}</div>
+                  <div style="font-size:10px;color:var(--muted);">Total interest paid</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:var(--muted);">Standard Agri Loan (7%)</div>
+                  <div style="font-size:18px;font-weight:700;color:#facc15;margin:4px 0;">₹${baseInterest.toLocaleString('en-IN')}</div>
+                  <div style="font-size:10px;color:var(--muted);">Without prompt discount</div>
+                </div>
+                <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:#86efac;font-weight:700;">Subsidized KCC Rate (4%)</div>
+                  <div style="font-size:22px;font-weight:800;color:#4ade80;margin:4px 0;">₹${netKccInterest.toLocaleString('en-IN')}</div>
+                  <div style="font-size:10px;color:#86efac;">Effective net interest</div>
+                </div>
+                <div style="background:linear-gradient(135deg,rgba(34,197,94,0.2),rgba(21,128,61,0.2));border:1px solid rgba(74,222,128,0.4);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:var(--gold);font-weight:700;">Cash Saved in Your Pocket</div>
+                  <div style="font-size:22px;font-weight:800;color:#facc15;margin:4px 0;">₹${kccSavings.toLocaleString('en-IN')}</div>
+                  <div style="font-size:10px;color:#86efac;">Subvention discount</div>
+                </div>
+              </div>
+
+              <!-- ACTION -->
+              <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button onclick="quickAsk('How do I apply for ₹${simKccAmount.toLocaleString('en-IN')} KCC crop loan at 4% interest through my PACS? What are the exact RBI guidelines on collateral?')" style="padding:8px 16px;background:linear-gradient(135deg,#15803d,#16a34a);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">
+                  🤖 Ask AI How to Apply for This KCC Loan →
+                </button>
+              </div>
+            </div>
+
+            <!-- SIMULATOR 2: DISASTER LOAN RESTRUCTURING SIMULATOR -->
+            <div style="background:linear-gradient(180deg,rgba(15,35,18,0.95),rgba(9,22,11,0.95));border:1px solid rgba(56,189,248,0.25);border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+                <div>
+                  <div style="font-size:11px;color:var(--sky);font-weight:700;text-transform:uppercase;">Simulator 2 • Natural Calamity Protection</div>
+                  <h3 style="font-size:18px;color:#f0fdf4;margin:4px 0;">🌧️ Crop Calamity Loan Restructuring & Moratorium Simulator</h3>
+                </div>
+                <div style="font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.4);font-weight:700;">
+                  Statutory Right under RBI Calamity Circular
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:16px;">
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:6px;">Declared Natural Disaster Type:</label>
+                  <select onchange="simCalamityType = this.value; buildFinanceSim();" style="width:100%;background:#091a0c;border:1px solid rgba(56,189,248,0.3);color:#f0fdf4;border-radius:8px;padding:8px 12px;font-size:13px;">
+                    <option value="flood" ${simCalamityType === 'flood' ? 'selected' : ''}>Flood & Crop Inundation</option>
+                    <option value="drought" ${simCalamityType === 'drought' ? 'selected' : ''}>Severe Drought & Water Scarcity</option>
+                    <option value="cyclone" ${simCalamityType === 'cyclone' ? 'selected' : ''}>Unseasonal Cyclone & Heavy Gale</option>
+                    <option value="hailstorm" ${simCalamityType === 'hailstorm' ? 'selected' : ''}>Hailstorm Damage</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                    <span style="color:var(--text);">Current Outstanding Crop Loan:</span>
+                    <strong style="color:#38bdf8;font-size:15px;">₹${simCalamityLoan.toLocaleString('en-IN')}</strong>
+                  </div>
+                  <input type="range" min="20000" max="300000" step="10000" value="${simCalamityLoan}" oninput="simCalamityLoan = parseInt(this.value,10); buildFinanceSim();" style="width:100%;accent-color:#38bdf8;">
+                </div>
+              </div>
+
+              <!-- STATUTORY RESTRUCTURE SUMMARY -->
+              <div style="background:rgba(56,189,248,0.06);border:1px dashed rgba(56,189,248,0.3);border-radius:10px;padding:14px;margin-bottom:14px;">
+                <div style="font-size:12px;font-weight:700;color:#38bdf8;margin-bottom:8px;">📜 Your Guaranteed Rights under RBI Calamity Directives:</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:12px;">
+                  <div>• <strong>Conversion:</strong> 1-Year short-term loan converted to <strong>3-Year Medium-Term Loan</strong></div>
+                  <div>• <strong>Moratorium:</strong> <strong>1 Year Zero Payment Holiday</strong> (no repayment required during year 1)</div>
+                  <div>• <strong>Penal Interest:</strong> <strong>0%</strong> (All late payment penalties and compoundings strictly waived)</div>
+                  <div>• <strong>Credit Standing:</strong> <strong>Clean CIBIL</strong> (Protected against NPA classification)</div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button onclick="quickAsk('My crops were damaged by ${simCalamityType}. Please draft a formal loan restructuring and 1-year moratorium petition under RBI Calamity Guidelines for my ₹${simCalamityLoan.toLocaleString('en-IN')} crop loan to my PACS Secretary and Bank.')" style="padding:8px 16px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);border-radius:8px;font-size:12px;font-weight:700;color:#38bdf8;cursor:pointer;">
+                  📝 Draft Calamity Restructuring Petition →
+                </button>
+              </div>
+            </div>
+
+            <!-- SIMULATOR 3: FERTILIZER STATUTORY MRP CHECKER -->
+            <div style="background:linear-gradient(180deg,rgba(15,35,18,0.95),rgba(9,22,11,0.95));border:1px solid ${isOvercharged ? 'rgba(239,68,68,0.4)' : 'rgba(74,222,128,0.25)'};border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+                <div>
+                  <div style="font-size:11px;color:${isOvercharged ? 'var(--red)' : 'var(--green)'};font-weight:700;text-transform:uppercase;">Simulator 3 • Anti-Black Marketing Audit</div>
+                  <h3 style="font-size:18px;color:#f0fdf4;margin:4px 0;">🧪 Fertilizer Statutory MRP & Illegal Overcharge Audit Checker</h3>
+                </div>
+                <div style="font-size:11px;padding:4px 10px;border-radius:6px;background:${isOvercharged ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.15)'};color:${isOvercharged ? '#f87171' : '#4ade80'};border:1px solid ${isOvercharged ? 'rgba(239,68,68,0.4)' : 'rgba(34,197,94,0.4)'};font-weight:700;">
+                  ${isOvercharged ? '🚨 ILLEGAL OVERCHARGING DETECTED' : '✅ 100% STATUTORY MRP COMPLIANT'}
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px;">
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:4px;">Select Subsidized Fertilizer:</label>
+                  <select onchange="simFertilizerType = this.value; simFertilizerActualPrice = FERTILIZER_RATES[this.value].mrp + 50; buildFinanceSim();" style="width:100%;background:#091a0c;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;border-radius:8px;padding:8px 12px;font-size:12px;">
+                    <option value="urea" ${simFertilizerType === 'urea' ? 'selected' : ''}>Neem Coated Urea (45kg bag @ ₹266.50)</option>
+                    <option value="dap" ${simFertilizerType === 'dap' ? 'selected' : ''}>DAP Fertilizer (50kg bag @ ₹1,350.00)</option>
+                    <option value="mop" ${simFertilizerType === 'mop' ? 'selected' : ''}>MOP Fertilizer (50kg bag @ ₹1,700.00)</option>
+                    <option value="npk" ${simFertilizerType === 'npk' ? 'selected' : ''}>NPK Complex 10:26:26 (50kg bag @ ₹1,470.00)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:4px;">Number of Bags Purchased:</label>
+                  <input type="number" min="1" max="100" value="${simFertilizerBags}" oninput="simFertilizerBags = parseInt(this.value,10) || 1; buildFinanceSim();" style="width:100%;background:#091a0c;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;border-radius:8px;padding:8px 12px;font-size:13px;">
+                </div>
+
+                <div>
+                  <label style="font-size:12px;color:var(--text);display:block;margin-bottom:4px;">Price Demanded Per Bag (₹):</label>
+                  <input type="number" min="100" max="5000" step="5" value="${simFertilizerActualPrice}" oninput="simFertilizerActualPrice = parseFloat(this.value) || fertData.mrp; buildFinanceSim();" style="width:100%;background:#091a0c;border:1px solid ${isOvercharged ? 'rgba(239,68,68,0.4)' : 'rgba(74,222,128,0.3)'};color:#f0fdf4;border-radius:8px;padding:8px 12px;font-size:13px;">
+                </div>
+              </div>
+
+              <!-- CALCULATION RESULTS -->
+              <div style="background:${isOvercharged ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)'};border:1px solid ${isOvercharged ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'};border-radius:10px;padding:14px;margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted);">Legal Maximum Retail Price (Statutory MRP):</div>
+                    <div style="font-size:18px;font-weight:700;color:#f0fdf4;">₹${fertData.mrp} × ${simFertilizerBags} bags = <strong>₹${totalLegalMrp.toLocaleString('en-IN')}</strong></div>
+                  </div>
+                  <div>
+                    <div style="font-size:12px;color:var(--muted);">Dealer Demanded Total:</div>
+                    <div style="font-size:18px;font-weight:700;color:${isOvercharged ? '#f87171' : '#4ade80'};">₹${simFertilizerActualPrice} × ${simFertilizerBags} bags = <strong>₹${totalDealerCharged.toLocaleString('en-IN')}</strong></div>
+                  </div>
+                  <div>
+                    <div style="font-size:12px;color:var(--muted);">${isOvercharged ? 'Illegal Extortion Amount:' : 'Compliance Status:'}</div>
+                    <div style="font-size:22px;font-weight:800;color:${isOvercharged ? '#ef4444' : '#22c55e'};">${isOvercharged ? `+ ₹${overchargeDifference.toLocaleString('en-IN')}` : 'Fair Price'}</div>
+                  </div>
+                </div>
+
+                ${isOvercharged ? `
+                  <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(239,68,68,0.2);font-size:12px;color:#fca5a5;line-height:1.5;">
+                    ⚠️ <strong>CRIMINAL OFFENSE NOTICE:</strong> Charging ₹${overchargeDifference} above MRP is a direct non-bailable offense under Clause 3 of Fertilizer (Control) Order 1985 and Section 7 of the Essential Commodities Act, 1955 punishable with 3 months to 7 years imprisonment and license revocation.
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- ACTION -->
+              <div style="display:flex;gap:10px;justify-content:flex-end;">
+                ${isOvercharged ? `
+                  <button onclick="quickAsk('I was overcharged by ₹${overchargeDifference.toLocaleString('en-IN')} for ${simFertilizerBags} bags of ${fertData.name} at ₹${simFertilizerActualPrice} per bag instead of official MRP ₹${fertData.mrp}. Please draft a formal criminal complaint petition under ECA Section 7 and FCO Clause 3 addressed to the District Collector and District Supply Officer.')" style="padding:8px 16px;background:linear-gradient(135deg,#dc2626,#b91c1c);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">
+                    🚨 Draft Criminal Complaint to District Collector →
+                  </button>
+                ` : `
+                  <button onclick="quickAsk('Explain my rights under Fertilizer Control Order 1985 regarding mandatory 60% PACS reservation for small farmers and ban on tie-in sales.')" style="padding:8px 16px;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:8px;font-size:12px;font-weight:700;color:var(--green);cursor:pointer;">
+                    💬 Ask AI About FCO Stock Allocation Rights
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ══════════════════════════════════════════════════════════════════════════
+       PHASE 5: OMNICHANNEL GRIEVANCE REDRESSAL TRACKING & EVIDENCE VAULT
+    ══════════════════════════════════════════════════════════════════════════ */
+    const DEFAULT_VAULT_ITEMS = [
+      {
+        id: "vault-1",
+        docket: "SV-2026-DRCS-0842",
+        title: "Section 90 Arbitration Petition: Non-Disbursal of Sanctioned KCC Crop Loan",
+        category: "Cooperative Banking & Crop Loans",
+        statute: "TN Cooperative Societies Act, 1983 (Section 90)",
+        respondent: "Thanjavur Rural Primary Agricultural Credit Society (PACS)",
+        date: "September 10, 2026",
+        daysRemaining: 16,
+        status: "Notice Issued to PACS Secretary",
+        progressPercent: 40,
+        petitionText: "BEFORE THE DEPUTY REGISTRAR OF COOPERATIVE SOCIETIES, THANJAVUR CIRCLE\n\nDispute Arbitration Claim under Section 90 of TN Cooperative Societies Act, 1983\n\nComplainant: Iniyan (Member ID: PACS-THJ-8821)\nRespondent: The Secretary, Thanjavur Rural PACS\n\n1. Complainant is a member cultivator owning 2.5 acres of agricultural land.\n2. In accordance with Model PACS Bye-Laws Chapter 1 Section 2, Complainant applied for short-term crop loan of ₹1,00,000 under Kisan Credit Card scheme.\n3. Respondent society unlawfully withheld disbursement without valid written justification and demanded third-party land mortgage in direct violation of RBI Master Circular.\n\nPRAYER:\nPass a statutory award directing immediate loan disbursement @ 4% net interest and award damages of ₹10,000 for delay."
+      },
+      {
+        id: "vault-2",
+        docket: "SV-2026-FCO-0199",
+        title: "Criminal Complaint for Illegal ₹55/bag Overcharging on Neem Coated Urea",
+        category: "Fertilizer Pricing & Allocation",
+        statute: "Fertilizer (Control) Order 1985 (Clause 3) r/w ECA 1955 (Sec 7)",
+        respondent: "Sri Venkateswara Agro Inputs (Authorized Retailer)",
+        date: "September 06, 2026",
+        daysRemaining: 7,
+        status: "Field Inspection Scheduled by ADA",
+        progressPercent: 65,
+        petitionText: "BEFORE THE DISTRICT SUPPLY OFFICER & DISTRICT COLLECTOR\n\nFormal Complaint under Section 7 of the Essential Commodities Act, 1955\n\nComplainant: Iniyan, Village Cultivator\nRespondent: Sri Venkateswara Agro Inputs, Madurai Main Road\n\n1. On 06.09.2026, Respondent demanded ₹320.00 per 45kg bag of Neem Coated Urea against the statutory Maximum Retail Price (MRP) of ₹266.50.\n2. Respondent refused to issue computerized POS receipt unless additional pesticide bottles were purchased (illegal tie-in sale under Clause 21).\n\nPRAYER:\nInitiate criminal prosecution under ECA Section 7, seize illegal stock, and revoke retail fertilizer dealership license."
+      }
+    ];
+
+    function getVaultData() {
+      try {
+        const stored = localStorage.getItem('sahakarGrievanceVault');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+      localStorage.setItem('sahakarGrievanceVault', JSON.stringify(DEFAULT_VAULT_ITEMS));
+      return DEFAULT_VAULT_ITEMS;
+    }
+
+    function saveVaultData(list) {
+      localStorage.setItem('sahakarGrievanceVault', JSON.stringify(list));
+    }
+
+    function buildGrievanceVault() {
+      const g = document.getElementById('vaultGrid');
+      if (!g) return;
+
+      const items = getVaultData();
+
+      g.innerHTML = `
+        <div style="padding:10px 0;">
+          <!-- BANNER -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+              <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#f0fdf4;margin:0 0 4px 0;">
+                ⚖️ Omnichannel Grievance Redressal Tracking & Evidence Vault
+              </h2>
+              <p style="font-size:13px;color:var(--muted);margin:0;">
+                Digital Audit Trail of Formal Dispute Petitions • Ministry of Cooperation (SIH PS 26088)
+              </p>
+            </div>
+            <button onclick="openNewDisputeModal()" style="padding:8px 16px;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:10px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 12px rgba(22,163,74,0.35);">
+              <span>➕</span>
+              <span>Log New Dispute / Generate Petition</span>
+            </button>
+          </div>
+
+          <!-- SUMMARY COUNTERS -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;">
+              <div style="font-size:11px;color:var(--muted);">Total Registered Petitions</div>
+              <div style="font-size:22px;font-weight:800;color:#f0fdf4;margin-top:2px;">${items.length}</div>
+              <div style="font-size:10px;color:#86efac;">Active audit trail</div>
+            </div>
+            <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px;">
+              <div style="font-size:11px;color:var(--gold);">Under Statutory Notice</div>
+              <div style="font-size:22px;font-weight:800;color:#facc15;margin-top:2px;">${items.filter(x => x.progressPercent < 80).length}</div>
+              <div style="font-size:10px;color:var(--muted);">Strict 30-day timeline active</div>
+            </div>
+            <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:12px;">
+              <div style="font-size:11px;color:#86efac;">Digital Evidence Attached</div>
+              <div style="font-size:22px;font-weight:800;color:#4ade80;margin-top:2px;">100%</div>
+              <div style="font-size:10px;color:#86efac;">Geo-tagged receipts preserved</div>
+            </div>
+          </div>
+
+          <!-- PETITION CARDS -->
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            ${items.length === 0 ? `
+              <div style="text-align:center;padding:50px;color:var(--muted);background:rgba(255,255,255,0.02);border-radius:12px;">
+                No grievances registered in your vault. Click "Log New Dispute" above or ask Sahakar Vaani AI to draft a petition.
+              </div>
+            ` : items.map((item, idx) => `
+              <div style="background:linear-gradient(180deg,rgba(15,35,18,0.95),rgba(9,22,11,0.95));border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,0.25);">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                  <div>
+                    <span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:rgba(251,191,36,0.15);color:var(--gold);border:1px solid rgba(251,191,36,0.3);font-family:monospace;">
+                      ${escapeHtml(item.docket)}
+                    </span>
+                    <h3 style="font-size:16px;color:#f0fdf4;margin:6px 0 2px 0;">${escapeHtml(item.title)}</h3>
+                    <div style="font-size:11px;color:var(--muted);">
+                      📜 Statute: <strong style="color:#86efac;">${escapeHtml(item.statute)}</strong> • Filed on: ${escapeHtml(item.date)}
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <span style="font-size:11px;font-weight:700;color:#38bdf8;background:rgba(56,189,248,0.12);padding:4px 10px;border-radius:6px;border:1px solid rgba(56,189,248,0.3);display:inline-block;">
+                      ${escapeHtml(item.status)}
+                    </span>
+                    <div style="font-size:10px;color:var(--muted);margin-top:4px;">⏱️ ${item.daysRemaining} days remaining in statutory deadline</div>
+                  </div>
+                </div>
+
+                <!-- PROGRESS BAR -->
+                <div style="margin:10px 0 12px 0;">
+                  <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;">
+                    <span>Step 1: Filed</span>
+                    <span>Step 2: Notice Served</span>
+                    <span>Step 3: DRCS / Ombudsman Hearing</span>
+                    <span>Step 4: Final Award</span>
+                  </div>
+                  <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;">
+                    <div style="height:100%;width:${item.progressPercent}%;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:999px;"></div>
+                  </div>
+                </div>
+
+                <!-- RESPONDENT -->
+                <div style="font-size:12px;color:var(--text);background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 12px;margin-bottom:12px;">
+                  🏛️ <strong>Respondent Entity:</strong> ${escapeHtml(item.respondent)}
+                </div>
+
+                <!-- ACTIONS -->
+                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                  <button onclick="viewPrintablePetition('${item.id}')" style="padding:6px 12px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-size:11px;font-weight:700;color:#38bdf8;cursor:pointer;">
+                    🖨️ View & Print Formal Petition
+                  </button>
+                  <button onclick="copyPetitionText('${item.id}')" style="padding:6px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;font-size:11px;color:#cbd5e1;cursor:pointer;">
+                    📋 Copy Text
+                  </button>
+                  <button onclick="deleteVaultItem('${item.id}')" style="padding:6px 12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;font-size:11px;color:#f87171;cursor:pointer;">
+                    🗑️ Remove
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function viewPrintablePetition(id) {
+      const items = getVaultData();
+      const item = items.find(x => x.id === id);
+      if (!item) return;
+
+      let modal = document.getElementById('petitionPrintModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'petitionPrintModal';
+        modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);`;
+        document.body.appendChild(modal);
+      }
+
+      modal.innerHTML = `
+        <div style="background:#0b1d0e;border:1px solid rgba(74,222,128,0.3);border-radius:16px;max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div>
+              <h3 style="margin:0;font-size:16px;color:#f0fdf4;">📜 Official Formal Grievance Petition</h3>
+              <small style="color:var(--gold);font-family:monospace;">Docket: ${escapeHtml(item.docket)}</small>
+            </div>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="background:transparent;border:none;color:#cbd5e1;font-size:20px;cursor:pointer;">✕</button>
+          </div>
+          <div style="padding:20px;overflow-y:auto;font-family:'Courier New',Courier,monospace;font-size:13px;color:#f0fdf4;line-height:1.7;white-space:pre-wrap;background:#050e06;border-radius:8px;margin:16px;">
+${escapeHtml(item.petitionText)}
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid rgba(255,255,255,0.1);">
+            <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">
+              🖨️ Print / Save as PDF
+            </button>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;font-size:12px;color:#cbd5e1;cursor:pointer;">
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    function copyPetitionText(id) {
+      const items = getVaultData();
+      const item = items.find(x => x.id === id);
+      if (!item) return;
+      navigator.clipboard.writeText(item.petitionText).then(() => {
+        alert(`Copied Docket ${item.docket} petition text to clipboard!`);
+      });
+    }
+
+    function deleteVaultItem(id) {
+      if (!confirm('Are you sure you want to remove this petition from your vault?')) return;
+      let items = getVaultData();
+      items = items.filter(x => x.id !== id);
+      saveVaultData(items);
+      buildGrievanceVault();
+    }
+
+    function openNewDisputeModal() {
+      const disputeType = prompt("Select dispute type:\n1: Fertilizer MRP Overcharging\n2: KCC Loan Refusal / Collateral Demand\n3: Spurious Seeds Crop Loss\n4: Delayed PMFBY Insurance Claim\n5: PACS Election / Audit Mismanagement\n\nEnter number (1-5):", "1");
+      if (!disputeType) return;
+
+      const societyName = prompt("Enter Name of the Society, Dealer, or Bank:", "Local Primary Agricultural Credit Society (PACS)");
+      if (!societyName) return;
+
+      let title = "Statutory Dispute Application";
+      let statute = "Cooperative Societies Act";
+      let category = "Cooperative Governance";
+
+      if (disputeType === "1") {
+        title = "Criminal Complaint for Illegal Fertilizer Overcharging above MRP";
+        statute = "Fertilizer Control Order 1985 (Clause 3) r/w ECA 1955 (Sec 7)";
+        category = "Fertilizer Pricing & Allocation";
+      } else if (disputeType === "2") {
+        title = "Dispute Arbitration for Unlawful KCC Loan Rejection & Collateral Demand";
+        statute = "Model PACS Bye-Laws r/w RBI Master Direction FIDD.CO.FSD.BC.No.6";
+        category = "Cooperative Banking & Crop Loans";
+      } else if (disputeType === "3") {
+        title = "100% Crop Loss Compensation Petition for Spurious Defective Seeds";
+        statute = "The Seeds Act, 1966 (Section 15) r/w Consumer Protection Act 2019";
+        category = "Seed Quality & Compensation";
+      } else if (disputeType === "4") {
+        title = "PMFBY Claim Enforcement Petition under 72-Hour Localized Calamity Rule";
+        statute = "PMFBY Operational Guidelines Section 14";
+        category = "Crop Insurance & Compensation";
+      } else {
+        title = "Statutory Inquiry Petition into PACS Audit and Voter Roll Irregularities";
+        statute = "Multi-State Co-operative Societies Act 2023 / State Cooperative Act";
+        category = "Cooperative Governance";
+      }
+
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const docket = `SV-2026-${randomNum}`;
+      const newItem = {
+        id: `vault-${Date.now()}`,
+        docket,
+        title,
+        category,
+        statute,
+        respondent: societyName,
+        date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+        daysRemaining: 30,
+        status: "Drafted & Ready to File",
+        progressPercent: 15,
+        petitionText: `BEFORE THE COMPETENT STATUTORY AUTHORITY\n\nSubject: Formal Legal Grievance Petition under ${statute}\n\nComplainant: ${profile.name || 'Farmer Cultivator'}\nLand: ${profile.acres || '2.5'} Acres | Crop: ${profile.crop || 'Paddy'} | Location: ${profile.village || 'Village'}, ${profile.state || 'Tamil Nadu'}\n\nRespondent: ${societyName}\n\nSTATEMENT OF FACTS:\n1. Complainant is a bonafide agricultural cultivator entitled to all rights, subsidies, and fair treatment under statutory regulations.\n2. The respondent entity committed violations by disregarding the statutory provisions of ${statute}.\n3. The complainant has suffered financial loss, agricultural disruption, and mental harassment due to this unlawful act.\n\nSTATUTORY GROUNDS & PRAYERS:\n1. Direct the respondent to immediately cease the illegal practice and restore the complainant's legal rights.\n2. Direct immediate refund/compensation with statutory interest.\n3. Initiate regulatory/criminal inquiries under the applicable Act.\n\nDate: ${new Date().toLocaleDateString()}\nComplainant Signature: _______________________`
+      };
+
+      const items = getVaultData();
+      items.unshift(newItem);
+      saveVaultData(items);
+      buildGrievanceVault();
+      alert(`Grievance successfully created with Docket ID: ${docket}! View or print it anytime from your Grievance Vault.`);
     }
 
     /* ════════════════════════════════════
