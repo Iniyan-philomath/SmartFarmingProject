@@ -6004,13 +6004,14 @@ function toggleMic() {
       }
 
       const categories = [
-        { id: 'all', label: 'All Legal Acts (6)' },
-        { id: 'seed', label: '🌱 Seed Act 1966' },
-        { id: 'fertilizer', label: '🧪 Fertilizer Control Order' },
-        { id: 'pacs', label: '🏦 Model PACS Bye-Laws' },
-        { id: 'cooperative', label: '⚖️ TN Cooperative Societies Act' },
-        { id: 'commodities', label: '📦 Essential Commodities Act' },
-        { id: 'rti', label: '📄 RTI Act for Farmers' }
+        { id: 'all', label: `All Legal Statutes (${allLegalDocs.length || 11})` },
+        { id: 'Cooperative Banking & Governance', label: '🏦 PACS & Cooperative Governance' },
+        { id: 'Agricultural Credit & Subvention', label: '💳 Crop Loans & 4% Subvention' },
+        { id: 'Crop Insurance & Compensation', label: '🛡️ PMFBY & Crop Compensation' },
+        { id: 'Seed Quality & Compensation', label: '🌱 Seeds Quality & Rights' },
+        { id: 'Fertilizer Pricing & Allocation', label: '🧪 Fertilizer Control & MRP' },
+        { id: 'Market Protection & Anti-Hoarding', label: '📦 Anti-Hoarding (ECA)' },
+        { id: 'Transparency & Fund Tracking', label: '📄 Transparency & RTI' }
       ];
 
       const catTabsHtml = categories.map(c => `
@@ -6024,7 +6025,7 @@ function toggleMic() {
           <div class="law-card-top">
             <div>
               <div class="law-card-title">${escapeHtml(doc.title)}</div>
-              <div class="law-card-authority">🏛️ ${escapeHtml(doc.authority)}</div>
+              <div class="law-card-authority">🏛️ ${escapeHtml(doc.authority)} • <span style="color:var(--green);font-weight:600;">${escapeHtml(doc.category)}</span></div>
             </div>
             <span class="laws-cloud-badge">☁️ Supabase Cloud (ap-south-1)</span>
           </div>
@@ -6046,13 +6047,16 @@ function toggleMic() {
 
           <div class="law-card-actions">
             <a href="${doc.supabase_pdf_url}" target="_blank" rel="noopener" class="law-action-btn pdf" title="Download official gazetted act from Supabase storage">
-              📥 View / Download PDF (Supabase Cloud)
+              📥 View / Download Act (Supabase Cloud)
             </a>
             <a href="${doc.local_pdf_url}" target="_blank" rel="noopener" class="law-action-btn pdf" style="background:rgba(255,255,255,0.06);color:#cbd5e1;border-color:rgba(255,255,255,0.15);" title="Local mirror backup">
               📁 Local Mirror
             </a>
             <button class="law-action-btn ask" onclick="quickAsk('Explain my legal rights under ${escapeHtml(doc.title)} and how to file a complaint.')">
-              💬 Ask AI Bot About This Act
+              💬 Ask AI Bot
+            </button>
+            <button class="law-action-btn" style="background:rgba(234,179,8,0.15);color:var(--gold);border:1px solid rgba(234,179,8,0.35);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.background='rgba(234,179,8,0.25)'" onmouseout="this.style.background='rgba(234,179,8,0.15)'" onclick="quickAsk('Please draft a formal legal grievance petition under ${escapeHtml(doc.title)} regarding my issue addressed to the competent authority with all statutory grounds and relief requested.')">
+              📝 Draft Legal Petition
             </button>
           </div>
         </div>

@@ -59,7 +59,7 @@
   {
     "id": "model-pacs-bye-laws",
     "title": "Model Bye-Laws for Primary Agricultural Credit Societies (PACS)",
-    "category": "Cooperative Banking & Crop Loans",
+    "category": "Cooperative Banking & Governance",
     "authority": "Ministry of Cooperation, Government of India",
     "filename": "Model_PACS_Bye_Laws.txt",
     "summary": "Modern governance bylaws transforming PACS into multi-service village hubs providing crop loans, interest subventions, cold storage, and Common Service Centers.",
@@ -83,9 +83,154 @@
     "grievance_steps": "1. If PACS refuses membership or loan application, submit written appeal to PACS Secretary with acknowledgement.\n2. If unaddressed within 7 days, file an appeal before the Deputy Registrar of Cooperative Societies (DRCS) under Cooperative Societies Act Section 90."
   },
   {
+    "id": "mscs-act-2023",
+    "title": "Multi-State Co-operative Societies (Amendment) Act, 2023",
+    "category": "Cooperative Banking & Governance",
+    "authority": "Ministry of Cooperation, Government of India",
+    "filename": "MSCS_Act_2023_Amendment.txt",
+    "summary": "Sweeping governance reforms establishing the Cooperative Election Authority, Cooperative Ombudsman for 30-day complaint resolution, and Information Officers for farmer transparency.",
+    "key_sections": [
+      {
+        "section": "Section 45",
+        "title": "Cooperative Election Authority (CEA)",
+        "details": "Mandates an independent authority appointed by Central Government to conduct fair, democratic, and scheduled elections in multi-state cooperatives without board interference."
+      },
+      {
+        "section": "Section 85",
+        "title": "Cooperative Ombudsman for Member Grievance Redressal",
+        "details": "Appoints independent Ombudsman to adjudicate complaints from member farmers, depositors, and borrowers regarding unlawful loan rejections or denial of membership within 30 days."
+      },
+      {
+        "section": "Section 106",
+        "title": "Cooperative Information Officer (CIO) & Right to Information",
+        "details": "Farmers have the statutory right to inspect audited annual accounts, general body minutes, and loan ledgers upon request to the CIO within 30 days."
+      },
+      {
+        "section": "Section 84 & 86",
+        "title": "Statutory Arbitration of Cooperative Disputes",
+        "details": "All disputes touching business or management must be referred to arbitration before the Central Registrar of Cooperative Societies (CRCS), with awards enforceable as civil court decrees."
+      }
+    ],
+    "grievance_steps": "1. Submit written grievance to Cooperative Information Officer (CIO) or Society Secretary.\n2. If unresolved in 30 days, file appeal before Central Cooperative Ombudsman or via CRCS portal (crcs.gov.in).\n3. For monetary disputes, file Section 84 arbitration claim before CRCS."
+  },
+  {
+    "id": "pmfby-sec14",
+    "title": "PMFBY Operational Guidelines Section 14 (Crop Loss & Payout)",
+    "category": "Crop Insurance & Compensation",
+    "authority": "Ministry of Agriculture & Farmers Welfare, Govt of India",
+    "filename": "PMFBY_Operational_Guidelines_Sec14.txt",
+    "summary": "Statutory guidelines mandating a 72-hour reporting window for localized disasters, immediate 25% on-account payouts for mid-season adversity, and post-harvest coverage.",
+    "key_sections": [
+      {
+        "section": "Section 14.1",
+        "title": "72-Hour Mandatory Intimation Window for Localized Calamities",
+        "details": "For localized disasters (hailstorm, landslide, inundation/flooding, cloudburst), loss is assessed at individual farm plot level provided the farmer intimates within 72 hours via Crop Insurance App or helpline 14447."
+      },
+      {
+        "section": "Section 14.2",
+        "title": "25% Immediate On-Account Payout for Mid-Season Adversity",
+        "details": "Where expected crop loss exceeds 50% due to widespread flood or drought, 25% of sum insured is transferred directly to farmer accounts immediately without waiting for harvesting season end."
+      },
+      {
+        "section": "Section 14.3",
+        "title": "Post-Harvest Crop Loss Coverage up to 14 Days",
+        "details": "Protects harvested crops lying in 'cut and spread' condition in the open field against unseasonal rainfall and cyclones for up to 14 days after harvest."
+      },
+      {
+        "section": "Section 14.4",
+        "title": "Mandatory Direct Benefit Transfer (DBT) & Zero Bank Lien",
+        "details": "Insurance compensation is paid directly into the farmer's bank account. Banks and PACS are strictly barred from diverting insurance money towards unpaid loan balance without farmer consent."
+      }
+    ],
+    "grievance_steps": "1. Take timestamped photos of crop damage.\n2. Intimate loss within 72 hours on PMFBY App, toll-free 14447, or to local Agriculture Officer and obtain docket number.\n3. If compensation is delayed over 30 days after survey, appeal to District Level Monitoring Committee (DLMC) headed by District Collector."
+  },
+  {
+    "id": "kcc-miss-rbi",
+    "title": "KCC Modified Interest Subvention Scheme (MISS) & RBI Directives",
+    "category": "Agricultural Credit & Subvention",
+    "authority": "Reserve Bank of India (RBI) & NABARD",
+    "filename": "KCC_Interest_Subvention_MISS_Guidelines.txt",
+    "summary": "Guarantees short-term crop loans up to ₹3 Lakh at 4% net interest with prompt repayment, and prohibits banks from demanding collateral or mortgage for loans up to ₹1.60 Lakh.",
+    "key_sections": [
+      {
+        "section": "Section 1",
+        "title": "Effective 4% Net Annual Interest via Prompt Repayment Incentive",
+        "details": "Base rate 7% minus 3% Prompt Repayment Incentive (PRI) gives net 4% interest per annum for timely repayment on crop loans up to ₹3,00,000."
+      },
+      {
+        "section": "Section 2",
+        "title": "Collateral-Free & Mortgage-Free Loan Limit up to ₹1.60 Lakh",
+        "details": "RBI Master Circular strictly mandates that no bank or PACS can demand land mortgage, title deeds, or third-party guarantee for loans up to ₹1,60,000 (up to ₹2,00,000 with tie-up arrangements)."
+      },
+      {
+        "section": "Section 3",
+        "title": "Automatic Calamity Restructuring into 3-5 Year Loan",
+        "details": "During state-declared natural disasters, short-term crop loans are restructured into medium-term loans over 3 to 5 years with 0% penal interest and first-year interest subvention retained."
+      },
+      {
+        "section": "Section 4",
+        "title": "Mandatory Coverage for Tenant Farmers & Sharecroppers",
+        "details": "Tenant cultivators, oral lessees, sharecroppers, and Joint Liability Groups (JLGs) are fully eligible for KCC without land ownership deeds."
+      }
+    ],
+    "grievance_steps": "1. In case of collateral demand or excess interest, submit written objection citing RBI Circular FIDD.CO.FSD.BC.No.6.\n2. If unaddressed in 15 days, file complaint before RBI Banking Ombudsman via cms.rbi.org.in.\n3. Inform NABARD District Development Manager (DDM)."
+  },
+  {
+    "id": "consumer-protection-act-2019",
+    "title": "Consumer Protection Act, 2019 (Farmer Rights & Product Liability)",
+    "category": "Crop Insurance & Compensation",
+    "authority": "Ministry of Consumer Affairs, Food and Public Distribution, Govt of India",
+    "filename": "Consumer_Protection_Act_2019_Farmer_Rights.txt",
+    "summary": "Protects farmers as statutory consumers against defective seeds, spurious pesticides, sub-standard drip kits, or faulty tractors with full product liability compensation.",
+    "key_sections": [
+      {
+        "section": "Section 2(7)",
+        "title": "Farmer as a Statutory Consumer",
+        "details": "Cultivators purchasing agricultural inputs, seeds, fertilizers, or machinery for livelihood self-employment are recognized as consumers under law. Manufacturer disclaimers are legally void."
+      },
+      {
+        "section": "Chapter VI (Sec 82-87)",
+        "title": "Strict Product Liability on Manufacturers & Dealers",
+        "details": "Manufacturers and distributors are strictly liable to pay full financial compensation for total crop loss caused by defective seeds, adulterated pesticides, or faulty farm implements."
+      },
+      {
+        "section": "Section 34 & 35",
+        "title": "District Consumer Commission & Free e-Filing",
+        "details": "Claims up to ₹50 Lakh can be filed before the District Consumer Commission via e-Daakhil (edaakhil.nic.in) with zero court fee for claims under ₹5 Lakh."
+      }
+    ],
+    "grievance_steps": "1. Retain purchase bill, empty product packaging, and batch details.\n2. Send 15-day legal demand notice to manufacturer and dealer.\n3. File petition on e-Daakhil (edaakhil.nic.in) before District Consumer Commission with Agriculture Officer inspection report."
+  },
+  {
+    "id": "pacs-computerization-erp-2023",
+    "title": "National PACS Computerization & CSC Multi-Service Rules",
+    "category": "Cooperative Banking & Governance",
+    "authority": "Ministry of Cooperation, Government of India",
+    "filename": "PACS_Computerization_ERP_Rules.txt",
+    "summary": "Mandates National Common ERP software across all 63,000+ PACS, ensuring computerized receipts, digital member ledgers, and delivery of 300+ citizen services.",
+    "key_sections": [
+      {
+        "section": "Rule 1",
+        "title": "Mandatory National Common ERP Software",
+        "details": "All accounting, loan ledgers, and fertilizer allocations must be processed via the Cloud-based National PACS ERP software integrated with NABARD."
+      },
+      {
+        "section": "Rule 2",
+        "title": "Instant Computerized Transaction Receipts",
+        "details": "Members have the statutory right to receive a computerized printout receipt for every rupee deposited, borrowed, or fertilizer purchased. Manual paper slips are prohibited."
+      },
+      {
+        "section": "Rule 3",
+        "title": "PACS as Common Service Centers (CSC)",
+        "details": "Empowers PACS to deliver 300+ digital government services including PM-KISAN e-KYC, PMFBY tracking, digital land records, and electricity bill payments at village level."
+      }
+    ],
+    "grievance_steps": "1. Demand printed computerized receipt from PACS Secretary.\n2. In case of refusal or manual ledger entries, report to Circle Deputy Registrar of Cooperative Societies (DRCS) or register grievance on National Cooperative Portal."
+  },
+  {
     "id": "tn-cooperative-act-1983",
     "title": "Tamil Nadu Cooperative Societies Act, 1983 & Rules",
-    "category": "State Cooperative Rights & Dispute Resolution",
+    "category": "Cooperative Banking & Governance",
     "authority": "Cooperation, Food & Consumer Protection Department, Govt of Tamil Nadu",
     "filename": "TN_Cooperative_Societies_Act_Rules.txt",
     "summary": "Empowers Tamil Nadu farmers with statutory arbitration mechanisms, free dispute adjudication, and independent auditing of PACS.",
@@ -111,7 +256,7 @@
   {
     "id": "essential-commodities-act-1955",
     "title": "Essential Commodities Act (ECA), 1955",
-    "category": "Anti-Hoarding & Market Protection",
+    "category": "Market Protection & Anti-Hoarding",
     "authority": "Ministry of Consumer Affairs, Food and Public Distribution, Govt of India",
     "filename": "Essential Commodity Act 1955.pdf",
     "summary": "Protects farmers against artificial input shortages, black marketing of fertilizers, seeds, and predatory middleman price manipulations.",

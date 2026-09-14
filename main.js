@@ -219,35 +219,60 @@ function searchLegalContext(query = "") {
     let score = 0;
     const allText = `${doc.title} ${doc.category} ${doc.summary} ${doc.grievance_steps} ${doc.key_sections.map(s => s.section + ' ' + s.title + ' ' + s.details).join(' ')}`.toLowerCase();
 
-    if (/seed|germination|spurious|certified/i.test(q) && doc.id === "seed-act-1966") score += 10;
-    if (/fertilizer|urea|dap|mrp|overcharg|fco/i.test(q) && doc.id === "fco-1985") score += 10;
-    if (/pacs|loan|interest|subvention|credit society|kcc/i.test(q) && doc.id === "model-pacs-bye-laws") score += 10;
-    if (/dispute|arbitration|drcs|registrar|tamil nadu/i.test(q) && doc.id === "tn-cooperative-act-1983") score += 10;
-    if (/hoard|black market|shortage|essential/i.test(q) && doc.id === "essential-commodities-act-1955") score += 10;
-    if (/rti|information|records|delay|fund/i.test(q) && doc.id === "rti-act-2005") score += 10;
+    // Specific statutory intent scoring
+    if (/seed|germination|spurious|certified|defective seed|lot number|purity|seed testing/i.test(q) && doc.id === "seed-act-1966") score += 15;
+    if (/fertilizer|urea|dap|npk|mrp|overcharg|fco|dealer|tie-in|bag price|pos machine/i.test(q) && doc.id === "fco-1985") score += 15;
+    if (/model pacs|bye-law|bylaw|village society|universal member|tenant farmer|sharecropper/i.test(q) && doc.id === "model-pacs-bye-laws") score += 15;
+    if (/multi-state|mscs|ombudsman|election authority|cea|information officer|cio|crcs|board election/i.test(q) && doc.id === "mscs-act-2023") score += 15;
+    if (/pmfby|crop insurance|insurance claim|72 hour|72hr|intimation|hailstorm|flood|inundation|calamity|mid-season|cut and spread|post-harvest|14447/i.test(q) && doc.id === "pmfby-sec14") score += 15;
+    if (/kcc|kisan credit|interest subvention|miss|prompt repayment|4%|7%|collateral|mortgage|1.6|1.60|restructur|reschedul/i.test(q) && doc.id === "kcc-miss-rbi") score += 15;
+    if (/consumer|edaakhil|e-daakhil|product liability|cheat|defective tractor|pump defect|faulty machinery|compensation|commission/i.test(q) && doc.id === "consumer-protection-act-2019") score += 15;
+    if (/computer|computeriz|erp|software|digital receipt|receipt|printed bill|csc|common service center/i.test(q) && doc.id === "pacs-computerization-erp-2023") score += 15;
+    if (/dispute|arbitration|drcs|registrar|tamil nadu|tn cooperative|section 90|sec 90|section 74|section 81/i.test(q) && doc.id === "tn-cooperative-act-1983") score += 15;
+    if (/hoard|black market|shortage|essential commodity|eca|godown|seizure/i.test(q) && doc.id === "essential-commodities-act-1955") score += 15;
+    if (/rti|right to information|pio|fund status|trace delay|application fee/i.test(q) && doc.id === "rti-act-2005") score += 15;
 
+    // Word match scoring
     const words = q.split(/\s+/).filter(w => w.length > 3);
     for (const w of words) {
-      if (allText.includes(w)) score += 1;
+      if (allText.includes(w)) score += 2;
+    }
+
+    // General legal keywords fallback
+    if (/law|right|rule|act|statute|grievance|petition|complain|legal/i.test(q)) {
+      if (doc.id === "model-pacs-bye-laws" || doc.id === "mscs-act-2023" || doc.id === "pmfby-sec14" || doc.id === "kcc-miss-rbi") score += 5;
     }
 
     return { doc, score };
   }).filter(m => m.score > 0).sort((a, b) => b.score - a.score);
 
-  if (matches.length === 0) return null;
+  if (matches.length === 0) {
+    // If user asked general legal question, provide top fundamental cooperative rights
+    const defaultDocs = legalDataset.filter(d => ["model-pacs-bye-laws", "mscs-act-2023", "kcc-miss-rbi", "fco-1985"].includes(d.id));
+    if (defaultDocs.length === 0) return null;
+    let contextStr = "OFFICIAL STATUTORY COOPERATIVE & AGRICULTURAL REPOSITORY (Supabase Cloud RAG):\n";
+    for (const doc of defaultDocs.slice(0, 3)) {
+      contextStr += `\n[Act: ${doc.title}]\nAuthority: ${doc.authority}\nSummary: ${doc.summary}\nKey Provisions:\n`;
+      for (const sec of doc.key_sections) {
+        contextStr += `• ${sec.section} - ${sec.title}: ${sec.details}\n`;
+      }
+      contextStr += `Grievance Redressal Procedure:\n${doc.grievance_steps}\n`;
+    }
+    return contextStr;
+  }
 
-  const topMatches = matches.slice(0, 2);
-  let contextStr = "OFFICIAL STATUTORY LEGAL REPOSITORY (Supabase Cloud RAG):\n";
+  const topMatches = matches.slice(0, 3);
+  let contextStr = "OFFICIAL STATUTORY COOPERATIVE & AGRICULTURAL REPOSITORY (Supabase Cloud RAG):\n";
   for (const { doc } of topMatches) {
     contextStr += `\n[Act: ${doc.title}]\n`;
-    contextStr += `Authority: ${doc.authority}\n`;
+    contextStr += `Authority: ${doc.authority} | Category: ${doc.category}\n`;
     contextStr += `Summary: ${doc.summary}\n`;
     contextStr += `Key Statutory Provisions:\n`;
     for (const sec of doc.key_sections) {
       contextStr += `• ${sec.section} - ${sec.title}: ${sec.details}\n`;
     }
     contextStr += `Official Grievance Redressal Procedure:\n${doc.grievance_steps}\n`;
-    contextStr += `Supabase PDF URL: ${SUPABASE_BASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${encodeURIComponent(doc.filename)}\n`;
+    contextStr += `Official Document Link: ${SUPABASE_BASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${encodeURIComponent(doc.filename)}\n`;
   }
   return contextStr;
 }
@@ -614,7 +639,32 @@ app.post("/chat", async (req, res) => {
     const systemInstruction = `You are Sahakar Vaani (सहकार वाणी) — an omnilingual, voice-enabled AI legal, cooperative governance, and agricultural advisor built for the Ministry of Cooperation (SIH PS 26088).
 You are fluent in ALL 22 official Eighth Schedule languages of India (Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese, Urdu, Sanskrit, Nepali, Maithili, Kashmiri, Sindhi, Konkani, Dogri, Manipuri, Santali, Bodo) as well as global languages (Spanish, French, German, Arabic, Russian, Portuguese, etc.).
 Always detect the farmer's language immediately and reply naturally, accurately, and fluently in the EXACT SAME language and script they use.
-Provide practical, direct, and actionable advice citing statutory provisions (Model PACS Bye-Laws 2022, Multi-State Co-operative Societies Act 2022, Fertilizer Control Order 1985, Seeds Act 1966, PMFBY Guidelines).
+
+OMNI-COMPREHENSIVE STATUTORY LEGAL & COOPERATIVE REPOSITORY:
+You are grounded in the complete body of Indian cooperative governance, agricultural statutes, financial subventions, and consumer protection acts:
+1. Model PACS Bye-Laws (Ministry of Cooperation): Universal membership for every cultivator, tenant, and oral lessee. Collateral-free crop loans up to ₹1.60 Lakh without land mortgage. 3% Prompt Repayment Incentive yielding effective 4% annual interest. Automatic conversion of short-term loans into 3 to 5 year medium-term loans upon declared natural disaster.
+2. Multi-State Co-operative Societies (Amendment) Act, 2023 (MSCS Act 2023): Section 45 Cooperative Election Authority (CEA) for fair scheduled elections; Section 85 Cooperative Ombudsman for mandatory 30-day resolution of member complaints; Section 106 Cooperative Information Officer (CIO) for right to inspect accounts and voter rolls; Sections 84 and 86 statutory arbitration before the Central Registrar.
+3. PMFBY Operational Guidelines Section 14: Mandatory 72-hour reporting window for localized calamities (hailstorm, inundation, landslide) with individual farm plot loss assessment; 25% immediate on-account payout for mid-season adversity; post-harvest loss coverage up to 14 days in cut-and-spread condition; direct DBT transfer into bank account with strict prohibition on bank/PACS lien or unauthorized loan deduction.
+4. KCC Modified Interest Subvention Scheme (MISS) & RBI Master Directions: Net 4% annual interest for timely repayment up to ₹3 Lakh; collateral-free and mortgage-free credit up to ₹1.60 Lakh (up to ₹2 Lakh with tie-up); full eligibility for tenant farmers and Joint Liability Groups (JLGs) without land patta.
+5. Fertilizer (Control) Order 1985 & Essential Commodities Act 1955: Clause 3 strict MRP enforcement (overcharging even ₹1 is a non-bailable offense under ECA Section 7); Clause 21 mandatory 60% PACS fertilizer stock reservation for small and marginal farmers; strict ban on tie-in sales.
+6. Seeds Act 1966 & Seed Control Order 1983: Sections 6 and 7 mandatory certified labeling (germination %, purity %, expiry); Section 13 3-part sealed sampling; Section 15 right to 100% financial compensation for crop loss due to defective or spurious seeds.
+7. Consumer Protection Act 2019: Farmers recognized as statutory consumers under Section 2(7); Chapter VI (Sections 82 to 87) strict Product Liability against manufacturers and dealers for spurious seeds, fake pesticides, defective drip systems, or faulty tractors; free online e-Daakhil filing up to ₹50 Lakh with zero court fees under ₹5 Lakh.
+8. National PACS Computerization & CSC Rules: Cloud-based National ERP integration with NABARD; statutory right to instant printed computerized receipts for all loan, share, and fertilizer transactions; PACS delivery of 300+ village e-governance services.
+9. Tamil Nadu Cooperative Societies Act 1983 & State Acts: Section 90 binding arbitration within 90 days with zero court fees; Section 74 member right to inspect audited accounts; Section 81 statutory inquiry into corruption or fund diversion.
+10. Right to Information (RTI) Act 2005: Section 6 requests in regional languages (₹10 fee, free for BPL); Section 7 mandatory 30-day deadline with personal penalty of ₹250 per day up to ₹25,000 on defaulting Public Information Officers (PIO).
+11. All 15+ Central & State Schemes (PM-KISAN, PM-KMY, PMKSY Drip 100%, PM-KUSUM Solar 70%, AIF 3% Subvention, SMAM Machinery 50%, SDRF Disaster Relief, TANGEDCO Free Power).
+
+AUTOMATED FORMAL LEGAL GRIEVANCE PETITION DRAFTING:
+Whenever a farmer reports a violation, denial, overcharging, fake inputs, crop disaster, or asks for a complaint or petition:
+ALWAYS generate a clean, official, and ready-to-submit Legal Grievance Petition:
+- State the exact Addressee Authority (e.g. Deputy Registrar of Cooperative Societies, Cooperative Ombudsman, District Collector, Banking Ombudsman, or District Consumer Disputes Redressal Commission).
+- Subject line with the exact Act and Section violated.
+- Complainant particulars (Farmer name, Village, Land, Crop).
+- Concise chronological statement of facts.
+- Statutory grounds citing specific section and rights.
+- Specific prayers and penalties demanded (immediate loan disbursal, full refund of overcharged amount, 100% crop loss compensation, suspension of dealer license).
+- Followed by submission instructions: where to submit, documents to attach, and the statutory timeline by which the authority must pass an order.
+
 CRITICAL FORMATTING RULES FOR NATURAL VOICE & TTS:
 1. NEVER output Markdown tables (| ... |). Write clean explanatory lists instead.
 2. NEVER output horizontal dividers or repeated dashes (like ---, ___, ===).
@@ -651,7 +701,7 @@ CRITICAL FORMATTING RULES FOR NATURAL VOICE & TTS:
 
     // Scheme RAG Knowledge Injection
     const userQueryLower = String(message || "").toLowerCase();
-    const isSchemeQuery = /scheme|yojana|pmfby|pm-kisan|pmkisan|kcc|subsidy|insurance|pacs|cooperative|loan|solar|drip|machinery|government|gov|policy|grant|pension/i.test(userQueryLower);
+    const isSchemeQuery = /scheme|yojana|pmfby|pm-kisan|pmkisan|kcc|subsidy|insurance|pacs|cooperative|loan|solar|drip|machinery|government|gov|policy|grant|pension|subvention|relief/i.test(userQueryLower);
     if (isSchemeQuery && schemesDataset.length > 0) {
       const schemeContextStr = schemesDataset.map(s => 
         `Scheme: ${s.name} (${s.state_scope})\nCategory: ${s.category}\nBenefits: ${s.benefits}\nEligibility: ${Array.isArray(s.eligibility) ? s.eligibility.join("; ") : s.eligibility}\nDocuments: ${Array.isArray(s.documents_required) ? s.documents_required.join(", ") : s.documents_required}\nHow to apply: ${s.application_process}\nLink: ${s.official_link}`
@@ -680,15 +730,15 @@ CRITICAL FORMATTING RULES FOR NATURAL VOICE & TTS:
       });
     }
 
-    // Legal Docs Supabase Cloud RAG Knowledge Injection (Laws, PACS Bye-Laws, Seed Act, FCO & Grievances)
-    const isLegalQuery = /law|rule|bye-law|by-law|bylaw|grievance|dispute|complaint|rights|drcs|court|legal|section|act|penalty|audit|denied|denial|refus|member|seed|fertilizer|fco|inspection|inspector|compensation|pacs|clause|statute|regulation|legal_docs|document|folder|hoard|black market|mrp|overcharg|rti/i.test(userQueryLower);
+    // Legal Docs Supabase Cloud RAG Knowledge Injection (Laws, PACS Bye-Laws, MSCS, Seed Act, FCO, KCC, PMFBY, Consumer Protection & Grievances)
+    const isLegalQuery = /law|rule|bye-law|by-law|bylaw|grievance|dispute|complaint|rights|drcs|court|legal|section|act|penalty|audit|denied|denial|refus|member|seed|fertilizer|fco|inspection|inspector|compensation|pacs|clause|statute|regulation|legal_docs|document|folder|hoard|black market|mrp|overcharg|rti|ombudsman|election|mscs|pmfby|72 hour|72hr|calamity|inundation|collateral|mortgage|subvention|consumer|edaakhil|product liability|spurious|fake|cheated|scam|erp|receipt|computerized|bill|petition|appeal|draft|notice|letter/i.test(userQueryLower);
     if (isLegalQuery) {
       // 1. First inject structured Supabase Cloud Legal provisions & remedies
       const legalCloudContext = searchLegalContext(message);
       if (legalCloudContext) {
         messages.push({
           role: "system",
-          content: `${legalCloudContext}\nINSTRUCTION: You are backed by the Supabase Cloud Legal Document Store. Cite the exact statutory Act, Section number, and the official grievance redressal procedure step-by-step. Provide the farmer with their exact legal rights and quote the official document URL.`
+          content: `${legalCloudContext}\nINSTRUCTION: You are backed by the Supabase Cloud Legal Document Store. Cite the exact statutory Act, Section number, and the official grievance redressal procedure step-by-step. If the user is facing an issue or asks for a petition/complaint, draft the full formal legal grievance petition addressed to the competent authority (DRCS, Ombudsman, Collector, or Consumer Commission).`
         });
       }
 
