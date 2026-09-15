@@ -2563,6 +2563,7 @@
     <div class="sb-nav">
       <div class="sb-section-lbl" id="sbSecMain">Cooperative Main</div>
       <button class="nav-btn active" onclick="switchTab('chat',this)"><span class="nav-icon">💬</span> <span id="sbNavChat">AI Legal Advisor</span></button>
+      <button class="nav-btn" onclick="switchTab('ops',this)"><span class="nav-icon">🏛️</span> <span id="sbNavOps">PACS Operations (3-Tier & JIC)</span></button>
       <button class="nav-btn" onclick="switchTab('schemes',this)"><span class="nav-icon">🏛️</span> <span id="sbNavSchemes">Cooperative Schemes & Sandbox</span></button>
       <button class="nav-btn" onclick="switchTab('laws',this)"><span class="nav-icon">📜</span> <span id="sbNavLaws">PACS Acts & Rights</span></button>
       <button class="nav-btn" onclick="switchTab('finance',this)"><span class="nav-icon">💳</span> <span id="sbNavFinance">Financial & MRP Simulator</span></button>
@@ -2609,6 +2610,7 @@
       <div class="tb-right">
         <div class="tb-tabs">
           <button class="tb-tab active" id="tab-chat" onclick="switchTab('chat',null)">💬 Legal AI</button>
+          <button class="tb-tab" id="tab-ops" onclick="switchTab('ops',null)">🏛️ PACS Operations</button>
           <button class="tb-tab" id="tab-schemes" onclick="switchTab('schemes',null)">🏛️ Schemes & Sandbox</button>
           <button class="tb-tab" id="tab-laws" onclick="switchTab('laws',null)">📜 Acts & Rights</button>
           <button class="tb-tab" id="tab-finance" onclick="switchTab('finance',null)">💳 Financial Simulator</button>
@@ -2790,6 +2792,11 @@
       <div class="dash-grid" id="vaultGrid" style="display:block;max-width:850px;margin:0 auto;"></div>
     </div>
 
+    <!-- INSTITUTIONAL COOPERATIVE GOVERNANCE (3-TIER, JIC, JLG & PACS ERP) -->
+    <div class="panel" id="panel-ops">
+      <div class="dash-grid" id="opsGrid" style="display:block;max-width:880px;margin:0 auto;"></div>
+    </div>
+
     <!-- WEATHER -->
     <div class="panel" id="panel-weather">
       <div class="dash-grid" id="weatherGrid"></div>
@@ -2801,6 +2808,10 @@
     <button class="mb-nav-item active" data-tab="chat" onclick="switchTab('chat', this)">
       <span class="mb-icon">💬</span>
       <span class="mb-label">Legal AI</span>
+    </button>
+    <button class="mb-nav-item" data-tab="ops" onclick="switchTab('ops', this)">
+      <span class="mb-icon">🏛️</span>
+      <span class="mb-label">Operations</span>
     </button>
     <button class="mb-nav-item" data-tab="schemes" onclick="switchTab('schemes', this)">
       <span class="mb-icon">🏛️</span>
@@ -2959,6 +2970,7 @@
 
       if (tab === 'farmwealth') buildFarmWealth();
       if (tab === 'dashboard') buildDash();
+      if (tab === 'ops') buildOpsGovernance();
       if (tab === 'schemes') buildSchemes();
       if (tab === 'laws') buildLaws();
       if (tab === 'finance') buildFinanceSim();
@@ -3545,6 +3557,7 @@ const UI_DICTIONARIES = {
     weatherPred: "🌦️ मौसम पूर्वानुमान",
     financeTab: "वित्तीय सिम्युलेटर",
     vaultTab: "शिकायत निवारण वॉल्ट",
+    opsTab: "पैक्स संचालन (3-स्तरीय व जेआईसी)",
     advisoriesLabel: "सलाह",
     installLabel: "ऐप इंस्टॉल",
     chipPacsVote: "पैक्स मतदान अधिकार",
@@ -3599,6 +3612,7 @@ const UI_DICTIONARIES = {
     weatherPred: "🌦️ வானிலை கணிப்பு",
     financeTab: "நிதி சிமுலேட்டர்",
     vaultTab: "குறைதீர்ப்பு பெட்டகம்",
+    opsTab: "பேக்ஸ் நிர்வாகம் (3-அடுக்கு & ஜேஐசி)",
     advisoriesLabel: "ஆலோசனைகள்",
     installLabel: "செயலியை நிறுவு",
     chipPacsVote: "பேக்ஸ் வாக்களிப்பு உரிமைகள்",
@@ -3653,6 +3667,7 @@ const UI_DICTIONARIES = {
     weatherPred: "🌦️ వాతావరణ అంచనా",
     financeTab: "ఆర్థిక సిమ్యులేటర్",
     vaultTab: "ఫిర్యాదుల వాల్ట్",
+    opsTab: "ప్యాక్స్ పాలన (3-దశల & జేఐసీ)",
     advisoriesLabel: "సలహాలు",
     installLabel: "యాప్ ఇన్‌స్టాల్",
     chipPacsVote: "ప్యాక్స్ ఓటింగ్ హక్కులు",
@@ -3708,6 +3723,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ ನಿಮ್ಮ ಅರ್ಹ ಯೋಜನೆಗಳು",
     financeTab: "ಹಣಕಾಸು ಸಿಮ್ಯುಲೇಟರ್",
     vaultTab: "ದೂರು ನಿವಾರಣಾ ವಾಲ್ಟ್",
+    opsTab: "ಪ್ಯಾಕ್ಸ್ ಕಾರ್ಯಾಚರಣೆ (3-ಹಂತ & ಜೆಐಸಿ)",
     advisoriesLabel: "ಸಲಹೆಗಳು",
     installLabel: "ಆ್ಯಪ್ ಸ್ಥಾಪಿಸಿ",
     chipPacsVote: "ಪ್ಯಾಕ್ಸ್ ಮತದಾನ ಹಕ್ಕುಗಳು",
@@ -3763,6 +3779,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ നിങ്ങളുടെ യോഗ്യതാ പദ്ധതികൾ",
     financeTab: "സാമ്പത്തിക സിമുലേറ്റർ",
     vaultTab: "പരാതി പരിഹാര വോൾട്ട്",
+    opsTab: "പാക്സ് പ്രവർത്തനം (3-തല & ജെഐസി)",
     advisoriesLabel: "നിർദ്ദേശങ്ങൾ",
     installLabel: "ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്യുക",
     chipPacsVote: "പാക്സ് വോട്ടവകാശം",
@@ -3818,6 +3835,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ तुमच्या पात्र योजना",
     financeTab: "आर्थिक सिम्युलेटर",
     vaultTab: "तक्रार निवारण व्हॉल्ट",
+    opsTab: "पॅक्स कामकाज (३-स्तरीय व जेआयसी)",
     advisoriesLabel: "सल्ले",
     installLabel: "अॅप स्थापित करा",
     chipPacsVote: "पॅक्स मतदान हक्क",
@@ -3873,6 +3891,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ તમારી યોગ્ય યોજનાઓ",
     financeTab: "નાણાકીય સિમ્યુલેટર",
     vaultTab: "ફરિયાદ નિવારણ વૉલ્ટ",
+    opsTab: "પેક્સ કામગીરી (3-સ્તરીય & જેઆઈસી)",
     advisoriesLabel: "સલાહ",
     installLabel: "એપ ઇન્સ્ટોલ કરો",
     chipPacsVote: "પેક્સ મતદાન અધિકારો",
@@ -3974,6 +3993,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ আপনার যোগ্য প্রকল্পসমূহ",
     financeTab: "আর্থিক সিমুলেটর",
     vaultTab: "অভিযোগ প্রতিকার ভল্ট",
+    opsTab: "প্যাক্স পরিচালনা (৩-স্তর ও জেআইসি)",
     advisoriesLabel: "পরামর্শ",
     installLabel: "অ্যাপ ইনস্টল করুন",
     chipPacsVote: "প্যাকস ভোটিং অধিকার",
@@ -4029,6 +4049,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ ਤੁਹਾਡੀਆਂ ਯੋਗ ਸਕੀਮਾਂ",
     financeTab: "ਵਿੱਤੀ ਸਿਮੂਲੇਟਰ",
     vaultTab: "ਸ਼ਿਕਾਇਤ ਨਿਵਾਰਨ ਵਾਲਟ",
+    opsTab: "ਪੈਕਸ ਸੰਚਾਲਨ (3-ਪੱਧਰੀ ਤੇ ਜੇਆਈਸੀ)",
     advisoriesLabel: "ਸਲਾਹਾਂ",
     installLabel: "ਐਪ ਸਥਾਪਿਤ ਕਰੋ",
     chipPacsVote: "ਪੈਕਸ ਵੋਟਿੰਗ ਅਧਿਕਾਰ",
@@ -4194,6 +4215,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ آپ کی اہل اسکیمیں",
     financeTab: "مالیاتی سمیلیٹر",
     vaultTab: "شکایت ازالہ والٹ",
+    opsTab: "پیکس آپریشنز (3 درجاتی و جے آئی سی)",
     advisoriesLabel: "مشورے",
     installLabel: "ایپ انسٹال کریں",
     chipPacsVote: "پیکس ووٹنگ کے حقوق",
@@ -4249,6 +4271,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ Planes Disponibles",
     financeTab: "Simulador Financiero",
     vaultTab: "Bóveda de Reclamaciones",
+    opsTab: "Operaciones PACS (3 Niveles y JIC)",
     advisoriesLabel: "Avisos",
     installLabel: "Instalar App",
     chipPacsVote: "Derechos de Voto PACS",
@@ -4304,6 +4327,7 @@ const UI_DICTIONARIES = {
     eligibleSchemes: "🏛️ Vos Programmes",
     financeTab: "Simulateur Financier",
     vaultTab: "Coffre de Réclamation",
+    opsTab: "Opérations PACS (3 Niveaux & JIC)",
     advisoriesLabel: "Conseils",
     installLabel: "Installer l'App",
     chipPacsVote: "Droits de Vote PACS",
@@ -4452,6 +4476,7 @@ const UI_DICTIONARIES = {
     lawsTab: "📜 Acts & Rights",
     financeTab: "Financial Simulator",
     vaultTab: "Grievance Vault",
+    opsTab: "PACS Operations (3-Tier & JIC)",
     weatherTab: "🌤️ Weather",
     advisoriesLabel: "Advisories",
     installLabel: "Install App",
@@ -4508,6 +4533,8 @@ function applyUiDictionary(normalized) {
   if (sbNavHealth && dict.sbNavHealth) sbNavHealth.textContent = dict.sbNavHealth;
   const sbNavChat = document.getElementById('sbNavChat');
   if (sbNavChat && dict.sbNavChat) sbNavChat.textContent = dict.sbNavChat;
+  const sbNavOps = document.getElementById('sbNavOps');
+  if (sbNavOps && dict.opsTab) sbNavOps.textContent = dict.opsTab;
   const sbNavDash = document.getElementById('sbNavDash');
   if (sbNavDash && dict.sbNavDash) sbNavDash.textContent = dict.sbNavDash;
   const sbNavSchemes = document.getElementById('sbNavSchemes');
@@ -4552,6 +4579,8 @@ function applyUiDictionary(normalized) {
   if (tbStatus && dict.tbStatusText) tbStatus.textContent = dict.tbStatusText;
   const tabChat = document.getElementById('tab-chat');
   if (tabChat && dict.chatTab) tabChat.textContent = dict.chatTab;
+  const tabOps = document.getElementById('tab-ops');
+  if (tabOps && dict.opsTab) tabOps.textContent = '🏛️ ' + dict.opsTab;
   const tabWealth = document.getElementById('tab-farmwealth');
   if (tabWealth && dict.wealthTab) tabWealth.textContent = dict.wealthTab;
   const tabDash = document.getElementById('tab-dashboard');
@@ -6581,6 +6610,799 @@ ${escapeHtml(item.petitionText)}
       saveVaultData(items);
       buildGrievanceVault();
       alert(`Grievance successfully created with Docket ID: ${docket}! View or print it anytime from your Grievance Vault.`);
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       INSTITUTIONAL COOPERATIVE GOVERNANCE (SIH PU 20/20)
+       1. 3-Tier Cooperative Escalation & Jurisdictional Router
+       2. 72-Hour Calamity JIC (Joint Inspection Committee) Tracker
+       3. Tenant Farmer & Oral Lessee JLG Mutual Guarantee Generator
+       4. National PACS Cloud ERP Member Passbook & Transaction Ledger
+    ══════════════════════════════════════════════════════════════════ */
+    let currentOpsSubTab = '3tier';
+
+    function buildOpsGovernance() {
+      const g = document.getElementById('opsGrid');
+      if (!g) return;
+
+      g.innerHTML = `
+        <div style="padding:10px 0;">
+          <!-- HEADER BANNER -->
+          <div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.06));border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:18px 20px;margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:rgba(16,185,129,0.2);border-radius:20px;font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:6px;">
+                  🏛️ Ministry of Cooperation (SIH PS 26088) • Institutional Operations
+                </div>
+                <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:#f0fdf4;margin:0 0 6px 0;">
+                  PACS Operations, 3-Tier Governance & Field Protocols
+                </h2>
+                <p style="font-size:13px;color:var(--muted);margin:0;max-width:700px;line-height:1.6;">
+                  Bridging ground administrative reality: Village PACS to State Ombudsman, 72-Hr JIC physical crop damage appraisal, tenant cultivator JLG collateral-free credit, and National PACS Cloud ERP passbook.
+                </p>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:11px;color:var(--muted);">National ERP Status:</span>
+                <div style="font-size:13px;font-weight:700;color:#38bdf8;">● NABARD Cloud Synced</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-NAVIGATION TABS -->
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);">
+            <button onclick="setOpsSubTab('3tier')" id="btnOpsSub3tier" class="ops-sub-btn active" style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#16a34a,#15803d);border:none;color:#fff;display:inline-flex;align-items:center;gap:6px;">
+              <span>🏢</span> 3-Tier Escalation Map
+            </button>
+            <button onclick="setOpsSubTab('jic')" id="btnOpsSubJic" class="ops-sub-btn" style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#cbd5e1;display:inline-flex;align-items:center;gap:6px;">
+              <span>⏱️</span> 72-Hr JIC Calamity Protocol
+            </button>
+            <button onclick="setOpsSubTab('jlg')" id="btnOpsSubJlg" class="ops-sub-btn" style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#cbd5e1;display:inline-flex;align-items:center;gap:6px;">
+              <span>🤝</span> Tenant Farmer JLG Guarantee
+            </button>
+            <button onclick="setOpsSubTab('erp')" id="btnOpsSubErp" class="ops-sub-btn" style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#cbd5e1;display:inline-flex;align-items:center;gap:6px;">
+              <span>💻</span> National PACS Cloud ERP
+            </button>
+          </div>
+
+          <!-- DYNAMIC CONTENT CONTAINER -->
+          <div id="opsSubContent"></div>
+        </div>
+      `;
+
+      renderOpsSubContent();
+    }
+
+    function setOpsSubTab(tab) {
+      currentOpsSubTab = tab;
+      document.querySelectorAll('.ops-sub-btn').forEach(b => {
+        b.style.background = 'rgba(255,255,255,0.05)';
+        b.style.border = '1px solid var(--border)';
+        b.style.color = '#cbd5e1';
+      });
+      const activeBtn = document.getElementById('btnOpsSub' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      if (activeBtn) {
+        activeBtn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
+        activeBtn.style.border = 'none';
+        activeBtn.style.color = '#fff';
+      }
+      renderOpsSubContent();
+    }
+
+    function renderOpsSubContent() {
+      const c = document.getElementById('opsSubContent');
+      if (!c) return;
+
+      if (currentOpsSubTab === '3tier') {
+        c.innerHTML = get3TierHierarchyHtml();
+      } else if (currentOpsSubTab === 'jic') {
+        c.innerHTML = getJicProtocolHtml();
+        startJicTimer();
+      } else if (currentOpsSubTab === 'jlg') {
+        c.innerHTML = getJlgCertificateHtml();
+      } else if (currentOpsSubTab === 'erp') {
+        c.innerHTML = getPacsErpHtml();
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       MODULE 1: 3-TIER COOPERATIVE HIERARCHY & ESCALATION ROUTER
+    ══════════════════════════════════════════════════════════════════ */
+    function get3TierHierarchyHtml() {
+      return `
+        <div>
+          <!-- 3-TIER VISUAL STEPPER -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:20px;">
+            <!-- TIER 1 -->
+            <div style="background:rgba(15,35,18,0.85);border:1px solid rgba(74,222,128,0.3);border-radius:12px;padding:16px;position:relative;">
+              <div style="position:absolute;top:12px;right:12px;background:rgba(74,222,128,0.15);color:#4ade80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">STAGE 1</div>
+              <div style="font-size:24px;margin-bottom:6px;">🌾</div>
+              <h4 style="color:#86efac;margin:0 0 4px 0;font-size:15px;">Tier 1: Village PACS</h4>
+              <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:8px;">Primary Agricultural Credit Society</div>
+              <ul style="font-size:12px;color:var(--muted);padding-left:16px;margin:0 0 10px 0;line-height:1.6;">
+                <li><strong>Authority:</strong> PACS Secretary & Managing Committee</li>
+                <li><strong>Functions:</strong> Member enrolment, KCC application receipt, subsidized fertilizer rationing, computerized receipts.</li>
+                <li><strong>Statutory Clock:</strong> Max 7 days to forward dossier to DCCB.</li>
+              </ul>
+              <div style="font-size:11px;color:#fde047;background:rgba(250,204,21,0.1);padding:6px 10px;border-radius:6px;">
+                ⚠️ <strong>Failure Check:</strong> If denied without written reason, escalate to Tier 2 under Model Bye-Laws Sec 11.
+              </div>
+            </div>
+
+            <!-- TIER 2 -->
+            <div style="background:rgba(15,35,18,0.85);border:1px solid rgba(56,189,248,0.3);border-radius:12px;padding:16px;position:relative;">
+              <div style="position:absolute;top:12px;right:12px;background:rgba(56,189,248,0.15);color:#38bdf8;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">STAGE 2</div>
+              <div style="font-size:24px;margin-bottom:6px;">🏦</div>
+              <h4 style="color:#7dd3fc;margin:0 0 4px 0;font-size:15px;">Tier 2: District DCCB</h4>
+              <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:8px;">District Central Co-op Bank</div>
+              <ul style="font-size:12px;color:var(--muted);padding-left:16px;margin:0 0 10px 0;line-height:1.6;">
+                <li><strong>Authority:</strong> DCCB Branch Manager & District Credit Officer</li>
+                <li><strong>Functions:</strong> Credit limit sanction, Modified Interest Subvention Scheme (MISS 4%), collateral-free appraisal up to ₹1.60L.</li>
+                <li><strong>Statutory Clock:</strong> Max 14 days for sanction & DBT release.</li>
+              </ul>
+              <div style="font-size:11px;color:#38bdf8;background:rgba(56,189,248,0.1);padding:6px 10px;border-radius:6px;">
+                💡 <strong>Disaster Conversion:</strong> Automatically converts crop loan to 3-year term loan on declared calamity.
+              </div>
+            </div>
+
+            <!-- TIER 3 -->
+            <div style="background:rgba(15,35,18,0.85);border:1px solid rgba(244,63,94,0.3);border-radius:12px;padding:16px;position:relative;">
+              <div style="position:absolute;top:12px;right:12px;background:rgba(244,63,94,0.15);color:#f43f5e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">STAGE 3</div>
+              <div style="font-size:24px;margin-bottom:6px;">⚖️</div>
+              <h4 style="color:#fda4af;margin:0 0 4px 0;font-size:15px;">Tier 3: DRCS & Ombudsman</h4>
+              <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:8px;">Statutory Dispute & Ombudsman Authority</div>
+              <ul style="font-size:12px;color:var(--muted);padding-left:16px;margin:0 0 10px 0;line-height:1.6;">
+                <li><strong>Authority:</strong> Deputy Registrar of Co-op Societies & Ombudsman</li>
+                <li><strong>Functions:</strong> MSCS Act Sec 84 binding arbitration (90-day decree), Sec 85 Ombudsman 30-day resolution, Sec 106 inspection.</li>
+                <li><strong>Statutory Remedy:</strong> Surcharge on corrupt officials, interest restitution.</li>
+              </ul>
+              <div style="font-size:11px;color:#fca5a5;background:rgba(244,63,94,0.1);padding:6px 10px;border-radius:6px;">
+                ⚖️ <strong>Legal Decrees:</strong> Final enforceable civil court decree with zero initial court fees.
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE JURISDICTIONAL ROUTER -->
+          <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:18px;">
+            <h4 style="margin:0 0 6px 0;color:#86efac;font-size:15px;">🎯 Statutory Jurisdictional Escalation Router</h4>
+            <p style="font-size:12px;color:var(--muted);margin:0 0 14px 0;">Select your specific issue to identify the exact competent officer desk, statutory section, and escalation timeline:</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+              <select id="selJurisdictionIssue" onchange="updateJurisdictionRouting()" style="flex:1;min-width:280px;background:#050e06;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;padding:10px 14px;border-radius:8px;font-size:13px;">
+                <option value="loan_denial">PACS Secretary Refusing KCC Crop Loan Application</option>
+                <option value="fertilizer_mrp">Fertilizer Sold Above Statutory MRP (Overcharging on Urea/DAP)</option>
+                <option value="tenant_patta">Tenant Farmer Denied KCC Due to Lack of Land Patta (No Title)</option>
+                <option value="subvention_interest">KCC Loan Interest Charged at 9% Instead of 4% MISS Rate</option>
+                <option value="insurance_delay">Crop Calamity Survey Not Conducted within 10 Days of Intimation</option>
+              </select>
+            </div>
+            <div id="jurisdictionResultBox" style="background:rgba(15,35,18,0.9);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:16px;font-size:13px;color:#f0fdf4;line-height:1.7;">
+              <!-- Dynamic Routing Content -->
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateJurisdictionRouting() {
+      const sel = document.getElementById('selJurisdictionIssue');
+      const box = document.getElementById('jurisdictionResultBox');
+      if (!sel || !box) return;
+
+      const v = sel.value;
+      if (v === 'loan_denial') {
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="color:#facc15;">📍 Escalation Level: Tier 1 ➔ Tier 2 (DCCB) ➔ Tier 3 (DRCS)</strong>
+            <span style="font-size:11px;background:#15803d;padding:2px 8px;border-radius:10px;">Statutory 14-Day Clock</span>
+          </div>
+          <div><strong>Competent Authority to Address:</strong> District Central Co-operative Bank Branch Manager & Deputy Registrar of Cooperative Societies (DRCS).</div>
+          <div><strong>Governing Statute:</strong> Model PACS Bye-Laws Section 11 & RBI Master Directions on KCC.</div>
+          <div><strong>Ground Reality Remedy:</strong> PACS cannot reject a member cultivator's credit proposal without written endorsement. Submit Form B directly to the DCCB Branch Manager, who exercises supervisory power over the PACS Secretary under Section 81 of the State Cooperative Act.</div>
+          <div style="margin-top:10px;">
+            <button onclick="quickAsk('How to file an appeal before DRCS for illegal KCC loan denial by PACS Secretary?')" style="padding:6px 12px;background:rgba(74,222,128,0.2);border:1px solid #4ade80;color:#4ade80;border-radius:6px;font-size:11px;cursor:pointer;">
+              🤖 Ask Sahakar Vaani to Draft Formal Appeal Notice →
+            </button>
+          </div>
+        `;
+      } else if (v === 'fertilizer_mrp') {
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="color:#ef4444;">📍 Immediate Escalation: District Collector & Agriculture Inspector</strong>
+            <span style="font-size:11px;background:#b91c1c;padding:2px 8px;border-radius:10px;">Non-Bailable Offense</span>
+          </div>
+          <div><strong>Competent Authority to Address:</strong> District Agriculture Officer (Fertilizer Inspector) & District Magistrate / Collector.</div>
+          <div><strong>Governing Statute:</strong> Clause 3 & 21 Fertilizer (Control) Order 1985 read with Section 7 Essential Commodities Act 1955.</div>
+          <div><strong>Ground Reality Remedy:</strong> Selling urea above ₹266.50/bag or DAP above statutory capped MRP is a criminal violation punishable by up to 7 years imprisonment. PACS is legally mandated to reserve 60% of all fertilizer stocks strictly for small & marginal farmers. File spot complaint with computerized receipt.</div>
+          <div style="margin-top:10px;">
+            <button onclick="quickAsk('Draft a complaint under FCO 1985 Section 7 ECA to District Collector for fertilizer overcharging')" style="padding:6px 12px;background:rgba(239,68,68,0.2);border:1px solid #ef4444;color:#f87171;border-radius:6px;font-size:11px;cursor:pointer;">
+              🚨 Draft Spot Criminal Complaint Notice →
+            </button>
+          </div>
+        `;
+      } else if (v === 'tenant_patta') {
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="color:#38bdf8;">📍 Ground Protocol: Joint Liability Group (JLG) Mutual Guarantee</strong>
+            <span style="font-size:11px;background:#0284c7;padding:2px 8px;border-radius:10px;">Zero Land Mortgage</span>
+          </div>
+          <div><strong>Competent Authority to Address:</strong> PACS Managing Committee & NABARD District Development Manager (DDM).</div>
+          <div><strong>Governing Statute:</strong> Model PACS Bye-Laws Section 4(2) & NABARD JLG Guidelines (Circular 136/2007).</div>
+          <div><strong>Ground Reality Remedy:</strong> Tenant farmers and oral lessees without land patta are legally entitled to collateral-free KCC up to ₹1.60 Lakh by forming a 4-to-10 member JLG. Demanding land records from an oral lessee violates Ministry of Cooperation norms. Use our JLG Generator tool below to produce your legal declaration.</div>
+          <div style="margin-top:10px;">
+            <button onclick="setOpsSubTab('jlg')" style="padding:6px 12px;background:rgba(56,189,248,0.2);border:1px solid #38bdf8;color:#38bdf8;border-radius:6px;font-size:11px;cursor:pointer;">
+              🤝 Open Tenant JLG Mutual Guarantee Generator →
+            </button>
+          </div>
+        `;
+      } else if (v === 'subvention_interest') {
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="color:#facc15;">📍 Escalation Level: Tier 2 (DCCB) ➔ Banking Ombudsman</strong>
+            <span style="font-size:11px;background:#15803d;padding:2px 8px;border-radius:10px;">3% Subvention Claim</span>
+          </div>
+          <div><strong>Competent Authority to Address:</strong> DCCB Chief Executive Officer & RBI Banking Ombudsman.</div>
+          <div><strong>Governing Statute:</strong> RBI Modified Interest Subvention Scheme (MISS) Guidelines.</div>
+          <div><strong>Ground Reality Remedy:</strong> For timely repayment within 1 year, the farmer's net effective interest is strictly 4% (7% base - 3% prompt repayment incentive). If PACS or DCCB debits 9%, it is an unauthorized debit. The bank is liable to refund excess interest with statutory 8% compensation.</div>
+          <div style="margin-top:10px;">
+            <button onclick="quickAsk('Draft a petition to DCCB CEO for refund of unauthorized 9% interest on KCC crop loan')" style="padding:6px 12px;background:rgba(74,222,128,0.2);border:1px solid #4ade80;color:#4ade80;border-radius:6px;font-size:11px;cursor:pointer;">
+              📄 Draft Excess Interest Restitution Petition →
+            </button>
+          </div>
+        `;
+      } else if (v === 'insurance_delay') {
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="color:#f43f5e;">📍 Statutory Default: Joint Inspection Committee Breach Notice</strong>
+            <span style="font-size:11px;background:#be123c;padding:2px 8px;border-radius:10px;">Mandatory 10-Day Window</span>
+          </div>
+          <div><strong>Competent Authority to Address:</strong> District Agriculture Officer & Insurance Grievance Officer.</div>
+          <div><strong>Governing Statute:</strong> Section 14.1, PMFBY Operational Guidelines (Government of India).</div>
+          <div><strong>Ground Reality Remedy:</strong> Under Section 14, once the farmer intimates crop damage within 72 hours, the 3-member JIC (VAO, AO, Insurance Surveyor) MUST physically inspect the plot within 10 days. Failure to survey within 10 days means the farmer's claimed loss is deemed accepted.</div>
+          <div style="margin-top:10px;">
+            <button onclick="setOpsSubTab('jic')" style="padding:6px 12px;background:rgba(244,63,94,0.2);border:1px solid #f43f5e;color:#f43f5e;border-radius:6px;font-size:11px;cursor:pointer;">
+              ⏱️ Open 72-Hour JIC Field Protocol Tracker →
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       MODULE 2: 72-HOUR CALAMITY JIC FIELD VERIFICATION TRACKER
+    ══════════════════════════════════════════════════════════════════ */
+    let jicCountdownInterval = null;
+
+    function getJicProtocolHtml() {
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 16);
+
+      return `
+        <div>
+          <!-- 72-HR LIVE CLOCK BANNER -->
+          <div style="background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(185,28,28,0.08));border:1px solid rgba(239,68,68,0.35);border-radius:12px;padding:18px;margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+              <div>
+                <span style="font-size:11px;background:rgba(239,68,68,0.25);color:#fca5a5;font-weight:700;padding:3px 8px;border-radius:8px;">
+                  SECTION 14 PMFBY MANDATE
+                </span>
+                <h3 style="margin:6px 0 2px 0;color:#fee2e2;font-size:18px;">
+                  ⏱️ 72-Hour Localized Calamity Intimation Clock
+                </h3>
+                <div style="font-size:12px;color:#cbd5e1;">Hailstorm • Inundation / Flooding • Landslide • Post-Harvest Rain Damage</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:10px 18px;text-align:center;">
+                <div style="font-size:11px;color:#fca5a5;font-weight:600;">TIME REMAINING TO NOTIFY</div>
+                <div id="jicTimerDisplay" style="font-size:22px;font-weight:900;color:#f87171;font-family:monospace;margin-top:2px;">
+                  72:00:00
+                </div>
+              </div>
+            </div>
+
+            <!-- TIME PICKER & CALAMITY SELECTOR -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);">
+              <div>
+                <label style="font-size:11px;color:#fca5a5;display:block;margin-bottom:4px;">Calamity Type:</label>
+                <select id="jicCalamityType" style="width:100%;background:#050e06;border:1px solid rgba(239,68,68,0.3);color:#f0fdf4;padding:8px 10px;border-radius:6px;font-size:12px;">
+                  <option value="Inundation and Excessive Waterlogging">Inundation / Severe Waterlogging</option>
+                  <option value="Severe Hailstorm">Severe Hailstorm Damage</option>
+                  <option value="Landslide and Soil Inundation">Landslide / Field Erosion</option>
+                  <option value="Post-Harvest Rain in Cut-and-Spread">Post-Harvest Rain (Cut-and-Spread within 14 days)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11px;color:#fca5a5;display:block;margin-bottom:4px;">Disaster Occurrence Time:</label>
+                <input type="datetime-local" id="jicDisasterTime" value="${dateStr}" onchange="startJicTimer()" style="width:100%;background:#050e06;border:1px solid rgba(239,68,68,0.3);color:#f0fdf4;padding:8px 10px;border-radius:6px;font-size:12px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- THE 3-MEMBER JIC COMMITTEE CHECKLIST -->
+          <div style="background:rgba(15,35,18,0.9);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;margin-bottom:18px;">
+            <h4 style="margin:0 0 6px 0;color:#86efac;font-size:15px;">👥 Mandatory 3-Member Joint Inspection Committee (JIC)</h4>
+            <p style="font-size:12px;color:var(--muted);margin:0 0 14px 0;">Under PMFBY Section 14.1, a physical plot survey MUST be conducted jointly by these 3 designated officers within 10 days of your intimation:</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:18px;">📜</span>
+                  <strong style="font-size:13px;color:#f0fdf4;">1. Revenue Official (VAO / Patwari)</strong>
+                </div>
+                <div style="font-size:12px;color:var(--muted);">Verifies land survey plot number, revenue patta / tenant status, and boundary demarcation.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:18px;">🌾</span>
+                  <strong style="font-size:13px;color:#f0fdf4;">2. Agriculture Officer (AO / ADH)</strong>
+                </div>
+                <div style="font-size:12px;color:var(--muted);">Appraises vegetative damage percentage; certifies if loss exceeds statutory 33% threshold.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:18px;">📸</span>
+                  <strong style="font-size:13px;color:#f0fdf4;">3. Insurance Surveyor</strong>
+                </div>
+                <div style="font-size:12px;color:var(--muted);">Uploads geo-tagged timestamped photographs directly to the National Crop Insurance Portal (NCIP).</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GENERATE OFFICIAL JIC MEMO BUTTON -->
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:14px 18px;">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#f0fdf4;">Official JIC Physical Inspection Request Memo</div>
+              <div style="font-size:11px;color:var(--muted);">Generates formal intimation document citing PMFBY Section 14 with 10-day survey deadline.</div>
+            </div>
+            <button onclick="generateJicInspectionMemo()" style="padding:10px 18px;background:linear-gradient(135deg,#dc2626,#b91c1c);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(220,38,38,0.35);">
+              <span>📄</span> Generate & Print JIC Inspection Memo
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function startJicTimer() {
+      if (jicCountdownInterval) clearInterval(jicCountdownInterval);
+      const picker = document.getElementById('jicDisasterTime');
+      const disp = document.getElementById('jicTimerDisplay');
+      if (!picker || !disp) return;
+
+      const disasterTime = new Date(picker.value).getTime();
+      const deadline = disasterTime + (72 * 60 * 60 * 1000);
+
+      function updateClock() {
+        const now = new Date().getTime();
+        const diff = deadline - now;
+        if (diff <= 0) {
+          disp.textContent = "EXPIRED (72h Exceeded)";
+          disp.style.color = "#ef4444";
+          return;
+        }
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        disp.textContent = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      updateClock();
+      jicCountdownInterval = setInterval(updateClock, 1000);
+    }
+
+    function generateJicInspectionMemo() {
+      const type = document.getElementById('jicCalamityType')?.value || 'Localized Inundation';
+      const timeStr = document.getElementById('jicDisasterTime')?.value || new Date().toLocaleString();
+      const docket = 'JIC-' + Date.now().toString().slice(-6);
+
+      const memoText = `FORMAL REQUISITION FOR PHYSICAL PLOT SURVEY UNDER PMFBY SECTION 14
+(72-HOUR LOCALIZED CALAMITY INT Custodian PROTOCOL)
+Ref No: ${docket}
+Date of Intimation: ${new Date().toLocaleDateString()}
+
+TO:
+1. The District Agriculture Officer / Member Secretary (DLMC-PMFBY)
+2. The Village Administrative Officer (VAO / Patwari), ${profile.village || 'Local Village'}, ${profile.state || 'Tamil Nadu'}
+3. The District Nodal Officer, Empaneled General Insurance Company
+
+SUBJECT: Mandatory Constitution of 3-Member Joint Inspection Committee (JIC) for Physical Plot Survey of Crop Loss within 10 Days under PMFBY Operational Guidelines Section 14.1.
+
+Sir / Madam,
+
+I, ${profile.name || 'Cooperative Cultivator'}, a member of Primary Agricultural Credit Society (PACS), hereby formally intimate localized crop loss caused by natural calamity on my cultivated holding:
+
+1. FARMER & LAND HOLDING PARTICULARS:
+   - Farmer Name: ${profile.name || 'Member Farmer'}
+   - Contact / Phone: ${profile.phone || '+91 9876543210'}
+   - State & Village: ${profile.state || 'Tamil Nadu'}, ${profile.village || 'Village Central'}
+   - Primary Crop Sown: ${profile.crop || 'Paddy / Sugarcane'}
+   - Land Extent: ${profile.acres || '3.5'} Acres (Irrigation: ${profile.irrigation || 'Canal/Well'})
+   - KCC / Insurance Policy No: KCC-PMFBY-${profile.phone ? profile.phone.slice(-6) : '482019'}
+
+2. PARTICULARS OF LOCALIZED DISASTER:
+   - Nature of Calamity: ${type}
+   - Date & Time of Occurrence: ${timeStr}
+   - Estimated Crop Loss: In excess of 50% (Exceeding the statutory 33% threshold)
+   - Crop Condition: Standing crop submerged / lodging / post-harvest loss in cut-and-spread condition.
+
+3. STATUTORY NOTICE & 10-DAY MANDATORY TIMELINE:
+   - As per Clause 14.1 of the Operational Guidelines for Pradhan Mantri Fasal Bima Yojana (PMFBY), issued by the Ministry of Agriculture & Farmers Welfare, this intimation is submitted within 72 hours of the occurrence.
+   - The designated 3-Member Joint Inspection Committee (VAO, AO, and Insurance Surveyor) is statutorily required to physically survey my plot and upload GPS-tagged photographs to the National Crop Insurance Portal (NCIP) within 10 DAYS of this intimation.
+   - Failure to conduct the joint survey within the stipulated 10-day window legally deems the claimed crop loss as uncontested and verified.
+   - Under Clause 14.3, compensation shall be credited directly via DBT without any unauthorized loan adjustment or lien deduction by the bank/PACS.
+
+Yours faithfully,
+
+_____________________________
+Signature / Thumb Impression of Farmer
+(${profile.name || 'Member Farmer'})
+Copy with Acknowledgement retained for District Consumer Disputes Redressal Commission / DRCS records.`;
+
+      let modal = document.getElementById('petitionPrintModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'petitionPrintModal';
+        modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);`;
+        document.body.appendChild(modal);
+      }
+
+      modal.innerHTML = `
+        <div style="background:#0b1d0e;border:1px solid rgba(239,68,68,0.4);border-radius:16px;max-width:720px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div>
+              <h3 style="margin:0;font-size:16px;color:#fca5a5;">⏱️ Official JIC Physical Survey Requisition Memo</h3>
+              <small style="color:#fde047;font-family:monospace;">PMFBY Sec 14 • Docket: ${docket}</small>
+            </div>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="background:transparent;border:none;color:#cbd5e1;font-size:20px;cursor:pointer;">✕</button>
+          </div>
+          <div style="padding:20px;overflow-y:auto;font-family:'Courier New',Courier,monospace;font-size:12px;color:#f0fdf4;line-height:1.7;white-space:pre-wrap;background:#050e06;border-radius:8px;margin:16px;">
+${escapeHtml(memoText)}
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid rgba(255,255,255,0.1);">
+            <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#dc2626,#b91c1c);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">
+              🖨️ Print / Save as PDF
+            </button>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;font-size:12px;color:#cbd5e1;cursor:pointer;">
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       MODULE 3: TENANT FARMER & ORAL LESSEE JLG GUARANTEE GENERATOR
+    ══════════════════════════════════════════════════════════════════ */
+    function getJlgCertificateHtml() {
+      return `
+        <div>
+          <!-- LEGAL MANDATE INTRO -->
+          <div style="background:linear-gradient(135deg,rgba(56,189,248,0.12),rgba(14,165,233,0.05));border:1px solid rgba(56,189,248,0.3);border-radius:12px;padding:18px;margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+              <div>
+                <span style="font-size:11px;background:rgba(56,189,248,0.25);color:#7dd3fc;font-weight:700;padding:3px 8px;border-radius:8px;">
+                  MODEL PACS BYE-LAWS SEC 4(2) & NABARD
+                </span>
+                <h3 style="margin:6px 0 2px 0;color:#f0fdf4;font-size:18px;">
+                  🤝 Tenant & Oral Lessee Joint Liability Group (JLG) Certificate
+                </h3>
+                <div style="font-size:12px;color:var(--muted);">
+                  Enables 100% Collateral-Free KCC Loans (up to ₹1.60 Lakh) for cultivators without Land Patta (Title Deed).
+                </div>
+              </div>
+              <div style="font-size:11px;color:#86efac;background:rgba(34,197,94,0.15);padding:6px 12px;border-radius:8px;font-weight:700;">
+                ✓ Effective 4% Net Annual Interest
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE JLG FORM -->
+          <div style="background:rgba(15,35,18,0.9);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:18px;margin-bottom:18px;">
+            <h4 style="margin:0 0 12px 0;color:#86efac;font-size:15px;">📝 Joint Liability Group Resolution Generator</h4>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px;">
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">JLG Group Name:</label>
+                <input type="text" id="jlgName" value="Kisan Samriddhi JLG Group 1" style="width:100%;background:#050e06;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;padding:8px 12px;border-radius:6px;font-size:12px;">
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Village / Gram Panchayat:</label>
+                <input type="text" id="jlgVillage" value="${profile.village || 'Village Central'}" style="width:100%;background:#050e06;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;padding:8px 12px;border-radius:6px;font-size:12px;">
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Cultivated Leased Crop:</label>
+                <input type="text" id="jlgCrop" value="${profile.crop || 'Paddy / Vegetables'}" style="width:100%;background:#050e06;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;padding:8px 12px;border-radius:6px;font-size:12px;">
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Landlord Name (Oral Lease):</label>
+                <input type="text" id="jlgLandlord" value="Shri R. Sundaram (Oral Lease)" style="width:100%;background:#050e06;border:1px solid rgba(74,222,128,0.3);color:#f0fdf4;padding:8px 12px;border-radius:6px;font-size:12px;">
+              </div>
+            </div>
+
+            <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">JLG Cultivator Peer Members (Joint & Several Liability Undertaking):</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:14px;">
+              <input type="text" id="jlgMem1" value="1. ${profile.name || 'Member 1'} (${profile.acres || '3.5'} Acres)" style="background:#050e06;border:1px solid rgba(255,255,255,0.1);color:#f0fdf4;padding:6px 10px;border-radius:6px;font-size:11px;">
+              <input type="text" id="jlgMem2" value="2. Muthuvel K. (2.0 Acres)" style="background:#050e06;border:1px solid rgba(255,255,255,0.1);color:#f0fdf4;padding:6px 10px;border-radius:6px;font-size:11px;">
+              <input type="text" id="jlgMem3" value="3. Selvam P. (2.5 Acres)" style="background:#050e06;border:1px solid rgba(255,255,255,0.1);color:#f0fdf4;padding:6px 10px;border-radius:6px;font-size:11px;">
+              <input type="text" id="jlgMem4" value="4. Arumugam S. (3.0 Acres)" style="background:#050e06;border:1px solid rgba(255,255,255,0.1);color:#f0fdf4;padding:6px 10px;border-radius:6px;font-size:11px;">
+            </div>
+
+            <div style="text-align:right;">
+              <button onclick="generateJlgCertificate()" style="padding:10px 20px;background:linear-gradient(135deg,#0284c7,#0369a1);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+                <span>📜</span> Generate Official JLG Resolution & Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function generateJlgCertificate() {
+      const jlgName = document.getElementById('jlgName')?.value || 'Kisan Samriddhi JLG';
+      const village = document.getElementById('jlgVillage')?.value || 'Village Central';
+      const crop = document.getElementById('jlgCrop')?.value || 'Paddy';
+      const landlord = document.getElementById('jlgLandlord')?.value || 'Local Landowner';
+      const m1 = document.getElementById('jlgMem1')?.value || '1. Farmer 1';
+      const m2 = document.getElementById('jlgMem2')?.value || '2. Farmer 2';
+      const m3 = document.getElementById('jlgMem3')?.value || '3. Farmer 3';
+      const m4 = document.getElementById('jlgMem4')?.value || '4. Farmer 4';
+      const regNo = 'JLG-NABARD-' + Date.now().toString().slice(-6);
+
+      const certText = `FORMAL RESOLUTION OF THE JOINT LIABILITY GROUP (JLG)
+FOR COLLATERAL-FREE CROP CREDIT UNDER MODEL PACS BYE-LAWS SECTION 4(2) & NABARD GUIDELINES
+Resolution Ref: ${regNo}
+Gram Panchayat / Village: ${village}
+Date of Group Constitution: ${new Date().toLocaleDateString()}
+
+TO:
+The President / Secretary,
+Primary Agricultural Credit Society (PACS), ${village}
+District Central Cooperative Bank (DCCB) Branch Jurisdiction.
+
+SUBJECT: Application for Collateral-Free Kisan Credit Card (KCC) Limit up to ₹1,60,000/- per member on Mutual Guarantee Basis for Tenant Cultivators / Oral Lessees.
+
+1. CONSTITUTION OF JOINT LIABILITY GROUP (JLG):
+We, the undersigned actual cultivating tenant farmers and oral lessees of Village ${village}, having formed the Joint Liability Group named "${jlgName}", hereby resolve and declare that:
+   a) We are active cultivators of land under oral lease / sharecropping agreements with landowner(s) [${landlord}].
+   b) In accordance with Model PACS Bye-Laws Section 4(2) promulgated by the Ministry of Cooperation, lack of registered land ownership (patta) shall NOT disqualify an oral lessee or tenant cultivator from cooperative credit.
+   c) Under NABARD Circular 136/2007, crop loans up to ₹1,60,000/- per cultivator are 100% COLLATERAL-FREE with zero land mortgage requirement.
+
+2. JOINT & SEVERAL LIABILITY UNDERTAKING:
+We mutually guarantee the due repayment of KCC crop loan principal and subvention interest (effective 4% per annum under RBI MISS Scheme) disbursed to any member of "${jlgName}". In the event of default by any individual member, the remaining members shall be jointly and severally liable to discharge the debt.
+
+3. DETAILS OF CULTIVATING MEMBERS & CROPPING PLAN:
+   - Member 1: ${m1} | Crop: ${crop}
+   - Member 2: ${m2} | Crop: ${crop}
+   - Member 3: ${m3} | Crop: ${crop}
+   - Member 4: ${m4} | Crop: ${crop}
+
+4. MANDATORY REQUISITIONS TO PACS:
+   - The PACS Secretary is requested to enroll all members as Class 'A' or nominal members with voting and credit rights as per Section 11 of the Bye-Laws.
+   - Crop loan proceeds shall be disbursed directly into the individual bank accounts of members via DBT without intermediary deduction.
+
+SIGNATURES OF JLG CONSTITUENTS:
+
+1. ___________________ (Member 1)    2. ___________________ (Member 2)
+3. ___________________ (Member 3)    4. ___________________ (Member 4)
+
+PACS SECRETARY ENDORSEMENT & SANCTION:
+Received and entered into the National PACS ERP Ledger on __________________.
+Forwarded to DCCB Branch Manager with recommendation for KCC limit sanction.
+
+[OFFICIAL SEAL & QR VERIFICATION CHECKSUM: ${regNo}]`;
+
+      let modal = document.getElementById('petitionPrintModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'petitionPrintModal';
+        modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);`;
+        document.body.appendChild(modal);
+      }
+
+      modal.innerHTML = `
+        <div style="background:#0b1d0e;border:1px solid rgba(56,189,248,0.4);border-radius:16px;max-width:720px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div>
+              <h3 style="margin:0;font-size:16px;color:#7dd3fc;">🤝 Statutory JLG Mutual Guarantee Resolution</h3>
+              <small style="color:#86efac;font-family:monospace;">NABARD & Model PACS Bye-Laws • ${regNo}</small>
+            </div>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="background:transparent;border:none;color:#cbd5e1;font-size:20px;cursor:pointer;">✕</button>
+          </div>
+          <div style="padding:20px;overflow-y:auto;font-family:'Courier New',Courier,monospace;font-size:12px;color:#f0fdf4;line-height:1.7;white-space:pre-wrap;background:#050e06;border-radius:8px;margin:16px;">
+${escapeHtml(certText)}
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid rgba(255,255,255,0.1);">
+            <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#0284c7,#0369a1);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">
+              🖨️ Print / Save as PDF
+            </button>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;font-size:12px;color:#cbd5e1;cursor:pointer;">
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       MODULE 4: NATIONAL PACS CLOUD ERP MEMBER PASSBOOK & AUDIT LEDGER
+    ══════════════════════════════════════════════════════════════════ */
+    function getPacsErpHtml() {
+      const stateCode = '33'; // Tamil Nadu (or state-based)
+      const distCode = '014';
+      const pacsCode = '0482';
+      const memCode = profile.phone ? profile.phone.slice(-5) : '01948';
+      const nationalId = `${stateCode}-${distCode}-${pacsCode}-${memCode}`;
+
+      return `
+        <div>
+          <!-- NATIONAL ERP MEMBER ID BADGE -->
+          <div style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.08));border:1px solid rgba(74,222,128,0.35);border-radius:12px;padding:18px;margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+              <div>
+                <span style="font-size:10px;background:rgba(74,222,128,0.25);color:#86efac;font-weight:700;padding:2px 8px;border-radius:6px;">
+                  MINISTRY OF COOPERATION • NATIONAL CLOUD ERP (NABARD)
+                </span>
+                <h3 style="margin:6px 0 2px 0;color:#f0fdf4;font-size:18px;">
+                  💻 National PACS Computerized Member Passbook
+                </h3>
+                <div style="font-size:12px;color:var(--muted);">Standardized 14-Digit Identity & Computerized Audit Trail</div>
+              </div>
+              <div style="background:#050e06;border:1px solid rgba(74,222,128,0.3);border-radius:8px;padding:8px 14px;text-align:right;">
+                <div style="font-size:10px;color:var(--muted);">NATIONAL MEMBER ID:</div>
+                <div style="font-family:monospace;font-size:16px;font-weight:800;color:#4ade80;">${nationalId}</div>
+              </div>
+            </div>
+
+            <!-- STATUTORY 1:10 SHARE CAPITAL GAUGE -->
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-size:12px;color:#cbd5e1;">Statutory Share Capital to Loan Ratio (1:10 Mandate):</span>
+                <span style="font-size:13px;font-weight:700;color:#facc15;">₹15,000 Shares ➔ ₹1,50,000 Max Loan Entitlement</span>
+              </div>
+              <div style="height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+                <div style="width:75%;height:100%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;">
+                <span>Current Share Capital: ₹15,000 (150 Shares @ ₹100)</span>
+                <span>Annual Dividend Rate: 9.0% (Model Bye-Laws Sec 9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPUTERIZED AUDIT LEDGER TABLE -->
+          <div style="background:rgba(15,35,18,0.9);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h4 style="margin:0;color:#86efac;font-size:15px;">📜 Computerized Transaction Ledger (Live NABARD ERP Node)</h4>
+              <button onclick="downloadErpReceipt()" style="padding:6px 12px;background:rgba(74,222,128,0.15);border:1px solid #4ade80;color:#4ade80;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700;">
+                🖨️ Print Verified Receipt
+              </button>
+            </div>
+
+            <div style="overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;color:#f0fdf4;">
+                <thead>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.1);text-align:left;color:var(--muted);">
+                    <th style="padding:8px 6px;">Txn ID</th>
+                    <th style="padding:8px 6px;">Date</th>
+                    <th style="padding:8px 6px;">Particulars</th>
+                    <th style="padding:8px 6px;">Category</th>
+                    <th style="padding:8px 6px;">Amount</th>
+                    <th style="padding:8px 6px;">ERP Audit Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:10px 6px;font-family:monospace;color:#38bdf8;">TXN-84920</td>
+                    <td style="padding:10px 6px;">12 Sep 2026</td>
+                    <td style="padding:10px 6px;">KCC Kharif Crop Loan Disbursement (MISS 4%)</td>
+                    <td style="padding:10px 6px;"><span style="background:rgba(34,197,94,0.15);color:#4ade80;padding:2px 6px;border-radius:4px;font-size:10px;">Credit Disbursal</span></td>
+                    <td style="padding:10px 6px;font-weight:700;color:#4ade80;">+ ₹1,20,000</td>
+                    <td style="padding:10px 6px;color:#86efac;">✓ Verified via DBT</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:10px 6px;font-family:monospace;color:#38bdf8;">TXN-84901</td>
+                    <td style="padding:10px 6px;">04 Sep 2026</td>
+                    <td style="padding:10px 6px;">Neem Coated Urea (2 Bags @ Statutory ₹266.50)</td>
+                    <td style="padding:10px 6px;"><span style="background:rgba(56,189,248,0.15);color:#38bdf8;padding:2px 6px;border-radius:4px;font-size:10px;">Fertilizer Quota</span></td>
+                    <td style="padding:10px 6px;color:#f87171;">- ₹533.00</td>
+                    <td style="padding:10px 6px;color:#86efac;">✓ POS Barcoded</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:10px 6px;font-family:monospace;color:#38bdf8;">TXN-83144</td>
+                    <td style="padding:10px 6px;">18 Aug 2026</td>
+                    <td style="padding:10px 6px;">Prompt Repayment Incentive (3% Interest Credit)</td>
+                    <td style="padding:10px 6px;"><span style="background:rgba(250,204,21,0.15);color:#facc15;padding:2px 6px;border-radius:4px;font-size:10px;">Govt Subvention</span></td>
+                    <td style="padding:10px 6px;font-weight:700;color:#4ade80;">+ ₹3,600</td>
+                    <td style="padding:10px 6px;color:#86efac;">✓ RBI Subvention Node</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 6px;font-family:monospace;color:#38bdf8;">TXN-82098</td>
+                    <td style="padding:10px 6px;">10 Jul 2026</td>
+                    <td style="padding:10px 6px;">Annual PACS Society Dividend (9% on ₹15,000)</td>
+                    <td style="padding:10px 6px;"><span style="background:rgba(168,85,247,0.15);color:#c084fc;padding:2px 6px;border-radius:4px;font-size:10px;">Share Dividend</span></td>
+                    <td style="padding:10px 6px;font-weight:700;color:#4ade80;">+ ₹1,350</td>
+                    <td style="padding:10px 6px;color:#86efac;">✓ Audited by DRCS</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadErpReceipt() {
+      const stateCode = '33';
+      const distCode = '014';
+      const pacsCode = '0482';
+      const memCode = profile.phone ? profile.phone.slice(-5) : '01948';
+      const nationalId = `${stateCode}-${distCode}-${pacsCode}-${memCode}`;
+      const receiptNo = 'ERP-REC-' + Date.now().toString().slice(-6);
+
+      const receiptText = `NATIONAL PACS COMPUTERIZATION ERP SYSTEM
+MINISTRY OF COOPERATION • GOVERNMENT OF INDIA
+(CLOUD HOSTED BY NABARD DATA CENTER)
+--------------------------------------------------------------------------------
+OFFICIAL COMPUTERIZED TRANSACTION AUDIT RECEIPT
+Receipt Number : ${receiptNo}
+Transaction ID : TXN-84920
+Date & Time    : ${new Date().toLocaleString()}
+National Mem ID: ${nationalId}
+Society Code   : PACS-${pacsCode} (${profile.village || 'Village Central'} PACS)
+DCCB Branch    : District Central Co-op Bank Branch #014
+--------------------------------------------------------------------------------
+MEMBER / BENEFICIARY PARTICULARS:
+Farmer Name    : ${profile.name || 'Member Farmer'}
+Land Extent    : ${profile.acres || '3.5'} Acres
+Crop Category  : ${profile.crop || 'Paddy / Sugarcane'}
+Share Holding  : ₹15,000 (150 Shares @ ₹100 each)
+Borrowing Power: ₹1,50,000 (1:10 Statutory Ratio)
+--------------------------------------------------------------------------------
+TRANSACTION PARTICULARS:
+Item Description                 Amount (INR)       Statutory Reference
+--------------------------------------------------------------------------------
+KCC Crop Loan Disbursal          ₹1,20,000.00       RBI MISS 4% Net Rate
+Govt Prompt Repayment Subsidy     (Eligible 3%)     RBI Circular 2022/194
+Statutory Insurance Deductions   - ₹1,800.00        PMFBY Operational Sec 14
+Net Disbursed via Direct DBT     ₹1,18,200.00       To A/c ending ...${profile.phone ? profile.phone.slice(-4) : '2048'}
+--------------------------------------------------------------------------------
+DIGITAL CHECKSUM & AUDIT CONFIRMATION:
+SHA-256 Hash: 9e4f2018b3a778c894ef7120a4b92c10
+National Cloud Sync: SUCCESS (Synchronized with State Cooperative Audit Server)
+
+This is a computerized legal receipt generated under National PACS Computerization
+Rules 2023. No physical signature required.
+--------------------------------------------------------------------------------`;
+
+      let modal = document.getElementById('petitionPrintModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'petitionPrintModal';
+        modal.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);`;
+        document.body.appendChild(modal);
+      }
+
+      modal.innerHTML = `
+        <div style="background:#0b1d0e;border:1px solid rgba(74,222,128,0.4);border-radius:16px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div>
+              <h3 style="margin:0;font-size:16px;color:#86efac;">💻 National PACS ERP Computerized Receipt</h3>
+              <small style="color:#38bdf8;font-family:monospace;">${receiptNo}</small>
+            </div>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="background:transparent;border:none;color:#cbd5e1;font-size:20px;cursor:pointer;">✕</button>
+          </div>
+          <div style="padding:20px;overflow-y:auto;font-family:'Courier New',Courier,monospace;font-size:12px;color:#f0fdf4;line-height:1.7;white-space:pre-wrap;background:#050e06;border-radius:8px;margin:16px;">
+${escapeHtml(receiptText)}
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid rgba(255,255,255,0.1);">
+            <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#16a34a,#15803d);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">
+              🖨️ Print Receipt
+            </button>
+            <button onclick="document.getElementById('petitionPrintModal').style.display='none'" style="padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;font-size:12px;color:#cbd5e1;cursor:pointer;">
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
     }
 
     /* ════════════════════════════════════
