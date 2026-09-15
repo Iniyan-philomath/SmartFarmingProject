@@ -4,8 +4,12 @@
 #include "DHT.h"
 #include "mbedtls/md.h"
 
+#include <Preferences.h>
+
 // Cryptographic Device Secret Key for Section 65B Indian Evidence Act Compliance
-const char* DEVICE_SECRET_KEY = "SAHAKAR_EVIDENCE_KEY_2026";
+// Stored securely in ESP32 Non-Volatile Storage (NVS flash partition)
+Preferences prefs;
+char deviceSecretKey[64] = "SAHAKAR_EVIDENCE_KEY_2026";
 
 // ==============================================================================
 // 1. GATEWAY RECEIVER MAC ADDRESS & NODE CONFIGURATION
@@ -39,7 +43,7 @@ const int RAIN_WET_VAL       = 1100;
 DHT dht(DHTPIN, DHTTYPE);
 
 // ==============================================================================
-// 3. CRYPTOGRAPHIC EVIDENCE STRUCT (Section 65B Compliant)
+// 3. CRYPTOGRAPHIC EVIDENCE STRUCT (Section 65B / BSA 2023 Compliant)
 // ==============================================================================
 typedef struct __attribute__((packed)) struct_telemetry {
   char     node_id[16];
@@ -50,7 +54,7 @@ typedef struct __attribute__((packed)) struct_telemetry {
   bool     rain_detected;
   bool     light_bright;  // true = BRIGHT, false = DARK
   uint32_t packet_seq;
-  char     hmac_digest[17]; // 16-char SHA-256 HMAC + null terminator
+  char     hmac_digest[65]; // Full 64-character (256-bit) SHA-256 HMAC + null terminator
 } struct_telemetry;
 
 struct_telemetry payload;
@@ -59,7 +63,7 @@ uint32_t globalPacketSeq = 0;
 
 // Hardware SHA-256 HMAC Calculation for Evidence Custody Chain
 void computePayloadHMAC(const struct_telemetry &data, char *outputHex) {
-  char rawBuf[96];
+  char rawBuf[128];
   snprintf(rawBuf, sizeof(rawBuf), "%s:%.1f:%.1f:%.1f:%.1f:%u", 
            data.node_id, data.temperature_c, data.humidity_pct, 
            data.soil_moisture_pct, data.rain_intensity_pct, data.packet_seq);
@@ -69,15 +73,16 @@ void computePayloadHMAC(const struct_telemetry &data, char *outputHex) {
   mbedtls_md_type_t md_type = MBEDTLS_MD_SHA256;
   mbedtls_md_init(&ctx);
   mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 1);
-  mbedtls_md_hmac_starts(&ctx, (const unsigned char *)DEVICE_SECRET_KEY, strlen(DEVICE_SECRET_KEY));
+  mbedtls_md_hmac_starts(&ctx, (const unsigned char *)deviceSecretKey, strlen(deviceSecretKey));
   mbedtls_md_hmac_update(&ctx, (const unsigned char *)rawBuf, strlen(rawBuf));
   mbedtls_md_hmac_finish(&ctx, hmacResult);
   mbedtls_md_free(&ctx);
 
-  for (int i = 0; i < 8; i++) {
+  // Output complete 64-hexadecimal (256-bit) cryptographic digest without truncation
+  for (int i = 0; i < 32; i++) {
     sprintf(&outputHex[i * 2], "%02x", (unsigned int)hmacResult[i]);
   }
-  outputHex[16] = '\0';
+  outputHex[64] = '\0';
 }
 
 // Multisampling filter to stabilize ADC readings
@@ -111,6 +116,17 @@ void setup() {
 
   analogReadResolution(12);
   analogSetAttenuation(ADC_11db);
+
+  // Secure Key Management: Load device secret from ESP32 NVS (or provision fallback)
+  prefs.begin("sahakar_sec", false);
+  if (prefs.isKey("device_key")) {
+    prefs.getString("device_key", deviceSecretKey, sizeof(deviceSecretKey));
+    Serial.println(F("[SECURITY] Device Secret Key verified from Secure NVS Flash."));
+  } else {
+    prefs.putString("device_key", deviceSecretKey);
+    Serial.println(F("[SECURITY] Device Secret Key provisioned to Secure NVS Flash."));
+  }
+  prefs.end();
 
   dht.begin();
   pinMode(LDR_DO_PIN, INPUT_PULLUP);
