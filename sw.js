@@ -1,5 +1,5 @@
-// Sahakar Vaani — Multilingual Cooperative Governance & Legal PWA (v3)
-const CACHE_NAME = 'sahakar-vaani-v3';
+// Sahakar Vaani — Multilingual Cooperative Governance & Legal PWA (v4)
+const CACHE_NAME = 'sahakar-vaani-v4';
 const CORE_ASSETS = [
   '/',
   '/index.html',
