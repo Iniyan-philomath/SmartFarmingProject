@@ -17,23 +17,57 @@ const char* WIFI_PASS         = "YOUR_WIFI_PASSWORD";
 // Deployed Google Apps Script Web App URL
 const char* GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7ng0kSCqnPxMz5nAjIZ9T-X_hwzSTJ72KnuyftgqQgYEV-KkAxjjZcKrN9a82ogUONw/exec";
 
+#include "mbedtls/md.h"
+
+// Cryptographic Device Secret Key matching Senders (Section 65B Indian Evidence Act)
+const char* DEVICE_SECRET_KEY = "SAHAKAR_EVIDENCE_KEY_2026";
+
 #define STATUS_LED 2
 
 // ==============================================================================
-// 2. EXACT 34-BYTE TELEMETRY STRUCT (Matches Senders byte-for-byte)
+// 2. CRYPTOGRAPHIC EVIDENCE STRUCT (Matches Sender byte-for-byte)
 // ==============================================================================
 typedef struct __attribute__((packed)) struct_telemetry {
-  char  node_id[16];
-  float temperature_c;
-  float humidity_pct;
-  float soil_moisture_pct;
-  float rain_intensity_pct;
-  bool  rain_detected;
-  bool  light_bright;  // true = BRIGHT, false = DARK
+  char     node_id[16];
+  float    temperature_c;
+  float    humidity_pct;
+  float    soil_moisture_pct;
+  float    rain_intensity_pct;
+  bool     rain_detected;
+  bool     light_bright;  // true = BRIGHT, false = DARK
+  uint32_t packet_seq;
+  char     hmac_digest[17]; // 16-char SHA-256 HMAC + null terminator
 } struct_telemetry;
 
 struct_telemetry rxPayload;
 volatile bool newDataAvailable = false;
+volatile bool lastPacketVerified = false;
+
+// Verify Cryptographic SHA-256 HMAC Signature on Received Telemetry
+bool verifyPayloadHMAC(const struct_telemetry &data) {
+  char rawBuf[96];
+  snprintf(rawBuf, sizeof(rawBuf), "%s:%.1f:%.1f:%.1f:%.1f:%u", 
+           data.node_id, data.temperature_c, data.humidity_pct, 
+           data.soil_moisture_pct, data.rain_intensity_pct, data.packet_seq);
+
+  byte hmacResult[32];
+  mbedtls_md_context_t ctx;
+  mbedtls_md_type_t md_type = MBEDTLS_MD_SHA256;
+  mbedtls_md_init(&ctx);
+  mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 1);
+  mbedtls_md_hmac_starts(&ctx, (const unsigned char *)DEVICE_SECRET_KEY, strlen(DEVICE_SECRET_KEY));
+  mbedtls_md_hmac_update(&ctx, (const unsigned char *)rawBuf, strlen(rawBuf));
+  mbedtls_md_hmac_finish(&ctx, hmacResult);
+  mbedtls_md_free(&ctx);
+
+  char computedHex[17];
+  for (int i = 0; i < 8; i++) {
+    sprintf(&computedHex[i * 2], "%02x", (unsigned int)hmacResult[i]);
+  }
+  computedHex[16] = '\0';
+
+  return (strncmp(computedHex, data.hmac_digest, 16) == 0);
+}
 
 // ==============================================================================
 // 3. DIRECT CLOUD UPLOADER (HTTPS POST with HTTP 302 Strict Redirect Follow)
@@ -118,6 +152,10 @@ void setup() {
   if (ENABLE_DIRECT_WIFI_SHEET_LOGGING && strlen(WIFI_SSID) > 0) {
     Serial.printf("[GATEWAY] Connecting to Wi-Fi SSID: %s...\n", WIFI_SSID);
     WiFi.begin(WIFI_SSID, WIFI_PASS);
+    
+    // Synchronize Official IST Network Time (GMT + 5:30 = 19800s) for Section 65B Evidence Act Timestamping
+    configTime(19800, 0, "pool.ntp.org", "time.nist.gov");
+    Serial.println(F("[NTP] Synchronizing IST Network Time for Legal Custody Chain..."));
   }
 
   if (esp_now_init() != ESP_OK) {
@@ -130,6 +168,7 @@ void setup() {
   Serial.println(F("=================================================="));
   Serial.println(F(" SMART AGRI-IOT GATEWAY RECEIVER ONLINE"));
   Serial.printf (" Receiver Station MAC: %s\n", WiFi.macAddress().c_str());
+  Serial.println(F(" [SECURITY] Hardware SHA-256 HMAC Verification Active"));
   Serial.println(F("=================================================="));
 }
 
@@ -141,14 +180,19 @@ void loop() {
     newDataAvailable = false;
     digitalWrite(STATUS_LED, LOW);
 
+    // 1. Verify Cryptographic Telemetry Integrity (Section 65B Indian Evidence Act)
+    bool isHMACValid = verifyPayloadHMAC(rxPayload);
+
     // Dynamic Agricultural Risk Assessment
     const char* floodRisk = (rxPayload.rain_intensity_pct > 50.0 && rxPayload.soil_moisture_pct > 70.0) ? "HIGH" : "NO";
     const char* droughtRisk = (rxPayload.soil_moisture_pct < 20.0 && rxPayload.temperature_c > 32.0) ? "HIGH" : "NO";
     const char* lightStr = rxPayload.light_bright ? "BRIGHT" : "DARK";
 
-    // 1. Output machine-readable serial string
-    Serial.printf("SENSOR_DATA:%s,%.2f,%.2f,%.2f,%.2f,%d,%s,%s,%s\n",
+    // 2. Output Section 65B Certified Forensic Stream
+    Serial.printf("SEC65B_EVIDENCE:%s,%s,%s,%.2f,%.2f,%.2f,%.2f,%d,%s,%s,%s\n",
                   rxPayload.node_id,
+                  rxPayload.hmac_digest,
+                  isHMACValid ? "VERIFIED_VALID" : "SIGNATURE_MISMATCH",
                   rxPayload.temperature_c,
                   rxPayload.humidity_pct,
                   rxPayload.soil_moisture_pct,
@@ -158,8 +202,8 @@ void loop() {
                   floodRisk,
                   droughtRisk);
 
-    // 2. Direct Cloud Wi-Fi Upload to Google Sheets (Standalone - no laptop required)
-    if (ENABLE_DIRECT_WIFI_SHEET_LOGGING && WiFi.status() == WL_CONNECTED) {
+    // 3. Direct Cloud Wi-Fi Upload to Google Sheets (Only verified packets)
+    if (ENABLE_DIRECT_WIFI_SHEET_LOGGING && WiFi.status() == WL_CONNECTED && isHMACValid) {
       postTelemetryToGoogleSheet(rxPayload, floodRisk, droughtRisk);
     }
   }

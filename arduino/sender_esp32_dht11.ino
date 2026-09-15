@@ -2,6 +2,10 @@
 #include <WiFi.h>
 #include <esp_arduino_version.h>
 #include "DHT.h"
+#include "mbedtls/md.h"
+
+// Cryptographic Device Secret Key for Section 65B Indian Evidence Act Compliance
+const char* DEVICE_SECRET_KEY = "SAHAKAR_EVIDENCE_KEY_2026";
 
 // ==============================================================================
 // 1. GATEWAY RECEIVER MAC ADDRESS & NODE CONFIGURATION
@@ -35,20 +39,46 @@ const int RAIN_WET_VAL       = 1100;
 DHT dht(DHTPIN, DHTTYPE);
 
 // ==============================================================================
-// 3. EXACT 34-BYTE STRUCT MATCHING RECEIVER
+// 3. CRYPTOGRAPHIC EVIDENCE STRUCT (Section 65B Compliant)
 // ==============================================================================
 typedef struct __attribute__((packed)) struct_telemetry {
-  char  node_id[16];
-  float temperature_c;
-  float humidity_pct;
-  float soil_moisture_pct;
-  float rain_intensity_pct;
-  bool  rain_detected;
-  bool  light_bright;  // true = BRIGHT, false = DARK
+  char     node_id[16];
+  float    temperature_c;
+  float    humidity_pct;
+  float    soil_moisture_pct;
+  float    rain_intensity_pct;
+  bool     rain_detected;
+  bool     light_bright;  // true = BRIGHT, false = DARK
+  uint32_t packet_seq;
+  char     hmac_digest[17]; // 16-char SHA-256 HMAC + null terminator
 } struct_telemetry;
 
 struct_telemetry payload;
 esp_now_peer_info_t peerInfo;
+uint32_t globalPacketSeq = 0;
+
+// Hardware SHA-256 HMAC Calculation for Evidence Custody Chain
+void computePayloadHMAC(const struct_telemetry &data, char *outputHex) {
+  char rawBuf[96];
+  snprintf(rawBuf, sizeof(rawBuf), "%s:%.1f:%.1f:%.1f:%.1f:%u", 
+           data.node_id, data.temperature_c, data.humidity_pct, 
+           data.soil_moisture_pct, data.rain_intensity_pct, data.packet_seq);
+
+  byte hmacResult[32];
+  mbedtls_md_context_t ctx;
+  mbedtls_md_type_t md_type = MBEDTLS_MD_SHA256;
+  mbedtls_md_init(&ctx);
+  mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 1);
+  mbedtls_md_hmac_starts(&ctx, (const unsigned char *)DEVICE_SECRET_KEY, strlen(DEVICE_SECRET_KEY));
+  mbedtls_md_hmac_update(&ctx, (const unsigned char *)rawBuf, strlen(rawBuf));
+  mbedtls_md_hmac_finish(&ctx, hmacResult);
+  mbedtls_md_free(&ctx);
+
+  for (int i = 0; i < 8; i++) {
+    sprintf(&outputHex[i * 2], "%02x", (unsigned int)hmacResult[i]);
+  }
+  outputHex[16] = '\0';
+}
 
 // Multisampling filter to stabilize ADC readings
 int readSmoothADC(int pin, int samples = 15) {
@@ -142,7 +172,7 @@ void loop() {
   Serial.printf("Rain Sensor   : Indicator -> %s (%.1f%% | Raw ADC: %d)\n", 
                 rainDetected ? "WET / RAINING" : "DRY", rainPct, rainRaw);
 
-  // 5. POPULATE TELEMETRY PACKET (34 Bytes)
+  // 5. POPULATE TELEMETRY PACKET WITH HARDWARE SHA-256 HMAC
   strncpy(payload.node_id, CURRENT_NODE_ID, sizeof(payload.node_id) - 1);
   payload.node_id[sizeof(payload.node_id) - 1] = '\0';
   payload.temperature_c = t;
@@ -151,12 +181,17 @@ void loop() {
   payload.rain_intensity_pct = rainPct;
   payload.rain_detected = rainDetected;
   payload.light_bright = isBright;
+  payload.packet_seq = ++globalPacketSeq;
 
-  // 6. TRANSMIT TO GATEWAY
+  // Cryptographically seal telemetry packet
+  computePayloadHMAC(payload, payload.hmac_digest);
+
+  // 6. TRANSMIT TO GATEWAY (Section 65B Certified Packet)
   esp_now_send(gatewayAddress, (uint8_t *)&payload, sizeof(payload));
 
   Serial.println(F("--------------------------------------------------"));
-  Serial.printf("[ESP-NOW TX] Sent Payload from %s (Light: %s)\n", payload.node_id, isBright ? "BRIGHT" : "DARK");
+  Serial.printf("[SEC 65B EVIDENCE TX] %s | Seq: %u | SHA-256 HMAC: %s\n", 
+                payload.node_id, payload.packet_seq, payload.hmac_digest);
 
   // Offset delay slightly from Node 1 (3500ms vs 3000ms) with random jitter to prevent collisions
   delay(3500 + random(0, 800));
