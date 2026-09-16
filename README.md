@@ -108,12 +108,21 @@ All metrics below are verified across active test runs:
 
 ---
 
-## 🌐 Multilingual Accessibility & Rural Usability
+## 🌐 Multilingual Accessibility, Alexa-Style Voice UI & Rural Usability
 
-* **22 Eighth Schedule Languages Supported**: Real-time spoken dialogue in Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese, Urdu, etc.
-* **12 Native Regional UI Dictionaries**: Instant, pixel-perfect UI adaptation across English, Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Urdu, Spanish, and French.
-* **Dedicated Mobile Layout**: Custom-designed 54px slim mobile topbar, off-canvas sliding navigation drawer, and bottom navigation dock optimized for one-handed thumb navigation.
-* **Village Voice Station Dual-Role**: The hardware unit installed at the PACS building serves as an empirical soil/weather sensor and an audio terminal for non-literate members who cannot read or write.
+* **Alexa-Style Prominent Voice Orb**: Non-literate farmers often cannot type on digital touchscreens. The interface replaces cramped typing mic buttons with a **large, central, glowing Alexa-style voice orb** (cyan/emerald resting gradient, pulsing red active soundwave rings) that listens to spoken questions in any native dialect and automatically speaks back the statutory answer aloud using neural TTS.
+* **One-Tap Indian Language Selector Modal**: Instant one-tap dialect switcher supporting 11 major Indian languages (Tamil, Hindi, Telugu, Kannada, Malayalam, Bengali, Marathi, Gujarati, Punjabi, Odia, English). It sets the localized dictionary, adjusts speech recognition, and switches Google Translate without external layout displacement or banner popups.
+* **Comprehensive 5-Step PACS & Agritech Onboarding**: Captures full operational profile:
+  1. *Personal Identity*: Name, phone, Aadhaar (last 4 for DBT), village, district, state.
+  2. *PACS Affiliation*: Society name, member ID, membership class (Regular Class A voting vs Associate Class B credit), subsidized fertilizer quota card status.
+  3. *Land Tenure & Crops*: Total acreage, tenure model (Owner cultivator, Tenant farmer, Sharecropper, JLG member), primary/secondary crops, sowing season, soil classification, irrigation source.
+  4. *Institutional Credit & Subsidies*: Active KCC loan status (4% interest rate), PM-KISAN enrollment, PMFBY crop insurance cover, income bracket.
+  5. *Voice & Dialect*: Preferred language for voice responses and Alexa-style auto-speak mode.
+* **Intelligent First-Time vs Returning User PWA Routing**:
+  - *New Farmers*: Automatically directed to the 5-step registration wizard on first visit.
+  - *Returning Farmers*: Automatically bypass registration on the same device and launch directly into the bot workspace with their customized profile pre-loaded.
+  - *Profile Editing*: Farmers can modify and update their land, crop, or PACS details anytime via `registration.html?edit=1`.
+* **Institutional Cooperative Brand & App Icon**: Replaced AI-generated cartoon graphics with an official, high-contrast institutional emblem featuring golden cooperative pillars, scales of justice, and wheat stalks on an emerald squircle field.
 
 ---
 

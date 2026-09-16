@@ -1,6 +1,6 @@
 Add-Type -AssemblyName System.Drawing
 
-$srcIcon = "C:\Users\iniya\.gemini\antigravity-ide\brain\6deaaded-39a0-44dc-ae48-ed8f777c84e2\smart_farm_icon_1789322290899.jpg"
+$srcIcon = "C:\Users\iniya\.gemini\antigravity-ide\brain\6deaaded-39a0-44dc-ae48-ed8f777c84e2\sahakar_vaani_icon_1789525350344.jpg"
 $srcScreen = "C:\Users\iniya\.gemini\antigravity-ide\brain\6deaaded-39a0-44dc-ae48-ed8f777c84e2\app_screenshot_1789322313864.jpg"
 $pubDir = "$PSScriptRoot\public"
 
