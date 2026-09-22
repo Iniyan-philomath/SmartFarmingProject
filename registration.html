@@ -129,6 +129,118 @@
       margin-top: 3px;
     }
 
+    .reg-lang-btn {
+      margin-left: auto;
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 10px;
+      color: var(--muted);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .reg-lang-btn:hover {
+      background: rgba(74, 222, 128, 0.22);
+      border-color: var(--green);
+      color: var(--green);
+      transform: translateY(-1px);
+    }
+
+    /* LANGUAGE SELECTION MODAL */
+    .reg-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 10, 5, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 999999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .reg-modal-overlay.show {
+      display: flex;
+      animation: modalFade 0.2s ease;
+    }
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .reg-modal-box {
+      background: #081d0d;
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85), 0 0 30px rgba(74,222,128,0.15);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .reg-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .reg-modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .reg-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 2px 8px;
+    }
+    .reg-modal-sub {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .reg-lang-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+    .reg-lang-opt {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      border-radius: 10px;
+      padding: 9px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: #f0fdf4;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .reg-lang-opt:hover, .reg-lang-opt.active {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: var(--green);
+      color: var(--green);
+      transform: translateY(-2px);
+    }
+    .reg-lang-opt .l-flag { font-size: 16px; }
+    .reg-lang-opt .l-name { font-size: 13.5px; font-weight: 700; }
+    .reg-lang-opt .l-en { font-size: 10px; color: rgba(255, 255, 255, 0.6); }
+
     /* STEP PROGRESS BAR */
     .progress-bar {
       display: flex;
@@ -502,6 +614,9 @@
           <h1>Sahakar <span>Vaani</span> (सहकार वाणी)</h1>
           <p>Institutional PACS Member, Tenant Farmer & Agritech Registry</p>
         </div>
+        <button type="button" class="reg-lang-btn" onclick="openRegLangModal()" title="Select Language">
+          🌐 <span id="regLangLabel">Language</span>
+        </button>
       </div>
 
       <!-- STEP PROGRESS -->
@@ -527,7 +642,7 @@
 
         <div class="field">
           <label>Full Name <span class="req">*</span></label>
-          <input id="f_name" type="text" placeholder="e.g. Ramesh Chandra / முருகன்" onkeydown="enterNext(event,'f_phone')">
+          <input id="f_name" type="text" placeholder="e.g. Ramesh Chandra" onkeydown="enterNext(event,'f_phone')">
         </div>
 
         <div class="row">
@@ -558,13 +673,13 @@
 
         <div class="field">
           <label>Village / Gram Panchayat <span class="req">*</span></label>
-          <input id="f_village" type="text" placeholder="e.g. Vaduvur / Thanjavur / Alwar">
+          <input id="f_village" type="text" placeholder="e.g. Vaduvur, Thanjavur, Alwar">
         </div>
 
         <div class="row">
           <div class="field">
             <label>District</label>
-            <input id="f_district" type="text" placeholder="e.g. Thanjavur / Belagavi">
+            <input id="f_district" type="text" placeholder="e.g. Thanjavur, Belagavi">
           </div>
           <div class="field state-wrap">
             <label>State <span class="req">*</span></label>
@@ -675,9 +790,9 @@
           <div class="field">
             <label>Soil Type</label>
             <select id="f_soil">
-              <option value="Alluvial">Alluvial Soil (Vandal Man)</option>
-              <option value="Black">Black Soil (Regur)</option>
-              <option value="Red">Red Soil (Semman)</option>
+              <option value="Alluvial">Alluvial Soil (Silt / Loam)</option>
+              <option value="Black">Black Soil (Regur / Cotton Soil)</option>
+              <option value="Red">Red Soil</option>
               <option value="Loamy">Loamy Soil</option>
               <option value="Sandy">Sandy / Coastal Soil</option>
               <option value="Clay">Clayey Soil</option>
@@ -692,8 +807,8 @@
             <option value="Canal">Canal Irrigation (River / Dam)</option>
             <option value="Borewell">Borewell / Tube Well (Electric/Solar)</option>
             <option value="Drip">Drip / Micro-irrigation</option>
-            <option value="Rainfed">Rainfed Only (Maanavari)</option>
-            <option value="Tank">Tank / Eri / Village Pond</option>
+            <option value="Rainfed">Rainfed Only (Dryland)</option>
+            <option value="Tank">Tank / Village Pond</option>
             <option value="Open Well">Open Well</option>
           </select>
         </div>
@@ -762,19 +877,19 @@
 
         <div class="field">
           <label>Preferred Language for Voice & Advice <span class="req">*</span></label>
-          <select id="f_lang">
-            <optgroup label="🇮🇳 Native Indian Languages">
-              <option value="ta-IN">தமிழ் (Tamil — தமிழ் வழிகாட்டல்)</option>
-              <option value="hi-IN">हिन्दी (Hindi — किसान मित्र)</option>
-              <option value="en-IN">English (India — Statutory English)</option>
-              <option value="te-IN">తెలుగు (Telugu)</option>
-              <option value="kn-IN">ಕನ್ನಡ (Kannada)</option>
-              <option value="ml-IN">മലയാളം (Malayalam)</option>
-              <option value="bn-IN">বাংলা (Bengali)</option>
-              <option value="mr-IN">मराठी (Marathi)</option>
-              <option value="gu-IN">ગુજરાતી (Gujarati)</option>
-              <option value="pa-IN">ਪੰਜਾਬੀ (Punjabi)</option>
-              <option value="or-IN">ଓଡ଼ିଆ (Odia)</option>
+          <select id="f_lang" onchange="onRegLangSelect(this.value)">
+            <optgroup label="Native Indian Languages">
+              <option value="en-IN" selected>English (India — Statutory English)</option>
+              <option value="ta-IN">Tamil (தமிழ்)</option>
+              <option value="hi-IN">Hindi (हिन्दी)</option>
+              <option value="te-IN">Telugu (తెలుగు)</option>
+              <option value="kn-IN">Kannada (ಕನ್ನಡ)</option>
+              <option value="ml-IN">Malayalam (മലയാളം)</option>
+              <option value="bn-IN">Bengali (বাংলা)</option>
+              <option value="mr-IN">Marathi (मराठी)</option>
+              <option value="gu-IN">Gujarati (ગુજરાતી)</option>
+              <option value="pa-IN">Punjabi (ਪੰਜਾਬੀ)</option>
+              <option value="or-IN">Odia (ଓଡ଼ିଆ)</option>
             </optgroup>
           </select>
         </div>
@@ -799,7 +914,7 @@
 
         <div class="btn-row">
           <button class="btn-back" onclick="goStep(4)">← Back</button>
-          <button class="btn-next" onclick="submitReg()" id="submitBtn">🏛️ Launch Sahakar Vaani (सहकार वाणी)</button>
+          <button class="btn-next" onclick="submitReg()" id="submitBtn">🏛️ Launch Sahakar Vaani</button>
         </div>
       </div>
 
@@ -867,7 +982,7 @@
       if (n === 2) {
         const name = document.getElementById('f_name').value.trim();
         if (!name) {
-          alert("Please enter your name / தயவுசெய்து உங்கள் பெயரை உள்ளிடவும்.");
+          alert("Please enter your full name.");
           document.getElementById('f_name').focus();
           return;
         }
@@ -988,7 +1103,7 @@
         pmkisan: togState.pmk,
         pmfby: togState.pmfby,
         income: document.getElementById('f_income').value || 'below1',
-        lang: document.getElementById('f_lang').value || 'ta-IN',
+        lang: document.getElementById('f_lang').value || 'en-IN',
         voicemode: document.getElementById('f_voicemode').value || 'alexa',
         registeredAt: new Date().toISOString()
       };
@@ -1173,6 +1288,54 @@
     window.addEventListener('resize', resize);
     resize();
     frame();
+  </script>
+
+  <!-- LANGUAGE SELECTION MODAL -->
+  <div class="reg-modal-overlay" id="regLangModal" onclick="if(event.target===this)closeRegLangModal()">
+    <div class="reg-modal-box">
+      <div class="reg-modal-header">
+        <h3>🌐 Select Language</h3>
+        <button type="button" class="reg-modal-close" onclick="closeRegLangModal()">✕</button>
+      </div>
+      <div class="reg-modal-sub">Choose your preferred language for registration and AI voice assistance:</div>
+      <div class="reg-lang-grid" id="regLangGrid">
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('en-IN', 'English')"><span class="l-name">English</span><span class="l-en">Statutory English</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('ta-IN', 'Tamil')"><span class="l-name">தமிழ்</span><span class="l-en">Tamil</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('hi-IN', 'Hindi')"><span class="l-name">हिन्दी</span><span class="l-en">Hindi</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('te-IN', 'Telugu')"><span class="l-name">తెలుగు</span><span class="l-en">Telugu</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('kn-IN', 'Kannada')"><span class="l-name">ಕನ್ನಡ</span><span class="l-en">Kannada</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('ml-IN', 'Malayalam')"><span class="l-name">മലയാളം</span><span class="l-en">Malayalam</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('bn-IN', 'Bengali')"><span class="l-name">বাংলা</span><span class="l-en">Bengali</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('mr-IN', 'Marathi')"><span class="l-name">मराठी</span><span class="l-en">Marathi</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('gu-IN', 'Gujarati')"><span class="l-name">ગુજરાતી</span><span class="l-en">Gujarati</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('pa-IN', 'Punjabi')"><span class="l-name">ਪੰਜਾਬੀ</span><span class="l-en">Punjabi</span></button>
+        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('or-IN', 'Odia')"><span class="l-name">ଓଡ଼ିଆ</span><span class="l-en">Odia</span></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openRegLangModal() {
+      document.getElementById('regLangModal').classList.add('show');
+    }
+    function closeRegLangModal() {
+      document.getElementById('regLangModal').classList.remove('show');
+    }
+    function applyRegLanguage(code, label) {
+      const sel = document.getElementById('f_lang');
+      if (sel) sel.value = code;
+      const btnLabel = document.getElementById('regLangLabel');
+      if (btnLabel) btnLabel.textContent = label;
+      localStorage.setItem('preferredLang', code);
+      closeRegLangModal();
+    }
+    function onRegLangSelect(code) {
+      localStorage.setItem('preferredLang', code);
+      const sel = document.getElementById('f_lang');
+      const label = sel.options[sel.selectedIndex].text.split(' ')[0];
+      const btnLabel = document.getElementById('regLangLabel');
+      if (btnLabel) btnLabel.textContent = label;
+    }
   </script>
 </body>
 </html>

@@ -2328,7 +2328,20 @@
 
     /* Default desktop controls */
     .mobile-menu-btn, .mobile-brand-title, .sb-close-btn, .sidebar-backdrop, .mobile-bottom-nav {
-      display: none;
+      display: none !important;
+    }
+
+    @media (min-width: 769px) {
+      .mobile-bottom-nav, #mobileBottomNav, .mb-nav-item {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        top: -9999px !important;
+      }
     }
 
     /* MOBILE CONFIGURATION (Screens <= 768px - Phones & Small Tablets) */
@@ -3374,17 +3387,6 @@
         <div class="mobile-brand-title">🏛️ Sahakar Vaani</div>
       </div>
       <div class="tb-right">
-        <div class="tb-tabs">
-          <button class="tb-tab active" id="tab-chat" onclick="switchTab('chat',null)">💬 Legal AI</button>
-          <button class="tb-tab" id="tab-ops" onclick="switchTab('ops',null)">🏛️ PACS Operations</button>
-          <button class="tb-tab" id="tab-schemes" onclick="switchTab('schemes',null)">🏛️ Schemes & Sandbox</button>
-          <button class="tb-tab" id="tab-laws" onclick="switchTab('laws',null)">📜 Acts & Rights</button>
-          <button class="tb-tab" id="tab-finance" onclick="switchTab('finance',null)">💳 Financial Simulator</button>
-          <button class="tb-tab" id="tab-vault" onclick="switchTab('vault',null)">⚖️ Grievance Vault</button>
-          <button class="tb-tab" id="tab-dashboard" onclick="switchTab('dashboard',null)">📊 Telemetry</button>
-          <button class="tb-tab" id="tab-farmwealth" onclick="switchTab('farmwealth',null)">💚 Health</button>
-          <button class="tb-tab" id="tab-weather" onclick="switchTab('weather',null)">🌤️ Weather</button>
-        </div>
         <!-- PWA INSTALL APP BUTTON -->
         <button id="pwaInstallBtn" class="tb-install-btn" title="Install Sahakar Vaani App" onclick="triggerPwaInstall()">
           <span>📲</span>
