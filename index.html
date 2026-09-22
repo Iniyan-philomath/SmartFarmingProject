@@ -767,9 +767,15 @@
     }
 
     /* Hide ONLY Google Translate top banner bar and hover tooltip, but keep menus clickable */
+    /* ABSOLUTE SUPPRESSION OF GOOGLE TRANSLATE BANNER, FRAMES & TOOLTIPS */
     .goog-te-banner-frame,
     .goog-te-banner-frame *,
     iframe.goog-te-banner-frame,
+    iframe[id*=":1.container"],
+    iframe[id*=":2.container"],
+    div[id*=":1.container"],
+    div[id*=":2.container"],
+    div[id*="goog-gt-"],
     #goog-gt-tt,
     #goog-gt-tt *,
     .goog-te-balloon-frame,
@@ -780,7 +786,8 @@
     .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
     .VIpgJd-ZVi9od-aZ2wEe-OiiCO,
     .VIpgJd-yAWNEb-VIpgJd-FMomSd,
-    .VIpgJd-yAWNEb-L7lbkb {
+    .VIpgJd-yAWNEb-L7lbkb,
+    .skiptranslate:not(.lang-modal-overlay):not(#topbarLangBtn):not(.lang-opt-btn) {
       display: none !important;
       visibility: hidden !important;
       height: 0px !important;
@@ -795,21 +802,18 @@
       z-index: -99999 !important;
     }
 
-    /* Ensure language menus, popups, and topbar selectors remain visible and clickable */
-    .lang-switch,
-    .lang-switch *,
-    #google_translate_element,
-    #google_translate_element *,
-    .goog-te-gadget,
-    .goog-te-gadget *,
-    .goog-te-menu-frame,
-    .goog-te-menu-value,
-    .goog-te-menu2,
-    div[id*=":1.container"],
-    div[id*=":2.container"] {
-      visibility: visible !important;
-      pointer-events: auto !important;
-      z-index: 999999 !important;
+    body {
+      top: 0px !important;
+      position: static !important;
+    }
+
+    /* Keep language switcher button and modal fully clickable */
+    .lang-switch {
+      cursor: pointer !important;
+      user-select: none;
+    }
+    .lang-modal-overlay {
+      z-index: 2147483647 !important;
     }
 
     /* ALEXA-STYLE PROMINENT VOICE ORB FOR FARMERS */
@@ -3406,17 +3410,16 @@
           <span style="font-size:12px;font-weight:600;margin-left:4px;">PACS Hub</span>
         </button>
 
-        <div class="lang-switch" id="topbarLangBtn" title="Choose Language / மொழியை தேர்ந்தெடுக்கவும்" onclick="openLangModal()">
+        <button type="button" class="lang-switch" id="topbarLangBtn" title="Choose Language / மொழியை தேர்ந்தெடுக்கவும்" onclick="openLangModal()" style="cursor:pointer;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.1);color:var(--muted);border-radius:8px;padding:5px 10px;display:inline-flex;align-items:center;gap:5px;">
           <span class="lang-icon">🌐</span>
-          <span id="langSwitchLabel" style="font-size:12px;font-weight:600;color:var(--muted);margin-left:4px;cursor:pointer;">Language</span>
-          <div id="google_translate_element" style="position:absolute;opacity:0.01;pointer-events:none;width:1px;height:1px;overflow:hidden;"></div>
-        </div>
+          <span id="langSwitchLabel" style="font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;">Language</span>
+        </button>
       </div>
     </div>
 
     <!-- CHAT PANEL -->
     <div class="panel active" id="panel-chat">
-      <div class="chatbox" id="chatbox">
+      <div class="chatbox notranslate" id="chatbox" translate="no">
         <div class="welcome" id="welcome">
 
           <!-- JARVIS ORB replaces waving hand -->
@@ -4162,10 +4165,10 @@
     }
 
     function addBubble(txt, type, imgSrc) {
-      const row = document.createElement('div'); row.className = 'msg-row ' + type;
+      const row = document.createElement('div'); row.className = 'msg-row notranslate ' + type; row.setAttribute('translate', 'no');
       const img = imgSrc ? `<img src="${imgSrc}" alt="crop">` : '';
       const formatted = formatBubbleText(txt);
-      row.innerHTML = `<div class="av ${type}">${type === 'ai' ? '🌿' : '👤'}</div><div class="bubble ${type}">${formatted}${img}</div>`;
+      row.innerHTML = `<div class="av ${type}">${type === 'ai' ? '🌿' : '👤'}</div><div class="bubble notranslate ${type}" translate="no">${formatted}${img}</div>`;
       chatbox.appendChild(row); chatbox.scrollTop = chatbox.scrollHeight;
     }
 
@@ -5459,10 +5462,8 @@ function syncDetectedLanguage(langCode, skipHistoryTranslation = false) {
     if (sel1 && sel1.value !== normalized) sel1.value = normalized;
   }
 
-  // If language actually changed and there is previous chat, translate it immediately!
-  if (!skipHistoryTranslation && prevLang && prevLang !== shortCode && chatHistory && chatHistory.length > 0) {
-    translateExistingChatHistory(normalized);
-  }
+  // Keep conversation history intact in each speaker's chosen language without overwriting
+  // (Prevents Google Translate / automated translation from tampering with multi-lingual dialogues)
 
   const targetDomain = window.location.hostname;
   if (shortCode === 'en') {
@@ -8752,6 +8753,11 @@ ${escapeHtml(bodyText)}
       const bannerSelectors = [
         '.goog-te-banner-frame',
         'iframe.goog-te-banner-frame',
+        'iframe[id*=":1.container"]',
+        'iframe[id*=":2.container"]',
+        'div[id*=":1.container"]',
+        'div[id*=":2.container"]',
+        'div[id*="goog-gt-"]',
         '#goog-gt-tt',
         '.goog-te-balloon-frame',
         '.goog-tooltip',
@@ -8804,51 +8810,27 @@ ${escapeHtml(bodyText)}
     }
 
     function applyLanguage(shortCode, bcp47Code, langLabel) {
-      // 1. Set Google translate cookie for current domain and root
-      const hostname = window.location.hostname;
-      const domainParts = hostname.split('.');
-      const topDomain = domainParts.length > 1 ? ('.' + domainParts.slice(-2).join('.')) : '';
-      
-      const cookieVal = '/en/' + shortCode;
-      document.cookie = 'googtrans=' + cookieVal + '; path=/;';
-      if (topDomain) {
-        document.cookie = 'googtrans=' + cookieVal + '; path=/; domain=' + topDomain + ';';
+      // 1. Instantly apply language across UI, profile, and voice
+      if (typeof syncDetectedLanguage === 'function') {
+        syncDetectedLanguage(bcp47Code, true);
       }
 
-      // 2. Update Google translate combo if present
-      const combo = document.querySelector('#google_translate_element .goog-te-combo');
-      if (combo) {
-        combo.value = shortCode;
-        combo.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-
-      // 3. Save to profile and localStorage
-      localStorage.setItem('preferredLang', bcp47Code);
-      if (typeof profile !== 'undefined' && profile) {
-        profile.lang = bcp47Code;
-        localStorage.setItem('farmerProfile', JSON.stringify(profile));
-      }
-
-      // 4. Update topbar label
+      // 2. Update topbar button text
       const lbl = document.getElementById('langSwitchLabel');
       if (lbl) {
         lbl.textContent = langLabel || shortCode.toUpperCase();
       }
 
+      // 3. Highlight selected button in modal
+      document.querySelectorAll('.lang-opt-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-lang') === shortCode);
+      });
+
+      // 4. Save to localStorage
+      localStorage.setItem('preferredLang', bcp47Code);
+
       // 5. Close modal
       closeLangModalDirect();
-
-      // 6. Update internal dictionary / TTS voice pref
-      if (typeof syncProfileLanguagePreference === 'function') {
-        syncProfileLanguagePreference();
-      }
-
-      // If page hasn't translated yet, softly reload to apply translate cookie cleanly
-      setTimeout(() => {
-        if (typeof checkAndTriggerTranslation === 'function') {
-          checkAndTriggerTranslation();
-        }
-      }, 300);
     }
 
     /* ================= 10-MINUTE AUTOMATED ADVISORY DRAWER CONTROLLER ================= */
@@ -9516,5 +9498,6 @@ ${escapeHtml(bodyText)}
       }
     }
   </script>
+<div id="google_translate_element" style="position:fixed;bottom:0;left:0;width:0;height:0;opacity:0;pointer-events:none;z-index:-1;"></div>
 </body>
 </html>

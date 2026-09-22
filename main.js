@@ -623,7 +623,7 @@ function detectMessageLanguage(text) {
   if (/\b(guten|tag|danke|bauer|genossenschaft)\b/i.test(lower)) return "de-DE";
   if (/\b(vyavasaya|vyavasayam|bhoomi|bhumi|ela|elaa|undi|unnaru|cheyali|cheyyali|panta|raithu|raithulu|neellu|polam|namaskaram|bagunnara|eppudu|emi|emiti|dabbulu|dharalu|mandulu|kothalu|subhodayam)\b/i.test(lower)) return "te-IN";
   if (/\b(vanakkam|vannakam|vanakam|epdi|eppadi|irukinga|irukku|enokku|enakku|nandri|magizhchi|nalla|payir|thanni|mazhai|vivasaayam|poochi|kadan|marunthu|seiyyanum|vilai|sollunga)\b/i.test(lower)) return "ta-IN";
-  if (/\b(namaste|namaskar|pranam|kaise|kya|hai|hain|hoon|shukriya|dhanyawad|kheti|fasal|kisan|paani|baarish|zameen|mitti|beej|khaad|keede|daam|mandi|batao|kariye)\b/i.test(lower)) return "hi-IN";
+  if (/\b(namaste|namaskar|pranam|kaise|kya|hai|hain|hoon|shukriya|dhanyawad|kheti|fasal|kisan|paani|baarish|zameen|mitti|beej|khaad|keede|daam|mandi|batao|kariye|aapka|apka|swagat|svagath|madad|sahayata|karo|bataiye|chahiye|batao)\b/i.test(lower)) return "hi-IN";
   if (/\b(namaskara|hegiddira|hegidhe|dhanyavada|raitha|bale|bele|krushi|krishi|neeru|manne|yava|enu|hege|kelsa|ivattu|rogi)\b/i.test(lower)) return "kn-IN";
   if (/\b(namaskaram|sugamano|nandi|karsakan|mazha|krishi|vellam|nelam|vila|manņu|puzhu|chood|engane|und|enth|parayu)\b/i.test(lower)) return "ml-IN";
   if (/\b(namaskar|kasa|ahe|dhanyavad|shetkari|paus|sheti|pik|zameen|bhav|sang)\b/i.test(lower)) return "mr-IN";
@@ -653,8 +653,20 @@ app.post("/chat", async (req, res) => {
       if (msgDetected) effectiveLang = msgDetected;
     }
     const systemInstruction = `You are Sahakar Vaani (सहकार वाणी) — an omnilingual, voice-enabled AI legal, cooperative governance, and agricultural advisor built for the Ministry of Cooperation (SIH PS 26088).
-You are fluent in ALL 22 official Eighth Schedule languages of India (Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese, Urdu, Sanskrit, Nepali, Maithili, Kashmiri, Sindhi, Konkani, Dogri, Manipuri, Santali, Bodo) as well as global languages (Spanish, French, German, Arabic, Russian, Portuguese, etc.).
-Always detect the farmer's language immediately and reply naturally, accurately, and fluently in the EXACT SAME language and script they use.
+You are fluent in ALL 22 official Eighth Schedule languages of India (Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Gujarati, Bengali, Punjabi, Odia, Assamese, Urdu, Sanskrit, Nepali, Maithili, Kashmiri, Sindhi, Konkani, Dogri, Manipuri, Santali, Bodo) as well as global languages.
+
+CRITICAL NATIVE SCRIPT MANDATE (NON-NEGOTIABLE):
+1. When responding in Hindi, you MUST write STRICTLY in DEVANAGARI HINDI SCRIPT (उदा: "नमस्ते! आपका स्वागत है। मैं आपकी कैसे सहायता कर सकता हूँ?"). NEVER output Hindi in English/Latin/Roman transliteration (e.g. NEVER write "Namaste! Main aapki kaise sahayata kar sakta hoon?").
+2. When responding in Tamil, write STRICTLY in TAMIL SCRIPT (எ.கா: "வணக்கம்! எப்படி உதவலாம்?").
+3. When responding in Telugu, write in TELUGU SCRIPT.
+4. When responding in Kannada, write in KANNADA SCRIPT.
+5. When responding in Malayalam, write in MALAYALAM SCRIPT.
+6. When responding in Bengali, write in BENGALI SCRIPT.
+7. When responding in Marathi, write in DEVANAGARI SCRIPT.
+8. When responding in Gujarati, write in GUJARATI SCRIPT.
+9. When responding in Punjabi, write in GURMUKHI SCRIPT.
+10. When responding in Odia, write in ODIA SCRIPT.
+11. Even if the user types using English alphabet (like "apka svagath he", "vanakkam", "namaskaram"), detect their intended language and generate your reply in the authentic, native script of that language! Only reply in English text if the user asks in English.
 
 OMNI-COMPREHENSIVE STATUTORY LEGAL & COOPERATIVE REPOSITORY:
 You are grounded in the complete body of Indian cooperative governance, agricultural statutes, financial subventions, and consumer protection acts:
