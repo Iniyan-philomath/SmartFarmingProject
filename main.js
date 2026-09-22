@@ -2079,12 +2079,17 @@ app.get("/api/pacs/erp-export", async (req, res) => {
     const batchSha256 = crypto.createHash("sha256").update(canonicalJson).digest("hex");
     erpBatchPayload.batch_cryptographic_checksum_sha256 = batchSha256;
 
-    res.json({
-      success: true,
-      format: "National PACS ERP JSON/XML Reconciliation Batch",
-      regulatory_compliance: "Ministry of Cooperation National PACS Computerization Project",
-      batch_payload: erpBatchPayload
-    });
+      res.json({
+        success: true,
+        format: "National PACS ERP JSON/XML Reconciliation Batch",
+        regulatory_compliance: "Ministry of Cooperation National PACS Computerization Project",
+        batch_payload: erpBatchPayload
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
 // ================= PACS ADMINISTRATIVE REGISTRY & SUPABASE FARMER STORAGE =================
 const REGISTERED_FARMERS_FILE = path.join(__dirname, "registered_farmers.json");
 
