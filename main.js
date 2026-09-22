@@ -1414,15 +1414,32 @@ app.post("/stt", async (req, res) => {
     };
     const ext = extensionMap[safeMime] || "webm";
 
+    // Indian Multilingual Prompt to anchor Whisper to Indian dialects & agricultural vocabulary
+    const INDIAN_LANG_PROMPT = "Sahakar Vaani: Indian agricultural and cooperative governance advisory. Spoken in Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, English. Namaskar, Vanakkam, Namaskara, PACS, KCC loan, PM-KISAN, PMFBY, Urea, DAP, FCO 1985, fertilizer quota, Seed Act, MSP, kheti, சாகுபடி, விவசாயம், రైతు, കൃഷി, નમસ્તે, ખેડૂત, ਪੰਜਾਬੀ.";
+
+    // Map incoming languageCode to ISO 639-1 code if specified and valid
+    const cleanLangCode = String(languageCode || "").trim().toLowerCase();
+    const isoCode = cleanLangCode.split("-")[0];
+    const validWhisperLangs = ["hi", "ta", "te", "kn", "ml", "bn", "mr", "gu", "pa", "en", "ur", "or"];
+
+    const whisperParams = {
+      model: "whisper-large-v3-turbo",
+      response_format: "verbose_json",
+      temperature: 0.0,
+      prompt: INDIAN_LANG_PROMPT
+    };
+
+    if (cleanLangCode && cleanLangCode !== "auto" && cleanLangCode !== "all" && validWhisperLangs.includes(isoCode)) {
+      whisperParams.language = isoCode;
+    }
+
     let transcriptResp;
     try {
       // In-memory file object
       const file = await toFile(audioBuffer, `speech.${ext}`, { type: safeMime });
       transcriptResp = await client.audio.transcriptions.create({
         file,
-        model: "whisper-large-v3-turbo",
-        response_format: "verbose_json",
-        temperature: 0.0
+        ...whisperParams
       });
     } catch (inMemoryErr) {
       console.warn("In-memory STT failed, using temp file fallback:", inMemoryErr?.message);
@@ -1431,12 +1448,31 @@ app.post("/stt", async (req, res) => {
       try {
         transcriptResp = await client.audio.transcriptions.create({
           file: createReadStream(tmpPath),
-          model: "whisper-large-v3-turbo",
-          response_format: "verbose_json",
-          temperature: 0.0
+          ...whisperParams
         });
       } finally {
         await fs.unlink(tmpPath).catch(() => { });
+      }
+    }
+
+    // Check for bizarre European hallucination languages (like Icelandic 'is', Welsh 'cy', Danish 'da')
+    const nonIndianHallucinations = ["is", "cy", "no", "da", "sv", "pl", "cs", "fi", "la", "et", "lv", "lt", "hu"];
+    if (nonIndianHallucinations.includes(transcriptResp?.language)) {
+      console.warn(`[STT] Non-Indian language '${transcriptResp?.language}' falsely detected. Retrying with Indian English / Hindi bias...`);
+      try {
+        const retryResp = await client.audio.transcriptions.create({
+          file: await toFile(audioBuffer, `speech.${ext}`, { type: safeMime }),
+          model: "whisper-large-v3-turbo",
+          response_format: "verbose_json",
+          temperature: 0.0,
+          language: (isoCode && validWhisperLangs.includes(isoCode)) ? isoCode : "hi",
+          prompt: "Namaskar, Vanakkam, Kisan, farmer, Sahakar Vaani, PACS, agricultural queries in Hindi or English."
+        });
+        if (retryResp?.text) {
+          transcriptResp = retryResp;
+        }
+      } catch (retryErr) {
+        console.warn("[STT] Retry note:", retryErr.message);
       }
     }
 
@@ -1461,7 +1497,11 @@ app.post("/stt", async (req, res) => {
       return res.status(422).json({ error: "No speech detected in audio. Please speak louder or closer to the mic." });
     }
 
-    const detectedLanguage = mapWhisperLangToCode(transcriptResp?.language) || detectMessageLanguage(text);
+    let detectedLanguage = mapWhisperLangToCode(transcriptResp?.language);
+    if (!detectedLanguage || nonIndianHallucinations.includes(transcriptResp?.language)) {
+      detectedLanguage = detectMessageLanguage(text) || (isoCode && validWhisperLangs.includes(isoCode) ? `${isoCode}-IN` : "en-IN");
+    }
+
     return res.json({ transcript: text, detectedLanguage });
   } catch (err) {
     console.error("Groq Whisper STT error:", err);

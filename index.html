@@ -3710,11 +3710,12 @@
       return toLang.trim().toLowerCase();
     }
     function getActiveLang() {
-      if (profile && profile.lang) {
-        return normalizeLang(profile.lang);
+      const pref = localStorage.getItem('preferredLang');
+      if (pref) return normalizeLang(pref);
+      if (profile && (profile.lang || profile.language)) {
+        return normalizeLang(profile.lang || profile.language);
       }
-      const translated = getGoogleTranslateLang();
-      return translated ? normalizeLang(translated) : 'en-IN';
+      return 'en-IN';
     }
     profile.lang = normalizeLang(profile.lang);
     document.getElementById('welcomeName').textContent = profile.name;
@@ -5588,12 +5589,14 @@ try {
     async function transcribeServerAudio(blob) {
       updateMicUi(false, "⚙️ Transcribing speech...");
       const dataUrl = await fileToDataUrl(blob);
+      const activeLang = getActiveLang() || localStorage.getItem('preferredLang') || 'auto';
       const resp = await fetch('/stt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           audioBase64: dataUrl,
-          mimeType: blob.type || 'audio/webm'
+          mimeType: blob.type || 'audio/webm',
+          languageCode: activeLang
         })
       });
       const data = await resp.json();
