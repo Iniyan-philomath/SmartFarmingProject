@@ -1,1333 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Farmer Registration & PACS Institutional Profile — Sahakar Vaani</title>
-  <link rel="icon" type="image/svg+xml" href="/public/icon.svg">
-  <link rel="apple-touch-icon" href="/public/icon-192.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#050d06">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <script>
-    // Requirement 5: If a returning registered user opens registration, automatically redirect to bot
-    // unless explicitly opening with ?edit=1 or ?edit=true to update profile
-    const urlParams = new URLSearchParams(window.location.search);
-    const isEditMode = urlParams.get('edit') === '1' || urlParams.get('edit') === 'true';
-    const existingProfileStr = localStorage.getItem('farmerProfile');
-    if (existingProfileStr && !isEditMode) {
-      window.location.replace('index.html');
-    }
-  </script>
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --green: #4ade80;
-      --dark-green: #15803d;
-      --gold: #fbbf24;
-      --sky: #38bdf8;
-      --bg: #030a05;
-      --card: rgba(8, 24, 12, 0.88);
-      --border: rgba(74, 222, 128, 0.22);
-      --border-focus: rgba(74, 222, 128, 0.6);
-      --text: #f0fdf4;
-      --muted: #86efac;
-      --muted-dim: rgba(134, 239, 172, 0.65);
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow-x: hidden;
-      padding: 16px 12px;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    #bgCanvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .page-wrap {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 660px;
-      margin: 10px auto;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 30px 26px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(74, 222, 128, 0.08);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      position: relative;
-      overflow: hidden;
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 22px 16px;
-        border-radius: 20px;
-      }
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 22px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid rgba(74, 222, 128, 0.15);
-    }
-
-    .brand-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(251, 191, 36, 0.15));
-      border: 1px solid rgba(74, 222, 128, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      flex-shrink: 0;
-      box-shadow: 0 0 16px rgba(74, 222, 128, 0.2);
-    }
-
-    .brand-text h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--text);
-      line-height: 1.15;
-    }
-
-    .brand-text h1 span {
-      color: var(--green);
-    }
-
-    .brand-text p {
-      font-size: 12px;
-      color: var(--muted-dim);
-      margin-top: 3px;
-    }
-
-    .reg-lang-btn {
-      margin-left: auto;
-      background: rgba(74, 222, 128, 0.1);
-      border: 1px solid rgba(74, 222, 128, 0.35);
-      border-radius: 10px;
-      color: var(--muted);
-      padding: 6px 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .reg-lang-btn:hover {
-      background: rgba(74, 222, 128, 0.22);
-      border-color: var(--green);
-      color: var(--green);
-      transform: translateY(-1px);
-    }
-
-    /* LANGUAGE SELECTION MODAL */
-    .reg-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 10, 5, 0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      z-index: 999999;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .reg-modal-overlay.show {
-      display: flex;
-      animation: modalFade 0.2s ease;
-    }
-    @keyframes modalFade {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    .reg-modal-box {
-      background: #081d0d;
-      border: 1px solid rgba(74, 222, 128, 0.35);
-      border-radius: 20px;
-      max-width: 480px;
-      width: 100%;
-      padding: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.85), 0 0 30px rgba(74,222,128,0.15);
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-    .reg-modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .reg-modal-header h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--green);
-    }
-    .reg-modal-close {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 20px;
-      cursor: pointer;
-      padding: 2px 8px;
-    }
-    .reg-modal-sub {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.65);
-      margin-bottom: 16px;
-      line-height: 1.4;
-    }
-    .reg-lang-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 8px;
-    }
-    .reg-lang-opt {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(74, 222, 128, 0.2);
-      border-radius: 10px;
-      padding: 9px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      color: #f0fdf4;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .reg-lang-opt:hover, .reg-lang-opt.active {
-      background: rgba(74, 222, 128, 0.2);
-      border-color: var(--green);
-      color: var(--green);
-      transform: translateY(-2px);
-    }
-    .reg-lang-opt .l-flag { font-size: 16px; }
-    .reg-lang-opt .l-name { font-size: 13.5px; font-weight: 700; }
-    .reg-lang-opt .l-en { font-size: 10px; color: rgba(255, 255, 255, 0.6); }
-
-    /* STEP PROGRESS BAR */
-    .progress-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    .pdot {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted-dim);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 2;
-    }
-
-    .pdot.active {
-      background: var(--green);
-      border-color: var(--green);
-      color: #031106;
-      box-shadow: 0 0 14px rgba(74, 222, 128, 0.6);
-      transform: scale(1.12);
-    }
-
-    .pdot.done {
-      background: rgba(74, 222, 128, 0.2);
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .pline {
-      flex: 1;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.08);
-      margin: 0 4px;
-      transition: background 0.3s;
-    }
-
-    .pline.done {
-      background: var(--green);
-      box-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
-    }
-
-    /* STEP SECTIONS */
-    .step {
-      display: none;
-      animation: stepFade 0.35s ease;
-    }
-
-    .step.active {
-      display: block;
-    }
-
-    @keyframes stepFade {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .step-header {
-      margin-bottom: 18px;
-    }
-
-    .step-badge {
-      display: inline-block;
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--green);
-      background: rgba(74, 222, 128, 0.1);
-      border: 1px solid rgba(74, 222, 128, 0.25);
-      border-radius: 6px;
-      padding: 3px 8px;
-      margin-bottom: 6px;
-    }
-
-    .step-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .step-desc {
-      font-size: 12.5px;
-      color: var(--muted-dim);
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    /* FORM ELEMENTS */
-    .field {
-      margin-bottom: 15px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 11.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .field label span.req {
-      color: #f87171;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      background: rgba(4, 15, 7, 0.75);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 14px;
-      color: #f0fdf4;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      transition: all 0.2s;
-      outline: none;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 12px rgba(74, 222, 128, 0.25);
-      background: rgba(6, 22, 10, 0.9);
-    }
-
-    .field select option {
-      background: #061408;
-      color: #f0fdf4;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    @media (max-width: 480px) {
-      .row {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
-    }
-
-    /* BUTTON TOGGLES */
-    .toggle-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .tog {
-      flex: 1;
-      padding: 10px 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      color: var(--muted-dim);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-    }
-
-    .tog.on {
-      background: rgba(74, 222, 128, 0.16);
-      border-color: var(--green);
-      color: var(--green);
-      box-shadow: 0 0 10px rgba(74, 222, 128, 0.15);
-    }
-
-    /* STATE DROPDOWN */
-    .state-wrap {
-      position: relative;
-    }
-
-    .state-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      max-height: 220px;
-      overflow-y: auto;
-      background: #07190b;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-top: 4px;
-      z-index: 100;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
-    }
-
-    .state-dropdown.open {
-      display: block;
-    }
-
-    .state-option {
-      padding: 9px 14px;
-      font-size: 13px;
-      cursor: pointer;
-      color: var(--text);
-      transition: background 0.15s;
-    }
-
-    .state-option:hover, .state-option.highlight {
-      background: rgba(74, 222, 128, 0.16);
-      color: var(--green);
-    }
-
-    /* NAVIGATION BUTTONS */
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .btn-back {
-      padding: 12px 20px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-back:hover {
-      border-color: var(--muted);
-      color: #fff;
-    }
-
-    .btn-next {
-      flex: 1;
-      padding: 13px 20px;
-      background: linear-gradient(135deg, #4ade80, #16a34a);
-      border: none;
-      border-radius: 10px;
-      color: #031206;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14.5px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: 0 6px 20px rgba(74, 222, 128, 0.35);
-    }
-
-    .btn-next:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 26px rgba(74, 222, 128, 0.5);
-    }
-
-    /* PHOTO UPLOAD */
-    .photo-upload-area {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .photo-upload-area:hover {
-      border-color: var(--green);
-      background: rgba(74, 222, 128, 0.04);
-    }
-
-    .photo-upload-area input {
-      display: none;
-    }
-
-    .photo-preview {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--green);
-      display: none;
-      margin: 0 auto 8px;
-    }
-
-    /* SUCCESS SCREEN */
-    .success-screen {
-      display: none;
-      position: absolute;
-      inset: 0;
-      border-radius: 24px;
-      background: rgba(3, 13, 6, 0.97);
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      z-index: 50;
-      padding: 24px;
-      backdrop-filter: blur(12px);
-    }
-
-    .success-screen.show {
-      display: flex;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .s-icon {
-      font-size: 56px;
-      margin-bottom: 16px;
-      animation: pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    @keyframes pop {
-      from { transform: scale(0.3) rotate(-15deg); }
-      to { transform: scale(1) rotate(0deg); }
-    }
-
-    .s-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--green);
-      margin-bottom: 8px;
-    }
-
-    .s-sub {
-      color: var(--muted-dim);
-      font-size: 14px;
-      max-width: 380px;
-      line-height: 1.5;
-    }
-  
-    /* GOOGLE TRANSLATE BANNER SUPPRESSION */
-    .goog-te-banner-frame, iframe.goog-te-banner-frame, .goog-te-balloon-frame, #goog-gt-tt, .goog-tooltip, .skiptranslate:not(.reg-modal-overlay) {
-      display: none !important;
-      visibility: hidden !important;
-    }
-    body { top: 0px !important; position: static !important; }
-
-  </style>
-</head>
-<body>
-  <canvas id="bgCanvas"></canvas>
-
-  <div class="page-wrap">
-    <div class="card">
-      
-      <!-- SUCCESS OVERLAY -->
-      <div class="success-screen" id="successScreen">
-        <div class="s-icon">🌾</div>
-        <div class="s-title" id="sTitle">Registration Complete!</div>
-        <div class="s-sub" id="sSub">Saving your PACS membership profile & launching Sahakar Vaani (सहकार वाणी)…</div>
-      </div>
-
-      <!-- BRAND HEADER -->
-      <div class="brand">
-        <div class="brand-icon">🏛️</div>
-        <div class="brand-text">
-          <h1>Sahakar <span>Vaani</span> (सहकार वाणी)</h1>
-          <p id="brandSub">Institutional PACS Member, Tenant Farmer & Agritech Registry</p>
-        </div>
-        <button type="button" class="reg-lang-btn" onclick="openRegLangModal()" title="Select Language">
-          🌐 <span id="regLangLabel">Language</span>
-        </button>
-      </div>
-
-      <!-- STEP PROGRESS -->
-      <div class="progress-bar">
-        <div class="pdot active" id="d1">1</div>
-        <div class="pline" id="l1"></div>
-        <div class="pdot" id="d2">2</div>
-        <div class="pline" id="l2"></div>
-        <div class="pdot" id="d3">3</div>
-        <div class="pline" id="l3"></div>
-        <div class="pdot" id="d4">4</div>
-        <div class="pline" id="l4"></div>
-        <div class="pdot" id="d5">5</div>
-      </div>
-
-      <!-- STEP 1: IDENTITY & LOCATION -->
-      <div class="step active" id="step1">
-        <div class="step-header">
-          <div class="step-badge" id="s1Badge">Step 1 of 5</div>
-          <div class="step-title" id="s1Title">👤 Personal Identity & Location</div>
-          <div class="step-desc" id="s1Desc">Enter your basic identification so the AI can verify legal jurisdiction, local PACS by-laws, and disaster compensation limits.</div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_name">Full Name <span class="req">*</span></label>
-          <input id="f_name" type="text" placeholder="e.g. Ramesh Chandra" onkeydown="enterNext(event,'f_phone')">
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_phone">Mobile Number (for Alerts) <span class="req">*</span></label>
-            <input id="f_phone" type="tel" placeholder="10-digit mobile number" maxlength="10" onkeydown="enterNext(event,'f_aadhaar')">
-          </div>
-          <div class="field">
-            <label id="lbl_aadhaar">Aadhaar Last 4 Digits</label>
-            <input id="f_aadhaar" type="text" placeholder="e.g. 7821 (for DBT check)" maxlength="4" onkeydown="enterNext(event,'f_age')">
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_age">Age</label>
-            <input id="f_age" type="number" placeholder="42">
-          </div>
-          <div class="field">
-            <label id="lbl_gender">Gender</label>
-            <select id="f_gender">
-              <option value="Male">Male</option>
-              <option value="Female">Female (Eligible for Women SHG/Co-op credit)</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_village">Village / Gram Panchayat <span class="req">*</span></label>
-          <input id="f_village" type="text" placeholder="e.g. Vaduvur, Thanjavur, Alwar">
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_district">District</label>
-            <input id="f_district" type="text" placeholder="e.g. Thanjavur, Belagavi">
-          </div>
-          <div class="field state-wrap">
-            <label id="lbl_state">State <span class="req">*</span></label>
-            <input id="f_state_input" type="text" placeholder="Select state…" readonly onclick="toggleStateDD()" onkeydown="stateKeyNav(event)" style="cursor:pointer">
-            <input type="hidden" id="f_state" value="Tamil Nadu">
-            <div class="state-dropdown" id="stateDD"></div>
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-next" id="btnNext1" onclick="goStep(2)">Next: PACS Affiliation →</button>
-        </div>
-      </div>
-
-      <!-- STEP 2: PACS & COOPERATIVE AFFILIATION -->
-      <div class="step" id="step2">
-        <div class="step-header">
-          <div class="step-badge" id="s2Badge">Step 2 of 5</div>
-          <div class="step-title" id="s2Title">🏛️ PACS & Cooperative Society Affiliation</div>
-          <div class="step-desc" id="s2Desc">Connect your profile to your local Primary Agricultural Credit Society to verify voting rights, dividend shares, and subsidized fertilizer quotas.</div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_pacs_name">Primary Agricultural Credit Society (PACS) Name</label>
-          <input id="f_pacs_name" type="text" placeholder="e.g. Vaduvur Primary Agricultural Co-op Society">
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_pacs_id">PACS Member / Shareholder ID</label>
-            <input id="f_pacs_id" type="text" placeholder="e.g. TN-TAN-PACS-0482">
-          </div>
-          <div class="field">
-            <label id="lbl_pacs_type">Cooperative Membership Type <span class="req">*</span></label>
-            <select id="f_pacs_type">
-              <option value="Regular Class A">Regular Class A (Full Voting Rights & AGM eligible)</option>
-              <option value="Associate / Nominal Class B">Associate / Nominal Class B (Credit access, non-voting)</option>
-              <option value="Tenant / JLG Member">Tenant / JLG Member (Collateral-free group borrower)</option>
-              <option value="Not Registered Yet">Not a PACS Member Yet (Assist me to register)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_fert">PACS Subsidized Fertilizer / Urea Quota Card</label>
-          <div class="toggle-group">
-            <button class="tog on" id="fert_y" onclick="tog('fert','Yes')">✅ Have Quota Card</button>
-            <button class="tog" id="fert_n" onclick="tog('fert','No')">❌ No Quota Card</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_dccb">Affiliated DCCB / Co-op Bank Branch</label>
-          <input id="f_dccb" type="text" placeholder="e.g. Thanjavur Central Cooperative Bank">
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-back" id="btnBack2" onclick="goStep(1)">← Back</button>
-          <button class="btn-next" id="btnNext2" onclick="goStep(3)">Next: Land & Crops →</button>
-        </div>
-      </div>
-
-      <!-- STEP 3: LAND TENURE & CROPS -->
-      <div class="step" id="step3">
-        <div class="step-header">
-          <div class="step-badge" id="s3Badge">Step 3 of 5</div>
-          <div class="step-title" id="s3Title">🌾 Land Tenure, Soil & Agritech Profile</div>
-          <div class="step-desc" id="s3Desc">Details required to calculate Scale of Finance, PMFBY crop insurance premiums, and statutory tenant rights.</div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_acres">Total Landholding (Acres) <span class="req">*</span></label>
-            <input id="f_acres" type="number" step="0.1" placeholder="e.g. 2.5">
-          </div>
-          <div class="field">
-            <label id="lbl_landtype">Land Tenure Model <span class="req">*</span></label>
-            <select id="f_landtype">
-              <option value="Owner Cultivator">Owner Cultivator (Patta / Title Deed holder)</option>
-              <option value="Tenant Farmer">Tenant Farmer / Oral Lessee (Battaidar / Kauldar)</option>
-              <option value="Sharecropper">Sharecropper (Adhiyar / 50:50 share)</option>
-              <option value="Joint Liability Group (JLG)">Joint Liability Group (JLG Member)</option>
-              <option value="Government Lease">Assigned / Government Leasehold</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_crop">Primary Crop <span class="req">*</span></label>
-            <input id="f_crop" type="text" placeholder="e.g. Paddy (Rice), Wheat, Cotton, Sugarcane">
-          </div>
-          <div class="field">
-            <label id="lbl_sec_crop">Secondary / Intercrop</label>
-            <input id="f_sec_crop" type="text" placeholder="e.g. Black Gram, Mustard, Vegetables, None">
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label id="lbl_season">Sowing Season</label>
-            <select id="f_season">
-              <option value="Kharif">Kharif (Monsoon — Jun to Oct)</option>
-              <option value="Rabi">Rabi (Winter — Nov to Apr)</option>
-              <option value="Zaid">Zaid (Summer — Mar to Jun)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label id="lbl_soil">Soil Type</label>
-            <select id="f_soil">
-              <option value="Alluvial">Alluvial Soil (Silt / Loam)</option>
-              <option value="Black">Black Soil (Regur / Cotton Soil)</option>
-              <option value="Red">Red Soil</option>
-              <option value="Loamy">Loamy Soil</option>
-              <option value="Sandy">Sandy / Coastal Soil</option>
-              <option value="Clay">Clayey Soil</option>
-              <option value="Laterite">Laterite Soil</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_irrigation">Irrigation Source</label>
-          <select id="f_irrigation">
-            <option value="Canal">Canal Irrigation (River / Dam)</option>
-            <option value="Borewell">Borewell / Tube Well (Electric/Solar)</option>
-            <option value="Drip">Drip / Micro-irrigation</option>
-            <option value="Rainfed">Rainfed Only (Dryland)</option>
-            <option value="Tank">Tank / Village Pond</option>
-            <option value="Open Well">Open Well</option>
-          </select>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-back" id="btnBack3" onclick="goStep(2)">← Back</button>
-          <button class="btn-next" id="btnNext3" onclick="goStep(4)">Next: Credit & Insurance →</button>
-        </div>
-      </div>
-
-      <!-- STEP 4: CREDIT & SCHEMES -->
-      <div class="step" id="step4">
-        <div class="step-header">
-          <div class="step-badge" id="s4Badge">Step 4 of 5</div>
-          <div class="step-title" id="s4Title">💳 Institutional Credit, PMFBY & Subsidies</div>
-          <div class="step-desc" id="s4Desc">Enable automated KCC 4% subvention checks, PMFBY claim dossier generation, and PM-KISAN grievance tracking.</div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_kcc">Kisan Credit Card (KCC) Status</label>
-          <div class="toggle-group">
-            <button class="tog on" id="kcc_y" onclick="tog('kcc','Yes')">✅ Active KCC Loan (4% Rate)</button>
-            <button class="tog" id="kcc_n" onclick="tog('kcc','No')">❌ No KCC / Want to Apply</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_pmk">PM-KISAN DBT Beneficiary Status (₹6,000 / yr)</label>
-          <div class="toggle-group">
-            <button class="tog on" id="pmk_y" onclick="tog('pmk','Yes')">✅ Enrolled & Receiving</button>
-            <button class="tog" id="pmk_n" onclick="tog('pmk','No')">❌ Not Enrolled / Aadhaar Stuck</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_pmfby">PMFBY (Crop Insurance Coverage for Current Season)</label>
-          <div class="toggle-group">
-            <button class="tog on" id="pmfby_y" onclick="tog('pmfby','Yes')">✅ Covered (Premium Deducted)</button>
-            <button class="tog" id="pmfby_n" onclick="tog('pmfby','No')">❌ Uninsured (Need Cover)</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_income">Annual Household Income Bracket</label>
-          <select id="f_income">
-            <option value="below1">Below ₹1 Lakh (Small/Marginal Priority)</option>
-            <option value="1to2.5">₹1 Lakh – ₹2.5 Lakh</option>
-            <option value="2.5to5">₹2.5 Lakh – ₹5 Lakh</option>
-            <option value="above5">Above ₹5 Lakh</option>
-          </select>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-back" id="btnBack4" onclick="goStep(3)">← Back</button>
-          <button class="btn-next" id="btnNext4" onclick="goStep(5)">Next: Language & Voice →</button>
-        </div>
-      </div>
-
-      <!-- STEP 5: LANGUAGE & VOICE PREFERENCE -->
-      <div class="step" id="step5">
-        <div class="step-header">
-          <div class="step-badge" id="s5Badge">Step 5 of 5</div>
-          <div class="step-title" id="s5Title">🗣️ AI Dialect, Voice & Audio Mode</div>
-          <div class="step-desc" id="s5Desc">Farmers often prefer listening over typing. Choose your native Indian language for real-time Alexa-style voice answers.</div>
-        </div>
-
-        <div class="field">
-          <label id="lbl_lang">Preferred Language for Voice & Advice <span class="req">*</span></label>
-          <select id="f_lang" onchange="onRegLangSelect(this.value)">
-            <optgroup label="Native Indian Languages">
-              <option value="en-IN" selected>English (India — Statutory English)</option>
-              <option value="ta-IN">Tamil (தமிழ்)</option>
-              <option value="hi-IN">Hindi (हिन्दी)</option>
-              <option value="te-IN">Telugu (తెలుగు)</option>
-              <option value="kn-IN">Kannada (ಕನ್ನಡ)</option>
-              <option value="ml-IN">Malayalam (മലയാളം)</option>
-              <option value="bn-IN">Bengali (বাংলা)</option>
-              <option value="mr-IN">Marathi (मराठी)</option>
-              <option value="gu-IN">Gujarati (ગુજરાતી)</option>
-              <option value="pa-IN">Punjabi (ਪੰਜਾਬੀ)</option>
-              <option value="or-IN">Odia (ଓଡ଼ିଆ)</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <div class="field">
-          <label id="lbl_voicemode">Voice Output Mode</label>
-          <select id="f_voicemode">
-            <option value="alexa">🎙️ Alexa-Style Voice Auto-Readout (Speaks answers aloud)</option>
-            <option value="text">📝 Text Answers Only (Manual play button)</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label id="lbl_photo">Farmer Profile Photo (Optional)</label>
-          <div class="photo-upload-area" onclick="document.getElementById('f_photo').click()">
-            <img id="photoPreview" class="photo-preview" alt="Farmer Photo">
-            <div id="photoIcon" style="font-size:32px;margin-bottom:6px;">📷</div>
-            <div id="photoText" style="font-size:12.5px;color:var(--muted-dim);">Tap to capture camera selfie or upload passbook/photo</div>
-            <input id="f_photo" type="file" accept="image/*" onchange="previewPhoto(event)">
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-back" id="btnBack5" onclick="goStep(4)">← Back</button>
-          <button class="btn-next" onclick="submitReg()" id="submitBtn">🏛️ Launch Sahakar Vaani</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    const STATES = [
-      "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
-      "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-      "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
-      "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-      "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Jammu & Kashmir", "Ladakh",
-      "Puducherry", "Chandigarh", "Andaman & Nicobar", "Lakshadweep"
-    ];
-
-    let hiIdx = -1;
-    function buildStateDD(f = '') {
-      const dd = document.getElementById('stateDD');
-      const list = STATES.filter(s => s.toLowerCase().includes(f.toLowerCase()));
-      dd.innerHTML = list.map(s => `<div class="state-option" data-val="${s}" onclick="selectState('${s}')">${s}</div>`).join('');
-      hiIdx = -1;
-    }
-
-    function toggleStateDD() {
-      const dd = document.getElementById('stateDD');
-      buildStateDD(document.getElementById('f_state_input').value);
-      dd.classList.toggle('open');
-    }
-
-    function selectState(v) {
-      document.getElementById('f_state_input').value = v;
-      document.getElementById('f_state').value = v;
-      document.getElementById('stateDD').classList.remove('open');
-    }
-
-    function stateKeyNav(e) {
-      const dd = document.getElementById('stateDD'), opts = dd.querySelectorAll('.state-option');
-      if (!dd.classList.contains('open')) { dd.classList.add('open'); buildStateDD(); return; }
-      if (e.key === 'ArrowDown') { e.preventDefault(); hiIdx = Math.min(hiIdx + 1, opts.length - 1); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); hiIdx = Math.max(hiIdx - 1, 0); }
-      else if (e.key === 'Enter' && hiIdx >= 0) { e.preventDefault(); selectState(opts[hiIdx].dataset.val); return; }
-      else if (e.key === 'Escape') { dd.classList.remove('open'); return; }
-      opts.forEach((o, i) => o.classList.toggle('highlight', i === hiIdx));
-      if (hiIdx >= 0) opts[hiIdx].scrollIntoView({ block: 'nearest' });
-    }
-
-    document.addEventListener('click', e => {
-      if (!e.target.closest('.state-wrap')) document.getElementById('stateDD').classList.remove('open');
-    });
-
-    function enterNext(e, id) {
-      if (e.key === 'Enter') { e.preventDefault(); document.getElementById(id)?.focus(); }
-    }
-
-    const togState = { fert: 'Yes', kcc: 'Yes', pmk: 'Yes', pmfby: 'Yes' };
-    function tog(name, val) {
-      togState[name] = val;
-      document.getElementById(name + '_y').classList.toggle('on', val === 'Yes');
-      document.getElementById(name + '_n').classList.toggle('on', val === 'No');
-    }
-
-    function goStep(n) {
-      // Basic validation on step 1
-      if (n === 2) {
-        const name = document.getElementById('f_name').value.trim();
-        if (!name) {
-          const t = REG_TRANSLATIONS[currentLangCode] || REG_TRANSLATIONS['en'];
-          alert(t && t.alertName ? t.alertName : "Please enter your full name.");
-          document.getElementById('f_name').focus();
-          return;
-        }
-      }
-
-      for (let i = 1; i <= 5; i++) {
-        document.getElementById('step' + i).classList.toggle('active', i === n);
-        const dot = document.getElementById('d' + i);
-        if (i < n) { dot.className = 'pdot done'; dot.innerHTML = '✓'; }
-        else if (i === n) { dot.className = 'pdot active'; dot.innerHTML = i; }
-        else { dot.className = 'pdot'; dot.innerHTML = i; }
-        if (i < 5) document.getElementById('l' + i).classList.toggle('done', i < n);
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function previewPhoto(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const rd = new FileReader();
-      rd.onload = ev => {
-        const prev = document.getElementById('photoPreview');
-        prev.src = ev.target.result;
-        prev.style.display = 'block';
-        document.getElementById('photoIcon').style.display = 'none';
-        document.getElementById('photoText').textContent = 'Photo attached ✓';
-        localStorage.setItem('farmerPhoto', ev.target.result);
-      };
-      rd.readAsDataURL(file);
-    }
-
-    // Pre-fill fields if user is editing their profile (?edit=1)
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('f_state_input').value = 'Tamil Nadu';
-      buildStateDD();
-
-      const existingData = localStorage.getItem('farmerProfile');
-      if (existingData) {
-        try {
-          const p = JSON.parse(existingData);
-          if (p.name) document.getElementById('f_name').value = p.name;
-          if (p.phone) document.getElementById('f_phone').value = p.phone;
-          if (p.aadhaar) document.getElementById('f_aadhaar').value = p.aadhaar;
-          if (p.age) document.getElementById('f_age').value = p.age;
-          if (p.gender) document.getElementById('f_gender').value = p.gender;
-          if (p.village) document.getElementById('f_village').value = p.village;
-          if (p.district) document.getElementById('f_district').value = p.district;
-          if (p.state) {
-            document.getElementById('f_state').value = p.state;
-            document.getElementById('f_state_input').value = p.state;
-          }
-          if (p.pacs_name) document.getElementById('f_pacs_name').value = p.pacs_name;
-          if (p.pacs_id) document.getElementById('f_pacs_id').value = p.pacs_id;
-          if (p.pacs_type) document.getElementById('f_pacs_type').value = p.pacs_type;
-          if (p.dccb) document.getElementById('f_dccb').value = p.dccb;
-          if (p.acres) document.getElementById('f_acres').value = p.acres;
-          if (p.landtype) document.getElementById('f_landtype').value = p.landtype;
-          if (p.crop) document.getElementById('f_crop').value = p.crop;
-          if (p.sec_crop) document.getElementById('f_sec_crop').value = p.sec_crop;
-          if (p.season) document.getElementById('f_season').value = p.season;
-          if (p.soil) document.getElementById('f_soil').value = p.soil;
-          if (p.irrigation) document.getElementById('f_irrigation').value = p.irrigation;
-          if (p.income) document.getElementById('f_income').value = p.income;
-          if (p.lang) document.getElementById('f_lang').value = p.lang;
-          if (p.voicemode) document.getElementById('f_voicemode').value = p.voicemode;
-
-          if (p.kcc) tog('kcc', p.kcc);
-          if (p.pmkisan) tog('pmk', p.pmkisan);
-          if (p.pmfby) tog('pmfby', p.pmfby);
-          if (p.fert) tog('fert', p.fert);
-
-          const savedPhoto = localStorage.getItem('farmerPhoto');
-          if (savedPhoto) {
-            document.getElementById('photoPreview').src = savedPhoto;
-            document.getElementById('photoPreview').style.display = 'block';
-            document.getElementById('photoIcon').style.display = 'none';
-            document.getElementById('photoText').textContent = 'Photo attached ✓';
-          }
-
-          if (isEditMode) {
-            document.getElementById('submitBtn').textContent = '💾 Update Profile & Return to Bot';
-          }
-        } catch (e) {
-          console.log("Error loading existing profile for prefill:", e);
-        }
-      }
-    });
-
-    function submitReg() {
-      const name = document.getElementById('f_name').value.trim() || 'Farmer';
-      const acres = document.getElementById('f_acres').value.trim() || '2.5';
-      const crop = document.getElementById('f_crop').value.trim() || 'Paddy';
-      const state = document.getElementById('f_state').value || document.getElementById('f_state_input').value || 'Tamil Nadu';
-
-      const data = {
-        name: name,
-        phone: document.getElementById('f_phone').value.trim() || '—',
-        aadhaar: document.getElementById('f_aadhaar').value.trim() || '',
-        age: document.getElementById('f_age').value || '40',
-        gender: document.getElementById('f_gender').value || 'Male',
-        village: document.getElementById('f_village').value.trim() || 'Village',
-        district: document.getElementById('f_district').value.trim() || '',
-        state: state,
-        location: (document.getElementById('f_village').value.trim() || 'Village') + ', ' + state,
-        pacs_name: document.getElementById('f_pacs_name').value.trim() || 'Local PACS',
-        pacs_id: document.getElementById('f_pacs_id').value.trim() || 'PACS-REG-01',
-        pacs_type: document.getElementById('f_pacs_type').value || 'Regular Class A',
-        fert: togState.fert,
-        dccb: document.getElementById('f_dccb').value.trim() || 'District Central Co-op Bank',
-        acres: acres,
-        landtype: document.getElementById('f_landtype').value || 'Owner Cultivator',
-        crop: crop,
-        sec_crop: document.getElementById('f_sec_crop').value.trim() || 'None',
-        season: document.getElementById('f_season').value || 'Kharif',
-        soil: document.getElementById('f_soil').value || 'Alluvial',
-        irrigation: document.getElementById('f_irrigation').value || 'Canal',
-        kcc: togState.kcc,
-        pmkisan: togState.pmk,
-        pmfby: togState.pmfby,
-        income: document.getElementById('f_income').value || 'below1',
-        lang: document.getElementById('f_lang').value || 'en-IN',
-        voicemode: document.getElementById('f_voicemode').value || 'alexa',
-        registeredAt: new Date().toISOString()
-      };
-
-      // Save to device storage
-      localStorage.setItem('farmerProfile', JSON.stringify(data));
-      
-      // Update preferred language in UI if needed
-      localStorage.setItem('preferredLang', data.lang);
-
-      // Show success screen
-      if (isEditMode) {
-        document.getElementById('sTitle').textContent = 'Profile Updated!';
-        document.getElementById('sSub').textContent = 'Your agricultural & cooperative records have been updated. Opening Sahakar Vaani…';
-      }
-      document.getElementById('successScreen').classList.add('show');
-      setTimeout(() => {
-        window.location.replace('index.html');
-      }, 1500);
-    }
-
-    /* ══════════════ LUSH NIGHT BACKGROUND CANVAS ══════════════ */
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, blades = [], fireflies = [], clouds = [], birds = [], tick = 0;
-    function rnd(a, b) { return a + Math.random() * (b - a); }
-
-    function resize() {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      blades = [];
-      const groundY = H * 0.74;
-      const count = Math.floor(W / 3.2);
-      for (let i = 0; i < count; i++) {
-        const layer = Math.floor(rnd(0, 3));
-        const tall = [0.5, 0.75, 1][layer];
-        blades.push({
-          x: rnd(0, W),
-          y: groundY + rnd(0, H * 0.055),
-          h: rnd(28, 155) * tall,
-          bw: rnd(2, 4.5) * (0.5 + tall * 0.5),
-          hue: rnd(100, 138),
-          sat: rnd(38, 70),
-          lit: rnd(10, 38) * (0.5 + tall * 0.6),
-          phase: rnd(0, Math.PI * 2),
-          spd: rnd(0.25, 0.9),
-          sway: rnd(3, 22) * tall,
-          segs: 7,
-          layer
-        });
-      }
-      blades.sort((a, b) => a.layer - b.layer);
-      fireflies = Array.from({ length: 24 }, (_, i) => ({
-        x: rnd(0, W),
-        y: rnd(H * 0.28, H * 0.78),
-        vx: rnd(-0.25, 0.25),
-        vy: rnd(-0.35, -0.05),
-        life: rnd(0, 200),
-        maxLife: rnd(100, 280),
-        size: rnd(1.5, 3.8),
-        hue: rnd(88, 155),
-        phase: i * 0.65
-      }));
-      clouds = Array.from({ length: 5 }, () => ({
-        x: rnd(0, W),
-        y: rnd(H * 0.04, H * 0.22),
-        w: rnd(100, 260),
-        h: rnd(28, 55),
-        spd: rnd(0.06, 0.2),
-        alpha: rnd(0.03, 0.1)
-      }));
-      birds = Array.from({ length: 4 }, () => ({
-        x: rnd(0, W),
-        y: rnd(H * 0.06, H * 0.28),
-        spd: rnd(0.35, 0.85),
-        size: rnd(5, 10),
-        fp: rnd(0, Math.PI * 2)
-      }));
-    }
-
-    function frame() {
-      tick += 0.4;
-      const sky = ctx.createLinearGradient(0, 0, 0, H);
-      sky.addColorStop(0, '#010804');
-      sky.addColorStop(0.3, '#040f06');
-      sky.addColorStop(0.65, '#091e0c');
-      sky.addColorStop(1, '#0d2b10');
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, W, H);
-
-      for (let s = 0; s < 75; s++) {
-        const sx = ((s * 137.508 + 41) % W), sy = ((s * 83.1 + 29) % (H * 0.54));
-        const tw = 0.25 + 0.75 * Math.abs(Math.sin(tick * 0.018 + s * 0.71));
-        ctx.beginPath();
-        ctx.arc(sx, sy, s % 4 === 0 ? 1.3 : 0.65, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(240,240,210,${tw * 0.7})`;
-        ctx.fill();
-      }
-
-      // Crescent Moon
-      const mx = W * 0.83, my = H * 0.09;
-      const mg = ctx.createRadialGradient(mx, my, 0, mx, my, 100);
-      mg.addColorStop(0, 'rgba(254,243,148,0.20)');
-      mg.addColorStop(0.5, 'rgba(254,243,148,0.06)');
-      mg.addColorStop(1, 'transparent');
-      ctx.fillStyle = mg;
-      ctx.fillRect(0, 0, W, H);
-      ctx.beginPath();
-      ctx.arc(mx, my, 26, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,247,160,0.9)';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(mx + 11, my - 5, 21, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(2,8,3,0.92)';
-      ctx.fill();
-
-      // Mountain ridge
-      ctx.beginPath();
-      ctx.moveTo(0, H * 0.73);
-      for (let i = 0; i <= 14; i++) {
-        const hx = (i / 14) * W, hy = H * 0.73 - Math.sin(i * 0.85 + 1.1) * H * 0.1 - Math.sin(i * 0.38 + 0.5) * H * 0.046;
-        ctx.lineTo(hx, hy);
-      }
-      ctx.lineTo(W, H);
-      ctx.lineTo(0, H);
-      ctx.closePath();
-      ctx.fillStyle = '#030b04';
-      ctx.fill();
-
-      clouds.forEach(cl => {
-        cl.x += cl.spd;
-        if (cl.x > W + cl.w) cl.x = -cl.w;
-        ctx.save();
-        ctx.globalAlpha = cl.alpha;
-        ctx.fillStyle = '#8ecf8e';
-        ctx.beginPath();
-        ctx.ellipse(cl.x, cl.y, cl.w * 0.5, cl.h * 0.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-
-      blades.forEach(b => {
-        const wind = Math.sin(tick * b.spd * 0.033 + b.phase);
-        const totalSway = wind * b.sway;
-        const pts = [];
-        for (let s = 0; s <= b.segs; s++) {
-          const t = s / b.segs, sw = totalSway * t * t, lean = t * t * b.sway * 0.12;
-          pts.push({ x: b.x + sw + lean, y: b.y - t * b.h, w: b.bw * Math.pow(1 - t, 1.5) });
-        }
-        ctx.beginPath();
-        ctx.moveTo(pts[0].x - pts[0].w * 0.5, pts[0].y);
-        for (let s = 1; s < pts.length; s++) ctx.lineTo(pts[s].x - pts[s].w * 0.5, pts[s].y);
-        ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y - 1);
-        for (let s = pts.length - 1; s >= 0; s--) ctx.lineTo(pts[s].x + pts[s].w * 0.5, pts[s].y);
-        ctx.closePath();
-        ctx.fillStyle = `hsl(${b.hue},${b.sat}%,${b.lit}%)`;
-        ctx.fill();
-      });
-
-      fireflies.forEach(p => {
-        p.x += p.vx + Math.sin(tick * 0.018 + p.phase) * 0.28;
-        p.y += p.vy;
-        p.life++;
-        if (p.life > p.maxLife || p.y < H * 0.12) {
-          p.x = rnd(0, W); p.y = rnd(H * 0.5, H * 0.78);
-          p.vx = rnd(-0.25, 0.25); p.vy = rnd(-0.35, -0.05);
-          p.life = 0; p.maxLife = rnd(100, 280);
-        }
-        const fade = Math.sin((p.life / p.maxLife) * Math.PI), pulse = 0.5 + 0.5 * Math.sin(tick * 0.075 + p.phase);
-        ctx.save();
-        ctx.globalAlpha = fade * pulse * 0.88;
-        ctx.fillStyle = `hsl(${p.hue},98%,88%)`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 0.65, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-
-      requestAnimationFrame(frame);
-    }
-
-    window.addEventListener('resize', resize);
-    resize();
-    frame();
-  </script>
-
-  <!-- LANGUAGE SELECTION MODAL -->
-  <div class="reg-modal-overlay" id="regLangModal" onclick="if(event.target===this)closeRegLangModal()">
-    <div class="reg-modal-box">
-      <div class="reg-modal-header">
-        <h3>🌐 Select Language</h3>
-        <button type="button" class="reg-modal-close" onclick="closeRegLangModal()">✕</button>
-      </div>
-      <div class="reg-modal-sub">Choose your preferred language for registration and AI voice assistance:</div>
-      <div class="reg-lang-grid" id="regLangGrid">
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('en-IN', 'English')"><span class="l-name">English</span><span class="l-en">Statutory English</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('ta-IN', 'Tamil')"><span class="l-name">தமிழ்</span><span class="l-en">Tamil</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('hi-IN', 'Hindi')"><span class="l-name">हिन्दी</span><span class="l-en">Hindi</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('te-IN', 'Telugu')"><span class="l-name">తెలుగు</span><span class="l-en">Telugu</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('kn-IN', 'Kannada')"><span class="l-name">ಕನ್ನಡ</span><span class="l-en">Kannada</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('ml-IN', 'Malayalam')"><span class="l-name">മലയാളം</span><span class="l-en">Malayalam</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('bn-IN', 'Bengali')"><span class="l-name">বাংলা</span><span class="l-en">Bengali</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('mr-IN', 'Marathi')"><span class="l-name">मराठी</span><span class="l-en">Marathi</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('gu-IN', 'Gujarati')"><span class="l-name">ગુજરાતી</span><span class="l-en">Gujarati</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('pa-IN', 'Punjabi')"><span class="l-name">ਪੰਜਾਬੀ</span><span class="l-en">Punjabi</span></button>
-        <button type="button" class="reg-lang-opt" onclick="applyRegLanguage('or-IN', 'Odia')"><span class="l-name">ଓଡ଼ିଆ</span><span class="l-en">Odia</span></button>
-      </div>
-    </div>
-  </div>
-
-  
-  <!-- COMPREHENSIVE MULTILINGUAL DICTIONARY & GOOGLE TRANSLATE SYNC -->
-  <div id="google_translate_element" style="position:absolute;opacity:0.01;pointer-events:none;width:1px;height:1px;overflow:hidden;top:0;left:0;"></div>
-  <script>
-    const REG_TRANSLATIONS = {
+{
   "en": {
     "brandSub": "Institutional PACS Member, Tenant Farmer & Agritech Registry",
     "regLangLabel": "Language",
@@ -1349,6 +20,7 @@
     "lbl_state": "State <span class=\"req\">*</span>",
     "f_state_ph": "Select state…",
     "btnNext1": "Next: PACS Affiliation →",
+
     "s2Badge": "Step 2 of 5",
     "s2Title": "🏛️ PACS & Cooperative Society Affiliation",
     "s2Desc": "Connect your profile to your local Primary Agricultural Credit Society to verify voting rights, dividend shares, and subsidized fertilizer quotas.",
@@ -1364,6 +36,7 @@
     "f_dccb_ph": "e.g. Thanjavur Central Cooperative Bank",
     "btnBack2": "← Back",
     "btnNext2": "Next: Land & Crops →",
+
     "s3Badge": "Step 3 of 5",
     "s3Title": "🌾 Land Tenure, Soil & Agritech Profile",
     "s3Desc": "Details required to calculate Scale of Finance, PMFBY crop insurance premiums, and statutory tenant rights.",
@@ -1379,6 +52,7 @@
     "lbl_irrigation": "Irrigation Source",
     "btnBack3": "← Back",
     "btnNext3": "Next: Credit & Insurance →",
+
     "s4Badge": "Step 4 of 5",
     "s4Title": "💳 Institutional Credit, PMFBY & Subsidies",
     "s4Desc": "Enable automated KCC 4% subvention checks, PMFBY claim dossier generation, and PM-KISAN grievance tracking.",
@@ -1394,6 +68,7 @@
     "lbl_income": "Annual Household Income Bracket",
     "btnBack4": "← Back",
     "btnNext4": "Next: Language & Voice →",
+
     "s5Badge": "Step 5 of 5",
     "s5Title": "🗣️ AI Dialect, Voice & Audio Mode",
     "s5Desc": "Farmers often prefer listening over typing. Choose your native Indian language for real-time Alexa-style voice answers.",
@@ -1426,6 +101,7 @@
     "lbl_state": "राज्य <span class=\"req\">*</span>",
     "f_state_ph": "राज्य चुनें…",
     "btnNext1": "अगला: पैक्स संबद्धता →",
+
     "s2Badge": "चरण 2 / 5",
     "s2Title": "🏛️ पैक्स एवं सहकारी समिति संबद्धता",
     "s2Desc": "मतदान अधिकार, लाभांश शेयर और रियायती खाद कोटा सत्यापित करने हेतु अपनी प्राथमिक कृषि सहकारी समिति से जुड़ें।",
@@ -1441,6 +117,7 @@
     "f_dccb_ph": "उदा. तंजावुर केंद्रीय सहकारी बैंक",
     "btnBack2": "← वापस",
     "btnNext2": "अगला: भूमि और फसलें →",
+
     "s3Badge": "चरण 3 / 5",
     "s3Title": "🌾 भूमि का स्वामित्व, मिट्टी और कृषि प्रोफाइल",
     "s3Desc": "वित्त का पैमाना (Scale of Finance), पीएमएफबीवाई फसल बीमा प्रीमियम और वैधानिक अधिकार तय करने हेतु विवरण।",
@@ -1456,6 +133,7 @@
     "lbl_irrigation": "सिंचाई का स्रोत",
     "btnBack3": "← वापस",
     "btnNext3": "अगला: ऋण और बीमा →",
+
     "s4Badge": "चरण 4 / 5",
     "s4Title": "💳 संस्थागत ऋण, पीएमएफबीवाई और सब्सिडी",
     "s4Desc": "स्वचालित केसीसी 4% ब्याज छूट, पीएमएफबीवाई दावा डोजियर और पीएम-किसान निवारण सक्षम करें।",
@@ -1471,6 +149,7 @@
     "lbl_income": "वार्षिक घरेलू आय वर्ग",
     "btnBack4": "← वापस",
     "btnNext4": "अगला: भाषा और आवाज →",
+
     "s5Badge": "चरण 5 / 5",
     "s5Title": "🗣️ एआई बोली, आवाज और ऑडियो मोड",
     "s5Desc": "किसान अक्सर टाइपिंग के बजाय सुनना पसंद करते हैं। वास्तविक समय वॉयस उत्तरों के लिए अपनी भाषा चुनें।",
@@ -1503,6 +182,7 @@
     "lbl_state": "மாநிலம் <span class=\"req\">*</span>",
     "f_state_ph": "மாநிலத்தைத் தேர்ந்தெடுக்கவும்…",
     "btnNext1": "அடுத்தது: PACS இணைப்பு →",
+
     "s2Badge": "படி 2 / 5",
     "s2Title": "🏛️ PACS கூட்டுறவு சங்க இணைப்பு",
     "s2Desc": "வாக்குரிமை, பங்கு ஈவுத்தொகை மற்றும் மானிய உர ஒதுக்கீட்டை உறுதிப்படுத்த உங்கள் உள்ளூர் சங்கத்துடன் இணையுங்கள்.",
@@ -1518,6 +198,7 @@
     "f_dccb_ph": "எ.கா. தஞ்சாவூர் மத்திய கூட்டுறவு வங்கி",
     "btnBack2": "← பின்செல்",
     "btnNext2": "அடுத்தது: நிலம் & பயிர்கள் →",
+
     "s3Badge": "படி 3 / 5",
     "s3Title": "🌾 நில உரிமை, மண் மற்றும் பயிர் விவரம்",
     "s3Desc": "பயிர் கடன் அளவு, PMFBY காப்பீட்டு பிரீமியம் மற்றும் குத்தகை உரிமைகளை கணக்கிட தேவையான விவரங்கள்.",
@@ -1533,6 +214,7 @@
     "lbl_irrigation": "பாசன ஆதாரம்",
     "btnBack3": "← பின்செல்",
     "btnNext3": "அடுத்தது: கடன் & காப்பீடு →",
+
     "s4Badge": "படி 4 / 5",
     "s4Title": "💳 கிசான் கிரெடிட் கார்டு, PMFBY & மானியங்கள்",
     "s4Desc": "4% KCC வட்டி மானியம், PMFBY இழப்பீட்டு ஆவணம் மற்றும் PM-KISAN உதவித்தொகை கண்காணிப்பு.",
@@ -1548,6 +230,7 @@
     "lbl_income": "ஆண்டு வருமான வரம்பு",
     "btnBack4": "← பின்செல்",
     "btnNext4": "அடுத்தது: மொழி & குரல் முறை →",
+
     "s5Badge": "படி 5 / 5",
     "s5Title": "🗣️ AI மொழி மற்றும் குரல் முறை",
     "s5Desc": "விவசாயிகளுக்கு குரல் வழி வழிகாட்டல் சிறந்தது. நிகழ்நேர குரல் பதில்களுக்கு உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்.",
@@ -1580,6 +263,7 @@
     "lbl_state": "రాష్ట్రం <span class=\"req\">*</span>",
     "f_state_ph": "రాష్ట్రాన్ని ఎంచుకోండి…",
     "btnNext1": "తరువాత: PACS అనుబంధం →",
+
     "s2Badge": "దశ 2 / 5",
     "s2Title": "🏛️ PACS & సహకార సంఘం అనుబంధం",
     "s2Desc": "ఓటింగ్ హక్కులు, డివిడెండ్ షేర్లు మరియు సబ్సిడీ ఎరువుల కోటాను ధృవీకరించడానికి మీ స్థానిక సొసైటీతో కనెక్ట్ అవ్వండి.",
@@ -1595,6 +279,7 @@
     "f_dccb_ph": "ఉదా. జిల్లా కేంద్ర సహకార బ్యాంకు",
     "btnBack2": "← వెనుకకు",
     "btnNext2": "తరువాత: భూమి & పంటలు →",
+
     "s3Badge": "దశ 3 / 5",
     "s3Title": "🌾 భూమి యాజమాన్యం, నేల & పంట వివరాలు",
     "s3Desc": "రుణ పరిమితి, PMFBY పంట బీమా ప్రీమియం మరియు కౌలుదారు హక్కులను లెక్కించడానికి అవసరమైన వివరాలు.",
@@ -1610,6 +295,7 @@
     "lbl_irrigation": "నీటిపారుదల వనరు",
     "btnBack3": "← వెనుకకు",
     "btnNext3": "తరువాత: రుణం & బీమా →",
+
     "s4Badge": "దశ 4 / 5",
     "s4Title": "💳 కిసాన్ క్రెడిట్ కార్డు, PMFBY & రాయితీలు",
     "s4Desc": "4% KCC వడ్డీ రాయితీ, PMFBY దావా డాక్యుమెంటేషన్ మరియు PM-కిసాన్ నిధుల పర్యవేక్షణ.",
@@ -1625,6 +311,7 @@
     "lbl_income": "వార్షిక కుటుంబ ఆదాయం",
     "btnBack4": "← వెనుకకు",
     "btnNext4": "తరువాత: భాష & వాయిస్ →",
+
     "s5Badge": "దశ 5 / 5",
     "s5Title": "🗣️ AI భాష & వాయిస్ మోడ్",
     "s5Desc": "రైతులు టైప్ చేయడం కంటే వినడానికి ఇష్టపడతారు. రియల్-టైమ్ వాయిస్ సమాధానాల కోసం మీ భాషను ఎంచుకోండి.",
@@ -1657,6 +344,7 @@
     "lbl_state": "ರಾಜ್ಯ <span class=\"req\">*</span>",
     "f_state_ph": "ರಾಜ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ…",
     "btnNext1": "ಮುಂದೆ: PACS ಸಂಯೋಜನೆ →",
+
     "s2Badge": "ಹಂತ 2 / 5",
     "s2Title": "🏛️ PACS ಸಹಕಾರ ಸಂಘದ ಸಂಯೋಜನೆ",
     "s2Desc": "ಮತದಾನ ಹಕ್ಕು, ಲಾಭಾಂಶ ಮತ್ತು ರಿಯಾಯಿತಿ ರಸಗೊಬ್ಬರ ಕೋಟಾ ಪರಿಶೀಲಿಸಲು ಸ್ಥಳೀಯ ಸಂಘದೊಂದಿಗೆ ಸಂಪರ್ಕ ಸಾಧಿಸಿ.",
@@ -1672,6 +360,7 @@
     "f_dccb_ph": "ಉದಾ. ಜಿಲ್ಲಾ ಕೇಂದ್ರ ಸಹಕಾರಿ ಬ್ಯಾಂಕ್",
     "btnBack2": "← ಹಿಂದೆ",
     "btnNext2": "ಮುಂದೆ: ಭೂಮಿ ಮತ್ತು ಬೆಳೆಗಳು →",
+
     "s3Badge": "ಹಂತ 3 / 5",
     "s3Title": "🌾 ಭೂಹಿಡುವಳಿ, ಮಣ್ಣು ಮತ್ತು ಕೃಷಿ ವಿವರ",
     "s3Desc": "ಸಾಲದ ಪ್ರಮಾಣ, PMFBY ಬೆಳೆ ವಿಮೆ ಪ್ರೀಮಿಯಂ ಮತ್ತು ಗೇಣಿದಾರರ ಹಕ್ಕುಗಳನ್ನು ಲೆಕ್ಕಹಾಕಲು ವಿವರಗಳು.",
@@ -1687,6 +376,7 @@
     "lbl_irrigation": "ನೀರಾವರಿ ಮೂಲ",
     "btnBack3": "← ಹಿಂದೆ",
     "btnNext3": "ಮುಂದೆ: ಸಾಲ ಮತ್ತು ವಿಮೆ →",
+
     "s4Badge": "ಹಂತ 4 / 5",
     "s4Title": "💳 ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್, PMFBY & ಸಬ್ಸಿಡಿ",
     "s4Desc": "4% KCC ಬಡ್ಡಿ ಸಬ್ಸಿಡಿ, PMFBY ಕ್ಲೈಮ್ ಮತ್ತು PM-ಕಿಸಾನ್ ಪರಿಹಾರ ಟ್ರ್ಯಾಕಿಂಗ್ ಸಕ್ರಿಯಗೊಳಿಸಿ.",
@@ -1702,6 +392,7 @@
     "lbl_income": "ವಾರ್ಷಿಕ ಕುಟುಂಬ ಆದಾಯ",
     "btnBack4": "← ಹಿಂದೆ",
     "btnNext4": "ಮುಂದೆ: ಭಾಷೆ ಮತ್ತು ಧ್ವನಿ →",
+
     "s5Badge": "ಹಂತ 5 / 5",
     "s5Title": "🗣️ AI ಭಾಷೆ ಮತ್ತು ಧ್ವನಿ ಮೋಡ್",
     "s5Desc": "ರೈತರು ಟೈಪ್ ಮಾಡುವುದಕ್ಕಿಂತ ಆಲಿಸಲು ಬಯಸುತ್ತಾರೆ. ನೈಜ-ಸಮಯದ ಧ್ವನಿ ಉತ್ತರಗಳಿಗಾಗಿ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
@@ -1734,6 +425,7 @@
     "lbl_state": "സംസ്ഥാനം <span class=\"req\">*</span>",
     "f_state_ph": "സംസ്ഥാനം തിരഞ്ഞെടുക്കുക…",
     "btnNext1": "അടുത്തത്: PACS അഫിലിയേഷൻ →",
+
     "s2Badge": "ഘട്ടം 2 / 5",
     "s2Title": "🏛️ PACS സഹകരണ സംഘം അഫിലിയേഷൻ",
     "s2Desc": "വോട്ടിംഗ് അവകാശം, ലാഭവിഹിതം, സബ്‌സിഡി വളം എന്നിവ ഉറപ്പാക്കാൻ പ്രാദേശിക സംഘവുമായി ബന്ധിപ്പിക്കുക.",
@@ -1749,6 +441,7 @@
     "f_dccb_ph": "ഉദാ. ജില്ലാ സഹകരണ ബാങ്ക്",
     "btnBack2": "← പിന്നോട്ട്",
     "btnNext2": "അടുത്തത്: ഭൂമിയും വിളകളും →",
+
     "s3Badge": "ഘട്ടം 3 / 5",
     "s3Title": "🌾 ഭൂവുടമസ്ഥത, മണ്ണ്, വിള വിവരങ്ങൾ",
     "s3Desc": "വായ്പാ പരിധി, PMFBY വിള ഇൻഷുറൻസ് പ്രീമിയം എന്നിവ കണക്കാക്കാൻ ആവശ്യമായ വിവരങ്ങൾ.",
@@ -1764,6 +457,7 @@
     "lbl_irrigation": "ജലസേചന സ്രോതസ്സ്",
     "btnBack3": "← പിന്നോട്ട്",
     "btnNext3": "അടുത്തത്: വായ്പയും ഇൻഷുറൻസും →",
+
     "s4Badge": "ഘട്ടം 4 / 5",
     "s4Title": "💳 കിസാൻ ക്രെഡിറ്റ് കാർഡ്, PMFBY & സബ്‌സിഡികൾ",
     "s4Desc": "4% KCC പലിശ ഇളവ്, PMFBY ക്ലെയിം, PM-കിസാൻ ആനുകൂല്യ നിരീക്ഷണം എന്നിവ ലഭ്യമാക്കുക.",
@@ -1779,6 +473,7 @@
     "lbl_income": "വാർഷിക കുടുംബ വരുമാനം",
     "btnBack4": "← പിന്നോട്ട്",
     "btnNext4": "അടുത്തത്: ഭാഷയും വോയ്‌സ് മോഡും →",
+
     "s5Badge": "ഘട്ടം 5 / 5",
     "s5Title": "🗣️ AI ഭാഷയും വോയ്‌സ് മോഡും",
     "s5Desc": "ടൈപ്പ് ചെയ്യുന്നതിനേക്കാൾ കേൾക്കാൻ ഇഷ്ടപ്പെടുന്ന കർഷകർക്കായി തത്സമയ ശബ്ദ മറുപടികൾക്ക് ഭാഷ തിരഞ്ഞെടുക്കുക.",
@@ -1811,6 +506,7 @@
     "lbl_state": "রাজ্য <span class=\"req\">*</span>",
     "f_state_ph": "রাজ্য নির্বাচন করুন…",
     "btnNext1": "পরবর্তী: প্যাক্স সংযুক্তি →",
+
     "s2Badge": "ধাপ ২ / ৫",
     "s2Title": "🏛️ প্যাক্স ও সমবায় সমিতি সংযুক্তি",
     "s2Desc": "ভোটের অধিকার, লভ্যাংশ এবং ভর্তুকিযুক্ত সারের কোটা নিশ্চিত করতে স্থানীয় সমবায় সমিতির সাথে যুক্ত হন।",
@@ -1826,6 +522,7 @@
     "f_dccb_ph": "উদা. জেলা কেন্দ্রীয় সমবায় ব্যাংক",
     "btnBack2": "← পেছনে",
     "btnNext2": "পরবর্তী: জমি ও ফসল →",
+
     "s3Badge": "ধাপ ৩ / ৫",
     "s3Title": "🌾 জমির মেয়াদ, মাটি ও ফসলের বিবরণ",
     "s3Desc": "ঋণের পরিমাণ, PMFBY ফসল বীমা প্রিমিয়াম ও ভাগচাষী অধিকার নির্ধারণের জন্য প্রয়োজনীয় তথ্য।",
@@ -1841,6 +538,7 @@
     "lbl_irrigation": "সেচের উৎস",
     "btnBack3": "← পেছনে",
     "btnNext3": "পরবর্তী: ঋণ ও বীমা →",
+
     "s4Badge": "ধাপ ৪ / ৫",
     "s4Title": "💳 কিষাণ ক্রেডিট কার্ড, PMFBY ও ভর্তুকি",
     "s4Desc": "৪% KCC সুদ ভর্তুকি, PMFBY ক্ষতিপূরণ দাবি এবং PM-কিষাণ সহায়তার সুবিধা পান।",
@@ -1856,6 +554,7 @@
     "lbl_income": "বার্ষিক পারিবারিক আয়",
     "btnBack4": "← পেছনে",
     "btnNext4": "পরবর্তী: ভাষা ও ভয়েস মোড →",
+
     "s5Badge": "ধাপ ৫ / ৫",
     "s5Title": "🗣️ এআই ভাষা ও ভয়েস মোড",
     "s5Desc": "কৃষকরা টাইপ করার চেয়ে শুনতে পছন্দ করেন। ভয়েস উত্তরের জন্য আপনার ভাষা বেছে নিন।",
@@ -1888,6 +587,7 @@
     "lbl_state": "राज्य <span class=\"req\">*</span>",
     "f_state_ph": "राज्य निवडा…",
     "btnNext1": "पुढे: पॅक्स संलग्नता →",
+
     "s2Badge": "टप्पा २ / ५",
     "s2Title": "🏛️ पॅक्स व सहकारी संस्था संलग्नता",
     "s2Desc": "मतदान हक्क, लाभांश आणि खत कोटा पडताळणीसाठी आपल्या स्थानिक संस्थेशी जोडा.",
@@ -1903,6 +603,7 @@
     "f_dccb_ph": "उदा. जिल्हा मध्यवर्ती सहकारी बँक",
     "btnBack2": "← मागे",
     "btnNext2": "पुढे: जमीन व पिके →",
+
     "s3Badge": "टप्पा ३ / ५",
     "s3Title": "🌾 जमीन धारणा, माती व पीक तपशील",
     "s3Desc": "कर्ज मर्यादा, PMFBY पीक विमा आणि कुळ हक्क निश्चित करण्यासाठी आवश्यक माहिती.",
@@ -1918,6 +619,7 @@
     "lbl_irrigation": "सिंचनाचा स्रोत",
     "btnBack3": "← मागे",
     "btnNext3": "पुढे: कर्ज व विमा →",
+
     "s4Badge": "टप्पा ४ / ५",
     "s4Title": "💳 किसान क्रेडिट कार्ड, PMFBY व अनुदाने",
     "s4Desc": "४% KCC व्याज सवलत, PMFBY विमा दावा आणि PM-किसान निवारण ट्रॅकिंग.",
@@ -1933,6 +635,7 @@
     "lbl_income": "वार्षिक कौटुंबिक उत्पन्न",
     "btnBack4": "← मागे",
     "btnNext4": "पुढे: भाषा व आवाज पर्याय →",
+
     "s5Badge": "टप्पा ५ / ५",
     "s5Title": "🗣️ AI भाषा व व्हॉइस मोड",
     "s5Desc": "शेतकऱ्यांना वाचण्यापेक्षा ऐकणे सोपे वाटते. व्हॉइस उत्तरांसाठी आपली भाषा निवडा.",
@@ -1965,6 +668,7 @@
     "lbl_state": "રાજ્ય <span class=\"req\">*</span>",
     "f_state_ph": "રાજ્ય પસંદ કરો…",
     "btnNext1": "આગળ: પેક્સ જોડાણ →",
+
     "s2Badge": "પગલું ૨ / ૫",
     "s2Title": "🏛️ પેક્સ સહકારી મંડળી જોડાણ",
     "s2Desc": "મતદાન અધિકાર, ડિવિડન્ડ અને ખાતરનો ક્વોટા સુનિશ્ચિત કરવા સ્થાનિક મંડળી સાથે જોડાઓ.",
@@ -1980,6 +684,7 @@
     "f_dccb_ph": "દા.ત. જિલ્લા સહકારી બેંક",
     "btnBack2": "← પાછળ",
     "btnNext2": "આગળ: જમીન અને પાક →",
+
     "s3Badge": "પગલું ૩ / ૫",
     "s3Title": "🌾 જમીન ધારણ, જમીનનો પ્રકાર અને પાક વિગત",
     "s3Desc": "ધિરાણ મર્યાદા, PMFBY પાક વીમો અને હકોની ગણતરી માટે જરૂરી વિગતો.",
@@ -1995,6 +700,7 @@
     "lbl_irrigation": "સિંચાઈનો સ્ત્રોત",
     "btnBack3": "← પાછળ",
     "btnNext3": "આગળ: ધિરાણ અને વીમો →",
+
     "s4Badge": "પગલું ૪ / ૫",
     "s4Title": "💳 કિસાન ક્રેડિટ કાર્ડ, PMFBY અને સબસિડી",
     "s4Desc": "૪% KCC વ્યાજ રાહત, PMFBY દાવા અને PM-કિસાન લાભો મેળવો.",
@@ -2010,6 +716,7 @@
     "lbl_income": "વાર્ષિક કૌટુંબિક આવક",
     "btnBack4": "← પાછળ",
     "btnNext4": "આગળ: ભાષા અને અવાજ →",
+
     "s5Badge": "પગલું ૫ / ૫",
     "s5Title": "🗣️ AI ભાષા અને વૉઇસ મોડ",
     "s5Desc": "ખેડૂતો ટાઇપ કરવા કરતાં સાંભળવાનું પસંદ કરે છે. વાસ્તવિક સમયના જવાબો માટે ભાષા પસંદ કરો.",
@@ -2042,6 +749,7 @@
     "lbl_state": "ਰਾਜ <span class=\"req\">*</span>",
     "f_state_ph": "ਰਾਜ ਚੁਣੋ…",
     "btnNext1": "ਅਗਲਾ: PACS ਸੰਬੰਧਤ →",
+
     "s2Badge": "ਕਦਮ 2 / 5",
     "s2Title": "🏛️ PACS ਅਤੇ ਸਹਿਕਾਰੀ ਸਭਾ ਸੰਬੰਧਤ",
     "s2Desc": "ਵੋਟਿੰਗ ਅਧਿਕਾਰ, ਲਾਭਅੰਸ਼ ਅਤੇ ਸਬਸਿਡੀ ਵਾਲੀ ਖਾਦ ਕੋਟਾ ਪ੍ਰਮਾਣਿਤ ਕਰਨ ਲਈ ਆਪਣੀ ਸਭਾ ਨਾਲ ਜੁੜੋ।",
@@ -2057,6 +765,7 @@
     "f_dccb_ph": "ਉਦਾ. ਜ਼ਿਲ੍ਹਾ ਕੇਂਦਰੀ ਸਹਿਕਾਰੀ ਬੈਂਕ",
     "btnBack2": "← ਪਿੱਛੇ",
     "btnNext2": "ਅਗਲਾ: ਜ਼ਮੀਨ ਅਤੇ ਫਸਲਾਂ →",
+
     "s3Badge": "ਕਦਮ 3 / 5",
     "s3Title": "🌾 ਜ਼ਮੀਨ ਦੀ ਮਲਕੀਅਤ, ਮਿੱਟੀ ਅਤੇ ਫਸਲ ਵੇਰਵਾ",
     "s3Desc": "ਕਰਜ਼ਾ ਸੀਮਾ, PMFBY ਫਸਲ ਬੀਮਾ ਅਤੇ ਅਧਿਕਾਰਾਂ ਦੀ ਗਣਨਾ ਲਈ ਲੋੜੀਂਦੇ ਵੇਰਵੇ।",
@@ -2072,6 +781,7 @@
     "lbl_irrigation": "ਸਿੰਚਾਈ ਦਾ ਸਾਧਨ",
     "btnBack3": "← ਪਿੱਛੇ",
     "btnNext3": "ਅਗਲਾ: ਕਰਜ਼ਾ ਅਤੇ ਬੀਮਾ →",
+
     "s4Badge": "ਕਦਮ 4 / 5",
     "s4Title": "💳 ਕਿਸਾਨ ਕ੍ਰੈਡਿਟ ਕਾਰਡ, PMFBY ਅਤੇ ਸਬਸਿਡੀਆਂ",
     "s4Desc": "4% KCC ਵਿਆਜ ਛੋਟ, PMFBY ਦਾਅਵੇ ਅਤੇ PM-ਕਿਸਾਨ ਸਹਾਇਤਾ ਪ੍ਰਾਪਤ ਕਰੋ।",
@@ -2087,6 +797,7 @@
     "lbl_income": "ਸਾਲਾਨਾ ਪਰਿਵਾਰਕ ਆਮਦਨ",
     "btnBack4": "← ਪਿੱਛੇ",
     "btnNext4": "ਅਗਲਾ: ਭਾਸ਼ਾ ਅਤੇ ਆਵਾਜ਼ →",
+
     "s5Badge": "ਕਦਮ 5 / 5",
     "s5Title": "🗣️ AI ਭਾਸ਼ਾ ਅਤੇ ਵੌਇਸ ਮੋਡ",
     "s5Desc": "ਕਿਸਾਨ ਟਾਈਪ ਕਰਨ ਨਾਲੋਂ ਸੁਣਨਾ ਪਸੰਦ ਕਰਦੇ ਹਨ। ਵੌਇਸ ਜਵਾਬਾਂ ਲਈ ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ।",
@@ -2119,6 +830,7 @@
     "lbl_state": "ରାଜ୍ୟ <span class=\"req\">*</span>",
     "f_state_ph": "ରାଜ୍ୟ ଚୟନ କରନ୍ତୁ…",
     "btnNext1": "ପରବର୍ତ୍ତୀ: PACS ସଂଲଗ୍ନତା →",
+
     "s2Badge": "ପର୍ଯ୍ୟାୟ 2 / 5",
     "s2Title": "🏛️ PACS ଓ ସମବାୟ ସମିତି ସଂଲଗ୍ନତା",
     "s2Desc": "ଭୋଟ ଅଧିକାର, ଲାଭାଂଶ ଓ ରିହାତି ସାର କୋଟା ସୁନିଶ୍ଚିତ କରିବାକୁ ସ୍ଥାନୀୟ ସମିତି ସହ ଯୋଡ଼ନ୍ତୁ।",
@@ -2134,6 +846,7 @@
     "f_dccb_ph": "ଉଦା. ଜିଲ୍ଲା କେନ୍ଦ୍ରୀୟ ସମବାୟ ବ୍ୟାଙ୍କ",
     "btnBack2": "← ପଛକୁ",
     "btnNext2": "ପରବର୍ତ୍ତୀ: ଜମି ଓ ଫସଲ →",
+
     "s3Badge": "ପର୍ଯ୍ୟାୟ 3 / 5",
     "s3Title": "🌾 ଜମି ମାଲିକାନା, ମୃତ୍ତିକା ଓ ଫସଲ ବିବରଣୀ",
     "s3Desc": "ଋଣ ସୀମା, PMFBY ଫସଲ ବୀମା ଓ ଭାଗଚାଷୀ ଅଧିକାର ନିର୍ଦ୍ଧାରଣ ପାଇଁ ଆବଶ୍ୟକ ତଥ୍ୟ।",
@@ -2149,6 +862,7 @@
     "lbl_irrigation": "ଜଳସେଚନ ଉତ୍ସ",
     "btnBack3": "← ପଛକୁ",
     "btnNext3": "ପରବର୍ତ୍ତୀ: ଋଣ ଓ ବୀମା →",
+
     "s4Badge": "ପର୍ଯ୍ୟାୟ 4 / 5",
     "s4Title": "💳 କିଷାନ କ୍ରେଡିଟ କାର୍ଡ, PMFBY ଓ ସବସିଡି",
     "s4Desc": "4% KCC ସୁଧ ରିହାତି, PMFBY କ୍ଷତିପୂରଣ ଦାବି ଓ PM-କିଷାନ ସହାୟତା ପାଆନ୍ତୁ।",
@@ -2164,6 +878,7 @@
     "lbl_income": "ବାର୍ଷିକ ପାରିବାରିକ ଆୟ",
     "btnBack4": "← ପଛକୁ",
     "btnNext4": "ପରବର୍ତ୍ତୀ: ଭାଷା ଓ ଭଏସ୍ ମୋଡ୍ →",
+
     "s5Badge": "ପର୍ଯ୍ୟାୟ 5 / 5",
     "s5Title": "🗣️ AI ଭାଷା ଓ ଭଏସ୍ ମୋଡ୍",
     "s5Desc": "କୃଷକମାନେ ଟାଇପ୍ କରିବା ଅପେକ୍ଷା ଶୁଣିବାକୁ ପସନ୍ଦ କରନ୍ତି। ଭଏସ୍ ଉତ୍ତର ପାଇଁ ନିଜ ଭାଷା ବାଛନ୍ତୁ।",
@@ -2175,180 +890,4 @@
     "submitBtn": "🏛️ ସହକାର ବାଣୀ ଆରମ୍ଭ କରନ୍ତୁ",
     "alertName": "ଦୟାକରି ଆପଣଙ୍କ ପୂରା ନାମ ପ୍ରବେଶ କରନ୍ତୁ।"
   }
-};
-    let currentLangCode = 'en';
-
-    function translateRegistrationPage(code) {
-      const short = (code || 'en').split('-')[0].toLowerCase();
-      const t = REG_TRANSLATIONS[short] || REG_TRANSLATIONS['en'];
-      if (!t) return;
-      currentLangCode = short;
-
-      // Header & Brand
-      const bSub = document.getElementById('brandSub'); if (bSub && t.brandSub) bSub.textContent = t.brandSub;
-      const rLabel = document.getElementById('regLangLabel'); if (rLabel && t.regLangLabel) rLabel.textContent = t.regLangLabel;
-
-      // Step 1
-      const s1Badge = document.getElementById('s1Badge'); if (s1Badge && t.s1Badge) s1Badge.textContent = t.s1Badge;
-      const s1Title = document.getElementById('s1Title'); if (s1Title && t.s1Title) s1Title.textContent = t.s1Title;
-      const s1Desc = document.getElementById('s1Desc'); if (s1Desc && t.s1Desc) s1Desc.textContent = t.s1Desc;
-      const lbl_name = document.getElementById('lbl_name'); if (lbl_name && t.lbl_name) lbl_name.innerHTML = t.lbl_name;
-      const f_name = document.getElementById('f_name'); if (f_name && t.f_name_ph) f_name.placeholder = t.f_name_ph;
-      const lbl_phone = document.getElementById('lbl_phone'); if (lbl_phone && t.lbl_phone) lbl_phone.innerHTML = t.lbl_phone;
-      const f_phone = document.getElementById('f_phone'); if (f_phone && t.f_phone_ph) f_phone.placeholder = t.f_phone_ph;
-      const lbl_aadhaar = document.getElementById('lbl_aadhaar'); if (lbl_aadhaar && t.lbl_aadhaar) lbl_aadhaar.textContent = t.lbl_aadhaar;
-      const f_aadhaar = document.getElementById('f_aadhaar'); if (f_aadhaar && t.f_aadhaar_ph) f_aadhaar.placeholder = t.f_aadhaar_ph;
-      const lbl_age = document.getElementById('lbl_age'); if (lbl_age && t.lbl_age) lbl_age.textContent = t.lbl_age;
-      const lbl_gender = document.getElementById('lbl_gender'); if (lbl_gender && t.lbl_gender) lbl_gender.textContent = t.lbl_gender;
-      const lbl_village = document.getElementById('lbl_village'); if (lbl_village && t.lbl_village) lbl_village.innerHTML = t.lbl_village;
-      const f_village = document.getElementById('f_village'); if (f_village && t.f_village_ph) f_village.placeholder = t.f_village_ph;
-      const lbl_district = document.getElementById('lbl_district'); if (lbl_district && t.lbl_district) lbl_district.textContent = t.lbl_district;
-      const f_district = document.getElementById('f_district'); if (f_district && t.f_district_ph) f_district.placeholder = t.f_district_ph;
-      const lbl_state = document.getElementById('lbl_state'); if (lbl_state && t.lbl_state) lbl_state.innerHTML = t.lbl_state;
-      const f_state_input = document.getElementById('f_state_input'); if (f_state_input && t.f_state_ph) f_state_input.placeholder = t.f_state_ph;
-      const btnNext1 = document.getElementById('btnNext1'); if (btnNext1 && t.btnNext1) btnNext1.textContent = t.btnNext1;
-
-      // Step 2
-      const s2Badge = document.getElementById('s2Badge'); if (s2Badge && t.s2Badge) s2Badge.textContent = t.s2Badge;
-      const s2Title = document.getElementById('s2Title'); if (s2Title && t.s2Title) s2Title.textContent = t.s2Title;
-      const s2Desc = document.getElementById('s2Desc'); if (s2Desc && t.s2Desc) s2Desc.textContent = t.s2Desc;
-      const lbl_pacs_name = document.getElementById('lbl_pacs_name'); if (lbl_pacs_name && t.lbl_pacs_name) lbl_pacs_name.textContent = t.lbl_pacs_name;
-      const f_pacs_name = document.getElementById('f_pacs_name'); if (f_pacs_name && t.f_pacs_name_ph) f_pacs_name.placeholder = t.f_pacs_name_ph;
-      const lbl_pacs_id = document.getElementById('lbl_pacs_id'); if (lbl_pacs_id && t.lbl_pacs_id) lbl_pacs_id.textContent = t.lbl_pacs_id;
-      const f_pacs_id = document.getElementById('f_pacs_id'); if (f_pacs_id && t.f_pacs_id_ph) f_pacs_id.placeholder = t.f_pacs_id_ph;
-      const lbl_pacs_type = document.getElementById('lbl_pacs_type'); if (lbl_pacs_type && t.lbl_pacs_type) lbl_pacs_type.innerHTML = t.lbl_pacs_type;
-      const lbl_fert = document.getElementById('lbl_fert'); if (lbl_fert && t.lbl_fert) lbl_fert.textContent = t.lbl_fert;
-      const fert_y = document.getElementById('fert_y'); if (fert_y && t.fert_y) fert_y.textContent = t.fert_y;
-      const fert_n = document.getElementById('fert_n'); if (fert_n && t.fert_n) fert_n.textContent = t.fert_n;
-      const lbl_dccb = document.getElementById('lbl_dccb'); if (lbl_dccb && t.lbl_dccb) lbl_dccb.textContent = t.lbl_dccb;
-      const f_dccb = document.getElementById('f_dccb'); if (f_dccb && t.f_dccb_ph) f_dccb.placeholder = t.f_dccb_ph;
-      const btnBack2 = document.getElementById('btnBack2'); if (btnBack2 && t.btnBack2) btnBack2.textContent = t.btnBack2;
-      const btnNext2 = document.getElementById('btnNext2'); if (btnNext2 && t.btnNext2) btnNext2.textContent = t.btnNext2;
-
-      // Step 3
-      const s3Badge = document.getElementById('s3Badge'); if (s3Badge && t.s3Badge) s3Badge.textContent = t.s3Badge;
-      const s3Title = document.getElementById('s3Title'); if (s3Title && t.s3Title) s3Title.textContent = t.s3Title;
-      const s3Desc = document.getElementById('s3Desc'); if (s3Desc && t.s3Desc) s3Desc.textContent = t.s3Desc;
-      const lbl_acres = document.getElementById('lbl_acres'); if (lbl_acres && t.lbl_acres) lbl_acres.innerHTML = t.lbl_acres;
-      const f_acres = document.getElementById('f_acres'); if (f_acres && t.f_acres_ph) f_acres.placeholder = t.f_acres_ph;
-      const lbl_landtype = document.getElementById('lbl_landtype'); if (lbl_landtype && t.lbl_landtype) lbl_landtype.innerHTML = t.lbl_landtype;
-      const lbl_crop = document.getElementById('lbl_crop'); if (lbl_crop && t.lbl_crop) lbl_crop.innerHTML = t.lbl_crop;
-      const f_crop = document.getElementById('f_crop'); if (f_crop && t.f_crop_ph) f_crop.placeholder = t.f_crop_ph;
-      const lbl_sec_crop = document.getElementById('lbl_sec_crop'); if (lbl_sec_crop && t.lbl_sec_crop) lbl_sec_crop.textContent = t.lbl_sec_crop;
-      const f_sec_crop = document.getElementById('f_sec_crop'); if (f_sec_crop && t.f_sec_crop_ph) f_sec_crop.placeholder = t.f_sec_crop_ph;
-      const lbl_season = document.getElementById('lbl_season'); if (lbl_season && t.lbl_season) lbl_season.textContent = t.lbl_season;
-      const lbl_soil = document.getElementById('lbl_soil'); if (lbl_soil && t.lbl_soil) lbl_soil.textContent = t.lbl_soil;
-      const lbl_irrigation = document.getElementById('lbl_irrigation'); if (lbl_irrigation && t.lbl_irrigation) lbl_irrigation.textContent = t.lbl_irrigation;
-      const btnBack3 = document.getElementById('btnBack3'); if (btnBack3 && t.btnBack3) btnBack3.textContent = t.btnBack3;
-      const btnNext3 = document.getElementById('btnNext3'); if (btnNext3 && t.btnNext3) btnNext3.textContent = t.btnNext3;
-
-      // Step 4
-      const s4Badge = document.getElementById('s4Badge'); if (s4Badge && t.s4Badge) s4Badge.textContent = t.s4Badge;
-      const s4Title = document.getElementById('s4Title'); if (s4Title && t.s4Title) s4Title.textContent = t.s4Title;
-      const s4Desc = document.getElementById('s4Desc'); if (s4Desc && t.s4Desc) s4Desc.textContent = t.s4Desc;
-      const lbl_kcc = document.getElementById('lbl_kcc'); if (lbl_kcc && t.lbl_kcc) lbl_kcc.textContent = t.lbl_kcc;
-      const kcc_y = document.getElementById('kcc_y'); if (kcc_y && t.kcc_y) kcc_y.textContent = t.kcc_y;
-      const kcc_n = document.getElementById('kcc_n'); if (kcc_n && t.kcc_n) kcc_n.textContent = t.kcc_n;
-      const lbl_pmk = document.getElementById('lbl_pmk'); if (lbl_pmk && t.lbl_pmk) lbl_pmk.textContent = t.lbl_pmk;
-      const pmk_y = document.getElementById('pmk_y'); if (pmk_y && t.pmk_y) pmk_y.textContent = t.pmk_y;
-      const pmk_n = document.getElementById('pmk_n'); if (pmk_n && t.pmk_n) pmk_n.textContent = t.pmk_n;
-      const lbl_pmfby = document.getElementById('lbl_pmfby'); if (lbl_pmfby && t.lbl_pmfby) lbl_pmfby.textContent = t.lbl_pmfby;
-      const pmfby_y = document.getElementById('pmfby_y'); if (pmfby_y && t.pmfby_y) pmfby_y.textContent = t.pmfby_y;
-      const pmfby_n = document.getElementById('pmfby_n'); if (pmfby_n && t.pmfby_n) pmfby_n.textContent = t.pmfby_n;
-      const lbl_income = document.getElementById('lbl_income'); if (lbl_income && t.lbl_income) lbl_income.textContent = t.lbl_income;
-      const btnBack4 = document.getElementById('btnBack4'); if (btnBack4 && t.btnBack4) btnBack4.textContent = t.btnBack4;
-      const btnNext4 = document.getElementById('btnNext4'); if (btnNext4 && t.btnNext4) btnNext4.textContent = t.btnNext4;
-
-      // Step 5
-      const s5Badge = document.getElementById('s5Badge'); if (s5Badge && t.s5Badge) s5Badge.textContent = t.s5Badge;
-      const s5Title = document.getElementById('s5Title'); if (s5Title && t.s5Title) s5Title.textContent = t.s5Title;
-      const s5Desc = document.getElementById('s5Desc'); if (s5Desc && t.s5Desc) s5Desc.textContent = t.s5Desc;
-      const lbl_lang = document.getElementById('lbl_lang'); if (lbl_lang && t.lbl_lang) lbl_lang.innerHTML = t.lbl_lang;
-      const lbl_voicemode = document.getElementById('lbl_voicemode'); if (lbl_voicemode && t.lbl_voicemode) lbl_voicemode.textContent = t.lbl_voicemode;
-      const lbl_photo = document.getElementById('lbl_photo'); if (lbl_photo && t.lbl_photo) lbl_photo.textContent = t.lbl_photo;
-      const photoText = document.getElementById('photoText'); if (photoText && t.photoText) photoText.textContent = t.photoText;
-      const btnBack5 = document.getElementById('btnBack5'); if (btnBack5 && t.btnBack5) btnBack5.textContent = t.btnBack5;
-      const submitBtn = document.getElementById('submitBtn'); if (submitBtn && t.submitBtn) submitBtn.textContent = t.submitBtn;
-    }
-
-    function openRegLangModal() {
-      document.getElementById('regLangModal').classList.add('show');
-    }
-    function closeRegLangModal() {
-      document.getElementById('regLangModal').classList.remove('show');
-    }
-
-    function applyRegLanguage(code, label) {
-      const shortCode = (code || 'en').split('-')[0].toLowerCase();
-      
-      // 1. Instant built-in dictionary translation (0ms)
-      translateRegistrationPage(shortCode);
-
-      // 2. Sync select in Step 5
-      const sel = document.getElementById('f_lang');
-      if (sel) sel.value = code;
-
-      // 3. Update top button label
-      const btnLabel = document.getElementById('regLangLabel');
-      if (btnLabel) {
-        const cleanName = label ? label.split(' ')[0] : shortCode.toUpperCase();
-        btnLabel.textContent = cleanName;
-      }
-
-      // 4. Save to device storage
-      localStorage.setItem('preferredLang', code);
-
-      // 5. Trigger Google Translate cookie & combo for full DOM translation
-      try {
-        const targetDomain = window.location.hostname;
-        const cookieVal = '/en/' + shortCode;
-        document.cookie = 'googtrans=' + cookieVal + '; path=/;';
-        if (targetDomain) {
-          document.cookie = 'googtrans=' + cookieVal + '; path=/; domain=' + targetDomain + ';';
-        }
-        const combo = document.querySelector('.goog-te-combo');
-        if (combo) {
-          combo.value = shortCode === 'en' ? '' : shortCode;
-          ['focus', 'mousedown', 'mouseup', 'click', 'input', 'change'].forEach(ev => {
-            combo.dispatchEvent(new Event(ev, { bubbles: true }));
-          });
-        }
-      } catch (e) {}
-
-      closeRegLangModal();
-    }
-
-    function onRegLangSelect(code) {
-      const sel = document.getElementById('f_lang');
-      const label = sel && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex].text.split(' ')[0] : '';
-      applyRegLanguage(code, label);
-    }
-
-    function googleTranslateElementInit() {
-      try {
-        new google.translate.TranslateElement({
-          pageLanguage: 'en',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-          autoDisplay: false
-        }, 'google_translate_element');
-      } catch (e) {}
-    }
-
-    // On page load, auto-apply saved language
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedLang = localStorage.getItem('preferredLang') || 'en-IN';
-      translateRegistrationPage(savedLang);
-      const sel = document.getElementById('f_lang');
-      if (sel) sel.value = savedLang;
-      const short = savedLang.split('-')[0].toLowerCase();
-      const t = REG_TRANSLATIONS[short];
-      if (t && t.regLangLabel) {
-        const btnLabel = document.getElementById('regLangLabel');
-        if (btnLabel) btnLabel.textContent = t.regLangLabel;
-      }
-    });
-  </script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-</body>
-</html>
+}
