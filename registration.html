@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="google" content="notranslate">
+  <meta name="googlebot" content="notranslate">
   <title>Farmer Registration & PACS Institutional Profile — Sahakar Vaani</title>
   <link rel="icon" type="image/svg+xml" href="/public/icon.svg">
   <link rel="apple-touch-icon" href="/public/icon-192.png">
@@ -19,6 +21,21 @@
     if (existingProfileStr && !isEditMode) {
       window.location.replace('index.html');
     }
+
+    // Aggressively purge any lingering Google Translate cookies that force unwanted translation
+    (function killGoogleTranslate() {
+      const domains = [location.hostname, '.' + location.hostname, ''];
+      const paths = ['/', '', location.pathname];
+      domains.forEach(d => {
+        paths.forEach(p => {
+          document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=' + p + (d ? '; domain=' + d : '') + ';';
+        });
+      });
+      // Remove Google Translate iframe/banner elements if any
+      const banner = document.querySelector('.goog-te-banner-frame');
+      if (banner) banner.remove();
+      if (document.body) document.body.style.top = '0px';
+    })();
   </script>
 
   <style>
@@ -628,7 +645,7 @@
 
   </style>
 </head>
-<body>
+<body class="notranslate" translate="no">
   <canvas id="bgCanvas"></canvas>
 
   <div class="page-wrap">
@@ -2362,16 +2379,6 @@
       applyRegLanguage(code, label);
     }
 
-    function googleTranslateElementInit() {
-      try {
-        new google.translate.TranslateElement({
-          pageLanguage: 'en',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-          autoDisplay: false
-        }, 'google_translate_element');
-      } catch (e) {}
-    }
-
     // On page load, auto-apply saved language
     window.addEventListener('DOMContentLoaded', () => {
       const savedLang = localStorage.getItem('preferredLang') || 'en-IN';
@@ -2386,7 +2393,6 @@
       }
     });
   </script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 
   <!-- ADMINISTRATIVE OFFICER LOGIN MODAL -->
