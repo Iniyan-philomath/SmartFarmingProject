@@ -658,20 +658,22 @@
         <div class="s-sub" id="sSub">Saving your PACS membership profile & launching Sahakar Vaani (सहकार वाणी)…</div>
       </div>
 
+      <!-- TOP ACTION BAR -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid rgba(74,222,128,0.2); flex-wrap:wrap; gap:10px;">
+        <button type="button" class="reg-admin-btn" onclick="openAdminLoginModal()" style="background:linear-gradient(135deg, rgba(251,191,36,0.25), rgba(245,158,11,0.35)); border:1.5px solid rgba(251,191,36,0.75); color:#fef08a; padding:8px 16px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13.5px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 0 18px rgba(251,191,36,0.3);">
+          🏛️ Administrative Login (Officer Portal)
+        </button>
+        <button type="button" class="reg-lang-btn" onclick="openRegLangModal()" style="margin-left:auto; padding:8px 14px; font-size:13px; font-weight:600;">
+          🌐 <span id="regLangLabel">Language</span>
+        </button>
+      </div>
+
       <!-- BRAND HEADER -->
       <div class="brand">
         <div class="brand-icon">🏛️</div>
         <div class="brand-text">
           <h1>Sahakar <span>Vaani</span> (सहकार वाणी)</h1>
           <p id="brandSub">Institutional PACS Member, Tenant Farmer & Agritech Registry</p>
-        </div>
-        <div style="margin-left:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <button type="button" class="reg-admin-btn" onclick="openAdminLoginModal()" title="Administrative Officer Login">
-            🏛️ Administrative Login
-          </button>
-          <button type="button" class="reg-lang-btn" onclick="openRegLangModal()" title="Select Language">
-            🌐 <span id="regLangLabel">Language</span>
-          </button>
         </div>
       </div>
 
@@ -972,6 +974,14 @@
           <button class="btn-back" id="btnBack5" onclick="goStep(4)">← Back</button>
           <button class="btn-next" onclick="submitReg()" id="submitBtn">🏛️ Launch Sahakar Vaani</button>
         </div>
+      </div>
+
+      <!-- FOOTER OFFICER PORTAL LINK -->
+      <div style="margin-top:22px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08); text-align:center;">
+        <span style="color:var(--muted-dim); font-size:12.5px;">Authorized PACS Official? </span>
+        <a href="javascript:void(0)" onclick="openAdminLoginModal()" style="color:var(--gold); font-size:12.5px; font-weight:700; text-decoration:underline; cursor:pointer;">
+          🏛️ Administrative Officer Login
+        </a>
       </div>
 
     </div>
