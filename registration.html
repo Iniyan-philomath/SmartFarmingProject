@@ -129,6 +129,32 @@
       margin-top: 3px;
     }
 
+    
+    .reg-admin-btn {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 10px;
+      color: var(--gold);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .reg-admin-btn:hover {
+      background: rgba(251, 191, 36, 0.22);
+      border-color: var(--gold);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(251, 191, 36, 0.25);
+    }
+
     .reg-lang-btn {
       margin-left: auto;
       background: rgba(74, 222, 128, 0.1);
@@ -622,9 +648,14 @@
           <h1>Sahakar <span>Vaani</span> (सहकार वाणी)</h1>
           <p id="brandSub">Institutional PACS Member, Tenant Farmer & Agritech Registry</p>
         </div>
-        <button type="button" class="reg-lang-btn" onclick="openRegLangModal()" title="Select Language">
-          🌐 <span id="regLangLabel">Language</span>
-        </button>
+        <div style="margin-left:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="button" class="reg-admin-btn" onclick="openAdminLoginModal()" title="Administrative Officer Login">
+            🏛️ Administrative Login
+          </button>
+          <button type="button" class="reg-lang-btn" onclick="openRegLangModal()" title="Select Language">
+            🌐 <span id="regLangLabel">Language</span>
+          </button>
+        </div>
       </div>
 
       <!-- STEP PROGRESS -->
@@ -1119,6 +1150,13 @@
 
       // Save to device storage
       localStorage.setItem('farmerProfile', JSON.stringify(data));
+
+      // Sync to Central PACS Server & Supabase Cloud
+      fetch('/api/register-farmer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).catch(e => console.log('Registry sync note:', e));
       
       // Update preferred language in UI if needed
       localStorage.setItem('preferredLang', data.lang);
@@ -2349,6 +2387,78 @@
     });
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+  <!-- ADMINISTRATIVE OFFICER LOGIN MODAL -->
+  <div class="reg-modal-overlay" id="adminLoginModal" onclick="if(event.target===this)closeAdminLoginModal()">
+    <div class="reg-modal-box" style="max-width:400px; border-color:rgba(251,191,36,0.5); box-shadow: 0 20px 60px rgba(0,0,0,0.85), 0 0 35px rgba(251,191,36,0.2);">
+      <div class="reg-modal-header">
+        <h3 style="color:var(--gold); font-size:18px;">🏛️ PACS Administrative Login</h3>
+        <button type="button" class="reg-modal-close" onclick="closeAdminLoginModal()">✕</button>
+      </div>
+      <div class="reg-modal-sub" style="font-size:12px; margin-bottom:14px;">
+        Authorized Ministry of Cooperation & PACS Regulatory Officer Access.
+      </div>
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="field" style="margin-bottom:0;">
+          <label style="font-size:12px; color:var(--muted); font-weight:600;">Officer ID / Email <span class="req">*</span></label>
+          <input type="text" id="adminIdInput" placeholder="e.g. akshaykumar@PACs.gov.in" required style="width:100%; padding:10px; background:rgba(0,0,0,0.6); border:1px solid rgba(251,191,36,0.35); border-radius:8px; color:#fff; font-size:13.5px; font-family:'DM Sans', sans-serif;">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label style="font-size:12px; color:var(--muted); font-weight:600;">Password <span class="req">*</span></label>
+          <input type="password" id="adminPassInput" placeholder="••••••••" required style="width:100%; padding:10px; background:rgba(0,0,0,0.6); border:1px solid rgba(251,191,36,0.35); border-radius:8px; color:#fff; font-size:13.5px; font-family:'DM Sans', sans-serif;">
+        </div>
+        <div id="adminLoginError" style="display:none; color:#f87171; font-size:12px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); border-radius:8px; padding:8px 10px; font-weight:600;">
+          ❌ Wrong credentials. Please enter valid Officer ID and Password.
+        </div>
+        <button type="submit" id="adminLoginSubmitBtn" style="margin-top:6px; padding:12px; background:linear-gradient(135deg, #fbbf24, #d97706); border:none; border-radius:8px; color:#051408; font-weight:700; font-size:14px; cursor:pointer; font-family:'DM Sans', sans-serif; box-shadow:0 4px 15px rgba(251,191,36,0.35); transition:all 0.2s;">
+          🔓 Sign In to Registry Portal
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openAdminLoginModal() {
+      document.getElementById('adminLoginModal').classList.add('show');
+      document.getElementById('adminLoginError').style.display = 'none';
+      setTimeout(() => document.getElementById('adminIdInput').focus(), 150);
+    }
+
+    function closeAdminLoginModal() {
+      document.getElementById('adminLoginModal').classList.remove('show');
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('adminIdInput').value.trim();
+      const pass = document.getElementById('adminPassInput').value.trim();
+      const errBox = document.getElementById('adminLoginError');
+      errBox.style.display = 'none';
+
+      // Check credentials locally or via backend API
+      const isMatch = (id.toLowerCase() === 'akshaykumar@pacs.gov.in' && pass === '987654321');
+
+      if (!isMatch) {
+        errBox.style.display = 'block';
+        errBox.textContent = '❌ Wrong credentials. Access denied.';
+        return;
+      }
+
+      // Successful Officer Authentication
+      sessionStorage.setItem('pacs_officer_logged', '1');
+      sessionStorage.setItem('pacs_officer_name', 'Akshay Kumar (PACS Inspector)');
+      
+      // Try backend session token in background
+      fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, password: pass })
+      }).catch(e => console.log('Auth sync note:', e));
+
+      window.location.replace('officer.html');
+    }
+  </script>
 
 </body>
 </html>

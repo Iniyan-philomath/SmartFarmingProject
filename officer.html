@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PACS Administrative & Farmer Registry Portal — Sahakar Vaani</title>
+  <link rel="icon" type="image/svg+xml" href="/public/icon.svg">
+  <meta name="theme-color" content="#050d06">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    // Security check: Must be authenticated as PACS Officer
+    if (sessionStorage.getItem('pacs_officer_logged') !== '1') {
+      window.location.replace('registration.html');
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #4ade80;
+      --dark-green: #15803d;
+      --gold: #fbbf24;
+      --sky: #38bdf8;
+      --bg: #030a05;
+      --card: rgba(8, 24, 12, 0.92);
+      --border: rgba(74, 222, 128, 0.22);
+      --border-focus: rgba(74, 222, 128, 0.6);
+      --text: #f0fdf4;
+      --muted: #86efac;
+      --muted-dim: rgba(134, 239, 172, 0.65);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP NAVBAR */
+    .topbar {
+      height: 64px;
+      background: rgba(3, 13, 6, 0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(251,191,36,0.15));
+      border: 1px solid rgba(74,222,128,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 12px rgba(74,222,128,0.25);
+    }
+
+    .brand-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .brand-text h1 span { color: var(--gold); }
+    .brand-text p {
+      font-size: 11px;
+      color: var(--muted-dim);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .officer-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .btn {
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-green {
+      background: rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: var(--green);
+    }
+    .btn-green:hover {
+      background: rgba(74, 222, 128, 0.3);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-gold {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--gold);
+    }
+    .btn-gold:hover {
+      background: rgba(251, 191, 36, 0.3);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #fff;
+    }
+
+    /* MAIN CONTENT */
+    .container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px;
+      flex: 1;
+    }
+
+    .page-header {
+      margin-bottom: 22px;
+    }
+    .page-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #f0fdf4;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: var(--muted-dim);
+      margin-top: 4px;
+    }
+
+    /* KPI STAT CARDS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      transition: all 0.2s;
+    }
+    .stat-card:hover {
+      border-color: var(--green);
+      transform: translateY(-2px);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .stat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .stat-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .stat-lbl {
+      font-size: 12px;
+      color: var(--muted-dim);
+      font-weight: 500;
+    }
+
+    /* FILTERS TOOLBAR */
+    .filter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      border-radius: 10px;
+      padding: 9px 12px 9px 34px;
+      color: #fff;
+      font-size: 13.5px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+    }
+    .search-box input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+    }
+    .search-box .s-ico {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      color: var(--muted-dim);
+    }
+
+    .filter-select {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      cursor: pointer;
+    }
+    .filter-select option {
+      background: #081d0d;
+      color: #fff;
+    }
+
+    /* TABLE SECTION */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+    }
+
+    .table-header {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(74,222,128,0.15);
+      background: rgba(74,222,128,0.03);
+    }
+    .table-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    thead th {
+      background: rgba(0, 0, 0, 0.6);
+      color: var(--muted);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+      white-space: nowrap;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.08);
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: rgba(74, 222, 128, 0.05);
+    }
+
+    .farmer-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .f-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(74,222,128,0.15);
+      border: 1px solid rgba(74,222,128,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .f-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .f-info strong {
+      display: block;
+      color: #fff;
+      font-size: 13.5px;
+    }
+    .f-info span {
+      font-size: 11.5px;
+      color: var(--muted-dim);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-green { background: rgba(74, 222, 128, 0.15); color: var(--green); border: 1px solid rgba(74, 222, 128, 0.3); }
+    .badge-gold { background: rgba(251, 191, 36, 0.15); color: var(--gold); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .badge-sky { background: rgba(56, 189, 248, 0.15); color: var(--sky); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-gray { background: rgba(255, 255, 255, 0.08); color: #aaa; border: 1px solid rgba(255, 255, 255, 0.15); }
+
+    /* ACTION BUTTON IN TABLE */
+    .btn-dossier {
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 6px;
+      color: var(--green);
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-dossier:hover {
+      background: var(--green);
+      color: #031407;
+    }
+
+    /* DOSSIER MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 10, 5, 0.88);
+      backdrop-filter: blur(12px);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal-box {
+      background: #081d0d;
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      border-radius: 20px;
+      max-width: 650px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85), 0 0 35px rgba(74,222,128,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dossier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .d-item {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(74,222,128,0.15);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .d-label {
+      font-size: 11px;
+      color: var(--muted-dim);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .d-val {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      padding: 50px 20px;
+      text-align: center;
+      color: var(--muted-dim);
+    }
+    .empty-state .e-icon { font-size: 40px; margin-bottom: 10px; }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0 12px; }
+      .officer-badge { display: none; }
+      .dossier-grid { grid-template-columns: 1fr; }
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      body { background: #fff; color: #000; }
+      .topbar, .filter-card, .btn, .btn-dossier { display: none !important; }
+      .table-wrap { border: 1px solid #ccc; box-shadow: none; }
+      table { color: #000; }
+      thead th { background: #eee; color: #000; }
+      tbody td { border-bottom: 1px solid #ddd; }
+      .badge { border: 1px solid #888; color: #000; background: transparent; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand-group">
+      <div class="brand-icon">🏛️</div>
+      <div class="brand-text">
+        <h1>Sahakar <span>Vaani</span> Registry</h1>
+        <p>Ministry of Cooperation (MoC) Institutional Member Registry</p>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="officer-badge">
+        <span>👤</span>
+        <span id="officerNameDisplay">Akshay Kumar (PACS Inspector)</span>
+      </div>
+      <button type="button" class="btn btn-green" onclick="exportRegistryCSV()" title="Download CSV">
+        <span>📥</span> Export CSV
+      </button>
+      <button type="button" class="btn btn-gold" onclick="window.print()" title="Print Registry Report">
+        <span>🖨️</span> Print
+      </button>
+      <button type="button" class="btn btn-green" onclick="loadFarmersData()" title="Reload Farmers">
+        <span>🔄</span> Refresh
+      </button>
+      <a href="index.html" class="btn btn-green" style="text-decoration:none;" title="Open Bot Interface">
+        <span>🌾</span> Bot
+      </a>
+      <button type="button" class="btn btn-danger" onclick="adminLogout()" title="Logout Officer">
+        <span>🚪</span> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="container">
+    
+    <div class="page-header">
+      <h2>🏛️ Primary Agricultural Credit Society (PACS) Farmer Registry</h2>
+      <p>Authorized Institutional Database of Registered Small, Marginal & Tenant Farmers with Land Tenure, Soil & KCC Profiling.</p>
+    </div>
+
+    <!-- STAT COUNTERS -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-lbl">Total Registered Farmers</div>
+          <div class="stat-icon">👨‍🌾</div>
+        </div>
+        <div class="stat-val" id="statTotalFarmers">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-lbl">Total Landholdings</div>
+          <div class="stat-icon">🌾</div>
+        </div>
+        <div class="stat-val" id="statTotalAcres">0 <span style="font-size:14px;font-weight:500;color:var(--muted-dim);">acres</span></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-lbl">Active KCC Loan Holders (4%)</div>
+          <div class="stat-icon">💳</div>
+        </div>
+        <div class="stat-val" id="statKccCount">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-lbl">PMFBY Insured Cultivators</div>
+          <div class="stat-icon">🛡️</div>
+        </div>
+        <div class="stat-val" id="statPmfbyCount">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-lbl">Fertilizer Quota Issued</div>
+          <div class="stat-icon">🏷️</div>
+        </div>
+        <div class="stat-val" id="statFertCount">0</div>
+      </div>
+    </section>
+
+    <!-- SEARCH & FILTER TOOLBAR -->
+    <section class="filter-card">
+      <div class="search-box">
+        <span class="s-ico">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by Farmer Name, Phone, Village, District, Aadhaar..." oninput="applyFilters()">
+      </div>
+
+      <select id="filterState" class="filter-select" onchange="applyFilters()">
+        <option value="">All States</option>
+      </select>
+
+      <select id="filterCrop" class="filter-select" onchange="applyFilters()">
+        <option value="">All Crops</option>
+      </select>
+
+      <select id="filterKcc" class="filter-select" onchange="applyFilters()">
+        <option value="">KCC Status (All)</option>
+        <option value="Yes">KCC Active (Yes)</option>
+        <option value="No">No KCC (No)</option>
+      </select>
+
+      <select id="filterTenure" class="filter-select" onchange="applyFilters()">
+        <option value="">Tenure Model (All)</option>
+        <option value="Owner Cultivator">Owner Cultivator</option>
+        <option value="Tenant Farmer">Tenant Farmer</option>
+        <option value="Sharecropper">Sharecropper</option>
+        <option value="Joint Liability Group">JLG Group</option>
+      </select>
+    </section>
+
+    <!-- FARMERS DATA TABLE -->
+    <section class="table-wrap">
+      <div class="table-header">
+        <h3><span>📋</span> Verified Farmer Enrollment Records (<span id="recordCountDisplay">0</span>)</h3>
+        <div style="font-size:12px;color:var(--muted-dim);" id="dbSourceBadge">Source: Connecting…</div>
+      </div>
+      
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Farmer Details</th>
+              <th>Village & District</th>
+              <th>PACS Society & ID</th>
+              <th>Land & Crop</th>
+              <th>Soil & Irrigation</th>
+              <th>KCC & Schemes</th>
+              <th>Registered On</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="farmersTableBody">
+            <tr>
+              <td colspan="8" class="empty-state">
+                <div class="e-icon">⏳</div>
+                <div>Loading farmer records from centralized registry…</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FARMER DOSSIER MODAL -->
+  <div class="modal-overlay" id="dossierModal" onclick="if(event.target===this)closeDossierModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🏛️ Statutory PACS Farmer Dossier</h3>
+        <button type="button" class="btn btn-green" onclick="closeDossierModal()" style="padding:4px 8px;">✕</button>
+      </div>
+      
+      <div id="dossierContent">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allFarmers = [];
+    let filteredFarmers = [];
+
+    async function loadFarmersData() {
+      const tb = document.getElementById('farmersTableBody');
+      const badge = document.getElementById('dbSourceBadge');
+
+      try {
+        const res = await fetch('/api/farmers');
+        const data = await res.json();
+        
+        if (data.success && Array.isArray(data.farmers)) {
+          allFarmers = data.farmers;
+          badge.innerHTML = data.source === 'supabase' 
+            ? '☁️ Live Supabase Cloud Database' 
+            : '💾 Centralized PACS Local Store';
+          badge.style.color = data.source === 'supabase' ? 'var(--sky)' : 'var(--gold)';
+        } else {
+          allFarmers = [];
+          badge.textContent = '⚠️ Failed to fetch';
+        }
+      } catch (err) {
+        console.warn('API error, reading local fallback:', err);
+        badge.textContent = '💾 Offline Registry View';
+      }
+
+      // Populate filter options dynamically
+      populateFilterOptions();
+      applyFilters();
+    }
+
+    function populateFilterOptions() {
+      const stateSel = document.getElementById('filterState');
+      const cropSel = document.getElementById('filterCrop');
+
+      const states = new Set();
+      const crops = new Set();
+
+      allFarmers.forEach(f => {
+        if (f.state) states.add(f.state);
+        if (f.crop) crops.add(f.crop.split(' ')[0].replace(/[^a-zA-Z]/g, ''));
+      });
+
+      stateSel.innerHTML = '<option value="">All States</option>' + 
+        Array.from(states).sort().map(s => `<option value="${s}">${s}</option>`).join('');
+
+      cropSel.innerHTML = '<option value="">All Crops</option>' + 
+        Array.from(crops).filter(Boolean).sort().map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const stateF = document.getElementById('filterState').value;
+      const cropF = document.getElementById('filterCrop').value.toLowerCase();
+      const kccF = document.getElementById('filterKcc').value;
+      const tenureF = document.getElementById('filterTenure').value;
+
+      filteredFarmers = allFarmers.filter(f => {
+        const name = (f.name || '').toLowerCase();
+        const phone = (f.phone || '').toLowerCase();
+        const village = (f.village || '').toLowerCase();
+        const district = (f.district || '').toLowerCase();
+        const aadhaar = (f.aadhaar || '').toLowerCase();
+        const pacs = (f.pacs_name || '').toLowerCase();
+        const crop = (f.crop || '').toLowerCase();
+
+        const matchesQ = !q || name.includes(q) || phone.includes(q) || village.includes(q) || district.includes(q) || aadhaar.includes(q) || pacs.includes(q);
+        const matchesState = !stateF || f.state === stateF;
+        const matchesCrop = !cropF || crop.includes(cropF);
+        const matchesKcc = !kccF || f.kcc === kccF;
+        const matchesTenure = !tenureF || (f.landtype && f.landtype.includes(tenureF));
+
+        return matchesQ && matchesState && matchesCrop && matchesKcc && matchesTenure;
+      });
+
+      renderTable();
+      updateKPIs();
+    }
+
+    function updateKPIs() {
+      document.getElementById('statTotalFarmers').textContent = filteredFarmers.length;
+      document.getElementById('recordCountDisplay').textContent = filteredFarmers.length;
+
+      const totalAcres = filteredFarmers.reduce((sum, f) => sum + (parseFloat(f.acres) || 0), 0);
+      document.getElementById('statTotalAcres').innerHTML = `${totalAcres.toFixed(1)} <span style="font-size:14px;font-weight:500;color:var(--muted-dim);">acres</span>`;
+
+      const kccCount = filteredFarmers.filter(f => f.kcc === 'Yes').length;
+      document.getElementById('statKccCount').textContent = kccCount;
+
+      const pmfbyCount = filteredFarmers.filter(f => f.pmfby === 'Yes').length;
+      document.getElementById('statPmfbyCount').textContent = pmfbyCount;
+
+      const fertCount = filteredFarmers.filter(f => f.fert === 'Yes').length;
+      document.getElementById('statFertCount').textContent = fertCount;
+    }
+
+    function renderTable() {
+      const tb = document.getElementById('farmersTableBody');
+      if (filteredFarmers.length === 0) {
+        tb.innerHTML = `
+          <tr>
+            <td colspan="8" class="empty-state">
+              <div class="e-icon">🌾</div>
+              <div>No registered farmers match the specified filters.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tb.innerHTML = filteredFarmers.map((f, idx) => {
+        const photoHtml = f.photo 
+          ? `<img src="${f.photo}" alt="${f.name}">` 
+          : (f.gender === 'Female' ? '👩‍🌾' : '👨‍🌾');
+
+        const kccBadge = f.kcc === 'Yes' 
+          ? `<span class="badge badge-green">✅ KCC 4%</span>` 
+          : `<span class="badge badge-gray">❌ No KCC</span>`;
+
+        const fertBadge = f.fert === 'Yes' 
+          ? `<span class="badge badge-gold">🏷️ Quota Card</span>` 
+          : `<span class="badge badge-gray">No Quota</span>`;
+
+        const tenureBadge = (f.landtype || '').includes('Tenant') || (f.landtype || '').includes('JLG')
+          ? `<span class="badge badge-sky">🤝 Tenant / JLG</span>`
+          : `<span class="badge badge-green">🏡 Owner</span>`;
+
+        const dateStr = f.registeredAt ? new Date(f.registeredAt).toLocaleDateString('en-IN', {
+          day: 'numeric', month: 'short', year: 'numeric'
+        }) : 'Recent';
+
+        return `
+          <tr>
+            <td>
+              <div class="farmer-cell">
+                <div class="f-avatar">${photoHtml}</div>
+                <div class="f-info">
+                  <strong>${f.name || 'Farmer'}</strong>
+                  <span>📱 ${f.phone || '—'} · Age ${f.age || '—'} (${f.gender || '—'})</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>${f.village || '—'}</strong>
+              <div style="font-size:11.5px;color:var(--muted-dim);">${f.district || '—'}, ${f.state || '—'}</div>
+            </td>
+            <td>
+              <div style="font-weight:600;color:#fff;">${f.pacs_name || 'Local PACS'}</div>
+              <div style="font-size:11px;color:var(--gold);">${f.pacs_id || 'ID: —'} · ${f.pacs_type || 'Member'}</div>
+            </td>
+            <td>
+              <div><strong>${f.acres || '0'} acres</strong> ${tenureBadge}</div>
+              <div style="font-size:11.5px;color:var(--muted);">${f.crop || 'Paddy'}</div>
+            </td>
+            <td>
+              <div>${f.soil || 'Alluvial'}</div>
+              <div style="font-size:11.5px;color:var(--muted-dim);">💧 ${f.irrigation || 'Canal'}</div>
+            </td>
+            <td>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                ${kccBadge}
+                ${fertBadge}
+              </div>
+            </td>
+            <td style="font-size:12px;color:var(--muted-dim);white-space:nowrap;">
+              ${dateStr}
+            </td>
+            <td>
+              <button type="button" class="btn-dossier" onclick="viewDossier(${idx})">
+                <span>📄</span> View
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function viewDossier(index) {
+      const f = filteredFarmers[index];
+      if (!f) return;
+
+      const photoHtml = f.photo 
+        ? `<img src="${f.photo}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);">` 
+        : `<div style="width:72px;height:72px;border-radius:50%;background:rgba(74,222,128,0.2);display:flex;align-items:center;justify-content:center;font-size:36px;border:2px solid var(--green);">${f.gender === 'Female' ? '👩‍🌾' : '👨‍🌾'}</div>`;
+
+      const dateFull = f.registeredAt ? new Date(f.registeredAt).toLocaleString('en-IN') : 'Recent';
+
+      document.getElementById('dossierContent').innerHTML = `
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;border:1px solid rgba(74,222,128,0.2);">
+          ${photoHtml}
+          <div>
+            <h4 style="font-size:18px;color:#fff;margin-bottom:2px;">${f.name}</h4>
+            <div style="font-size:12.5px;color:var(--muted);">📱 Mobile: ${f.phone} | Aadhaar: XXXX-XXXX-${f.aadhaar || '0000'}</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="badge badge-green">🏛️ ${f.pacs_type || 'Regular Member'}</span>
+              <span class="badge badge-gold">${f.fert === 'Yes' ? '✅ Fertilizer Quota Card' : '❌ No Quota Card'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dossier-grid">
+          <div class="d-item">
+            <div class="d-label">Village & Panchayat</div>
+            <div class="d-val">${f.village || '—'}, ${f.district || '—'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">State Jurisdiction</div>
+            <div class="d-val">${f.state || '—'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Primary Agricultural Credit Society</div>
+            <div class="d-val">${f.pacs_name || '—'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">PACS Member / Share ID</div>
+            <div class="d-val" style="color:var(--gold);">${f.pacs_id || '—'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Total Landholding</div>
+            <div class="d-val">${f.acres || '0'} Acres (${f.landtype || 'Owner'})</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Cultivated Crops</div>
+            <div class="d-val">${f.crop || 'Paddy'} ${f.sec_crop ? '· ' + f.sec_crop : ''}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Soil & Irrigation</div>
+            <div class="d-val">${f.soil || 'Alluvial'} | ${f.irrigation || 'Canal'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Affiliated DCCB Branch</div>
+            <div class="d-val">${f.dccb || 'District Central Co-op Bank'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Kisan Credit Card (4% Rate)</div>
+            <div class="d-val">${f.kcc === 'Yes' ? '✅ Active KCC' : '❌ Want to Apply'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">PM-KISAN DBT Beneficiary</div>
+            <div class="d-val">${f.pmkisan === 'Yes' ? '✅ Enrolled (₹6,000/yr)' : '❌ Pending Verification'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">PMFBY Crop Loss Insurance</div>
+            <div class="d-val">${f.pmfby === 'Yes' ? '✅ Insured (Coverage Active)' : '❌ Uninsured'}</div>
+          </div>
+          <div class="d-item">
+            <div class="d-label">Dialect & Voice Mode</div>
+            <div class="d-val">${f.lang || 'ta-IN'} (${f.voicemode === 'alexa' ? '🎙️ Voice Aloud' : '📝 Text'})</div>
+          </div>
+        </div>
+
+        <div style="font-size:11.5px;color:var(--muted-dim);text-align:right;border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;">
+          Statutory Registration Timestamp: ${dateFull}
+        </div>
+      `;
+
+      document.getElementById('dossierModal').classList.add('show');
+    }
+
+    function closeDossierModal() {
+      document.getElementById('dossierModal').classList.remove('show');
+    }
+
+    function exportRegistryCSV() {
+      if (filteredFarmers.length === 0) {
+        alert("No records to export.");
+        return;
+      }
+
+      const headers = [
+        "Farmer Name", "Mobile", "Aadhaar Last 4", "Age", "Gender", 
+        "Village", "District", "State", "PACS Name", "PACS ID", "PACS Type",
+        "Fertilizer Quota", "DCCB Branch", "Land Acres", "Tenure Type",
+        "Primary Crop", "Secondary Crop", "Soil Type", "Irrigation",
+        "KCC Status", "PM-KISAN", "PMFBY Insurance", "Income Bracket", "Registered Date"
+      ];
+
+      const rows = filteredFarmers.map(f => [
+        `"${(f.name || '').replace(/"/g, '""')}"`,
+        `"${f.phone || ''}"`,
+        `"${f.aadhaar || ''}"`,
+        `"${f.age || ''}"`,
+        `"${f.gender || ''}"`,
+        `"${(f.village || '').replace(/"/g, '""')}"`,
+        `"${(f.district || '').replace(/"/g, '""')}"`,
+        `"${(f.state || '').replace(/"/g, '""')}"`,
+        `"${(f.pacs_name || '').replace(/"/g, '""')}"`,
+        `"${(f.pacs_id || '').replace(/"/g, '""')}"`,
+        `"${(f.pacs_type || '').replace(/"/g, '""')}"`,
+        `"${f.fert || ''}"`,
+        `"${(f.dccb || '').replace(/"/g, '""')}"`,
+        `"${f.acres || ''}"`,
+        `"${(f.landtype || '').replace(/"/g, '""')}"`,
+        `"${(f.crop || '').replace(/"/g, '""')}"`,
+        `"${(f.sec_crop || '').replace(/"/g, '""')}"`,
+        `"${(f.soil || '').replace(/"/g, '""')}"`,
+        `"${(f.irrigation || '').replace(/"/g, '""')}"`,
+        `"${f.kcc || ''}"`,
+        `"${f.pmkisan || ''}"`,
+        `"${f.pmfby || ''}"`,
+        `"${f.income || ''}"`,
+        `"${f.registeredAt || ''}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `PACS_Farmers_Registry_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('pacs_officer_logged');
+      window.location.replace('registration.html');
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', loadFarmersData);
+  </script>
+</body>
+</html>

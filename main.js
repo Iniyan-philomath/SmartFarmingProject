@@ -2085,8 +2085,175 @@ app.get("/api/pacs/erp-export", async (req, res) => {
       regulatory_compliance: "Ministry of Cooperation National PACS Computerization Project",
       batch_payload: erpBatchPayload
     });
+// ================= PACS ADMINISTRATIVE REGISTRY & SUPABASE FARMER STORAGE =================
+const REGISTERED_FARMERS_FILE = path.join(__dirname, "registered_farmers.json");
+
+async function loadLocalFarmers() {
+  try {
+    const raw = await fs.readFile(REGISTERED_FARMERS_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch (e) {
+    return [];
+  }
+}
+
+async function saveLocalFarmers(list) {
+  try {
+    await fs.writeFile(REGISTERED_FARMERS_FILE, JSON.stringify(list, null, 2), "utf8");
+  } catch (e) {
+    console.error("Error writing registered_farmers.json:", e);
+  }
+}
+
+// 1. Officer Login Endpoint (akshaykumar@PACs.gov.in / 987654321)
+app.post("/api/admin/login", (req, res) => {
+  const { id, password } = req.body || {};
+  const cleanId = String(id || "").trim().toLowerCase();
+  const cleanPass = String(password || "").trim();
+
+  if (cleanId === "akshaykumar@pacs.gov.in" && cleanPass === "987654321") {
+    res.json({
+      success: true,
+      officer: {
+        id: "akshaykumar@PACs.gov.in",
+        name: "Akshay Kumar",
+        designation: "PACS Senior Regulatory Inspector & Secretary",
+        jurisdiction: "Ministry of Cooperation / Central Cooperative Hub"
+      },
+      token: "pacs_token_" + Date.now()
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      error: "Wrong credentials"
+    });
+  }
+});
+
+// 2. Register Farmer Endpoint (Supabase Cloud + Local File Backup)
+app.post("/api/register-farmer", async (req, res) => {
+  try {
+    const farmerData = req.body;
+    if (!farmerData || !farmerData.name) {
+      return res.status(400).json({ success: false, error: "Missing farmer name" });
+    }
+
+    const localList = await loadLocalFarmers();
+    const newRecord = {
+      id: localList.length ? Math.max(...localList.map(f => f.id || 0)) + 1 : 1,
+      ...farmerData,
+      registeredAt: farmerData.registeredAt || new Date().toISOString()
+    };
+
+    // Save to local registry
+    localList.unshift(newRecord);
+    await saveLocalFarmers(localList);
+
+    // Attempt to push to Supabase Cloud
+    let supabaseSaved = false;
+    if (SUPABASE_KEY && SUPABASE_BASE_URL) {
+      try {
+        const supaRes = await fetch(`${SUPABASE_BASE_URL}/rest/v1/farmers`, {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            name: newRecord.name,
+            phone: newRecord.phone,
+            aadhaar: newRecord.aadhaar,
+            age: parseInt(newRecord.age) || null,
+            gender: newRecord.gender,
+            village: newRecord.village,
+            district: newRecord.district,
+            state: newRecord.state,
+            pacs_name: newRecord.pacs_name,
+            pacs_id: newRecord.pacs_id,
+            pacs_type: newRecord.pacs_type,
+            fert: newRecord.fert,
+            dccb: newRecord.dccb,
+            acres: parseFloat(newRecord.acres) || null,
+            landtype: newRecord.landtype,
+            crop: newRecord.crop,
+            sec_crop: newRecord.sec_crop,
+            season: newRecord.season,
+            soil: newRecord.soil,
+            irrigation: newRecord.irrigation,
+            kcc: newRecord.kcc,
+            pmkisan: newRecord.pmkisan,
+            pmfby: newRecord.pmfby,
+            income: newRecord.income,
+            lang: newRecord.lang,
+            voicemode: newRecord.voicemode
+          })
+        });
+        supabaseSaved = supaRes.ok;
+      } catch (err) {
+        console.warn("[Supabase] Insert farmer note:", err.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      farmer: newRecord,
+      supabaseSaved
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. Query All Registered Farmers for Officer Dashboard
+app.get("/api/farmers", async (req, res) => {
+  try {
+    let farmers = [];
+    let source = "local";
+
+    // Try Supabase first
+    if (SUPABASE_KEY && SUPABASE_BASE_URL) {
+      try {
+        const supaRes = await fetch(`${SUPABASE_BASE_URL}/rest/v1/farmers?select=*&order=created_at.desc`, {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        if (supaRes.ok) {
+          const supaList = await supaRes.json();
+          if (Array.isArray(supaList) && supaList.length > 0) {
+            farmers = supaList;
+            source = "supabase";
+          }
+        }
+      } catch (err) {
+        console.warn("[Supabase] Query farmers note:", err.message);
+      }
+    }
+
+    // Fallback or merge with local farmers
+    const localList = await loadLocalFarmers();
+    if (farmers.length === 0) {
+      farmers = localList;
+    } else {
+      const existingPhones = new Set(farmers.map(f => f.phone));
+      for (const lf of localList) {
+        if (!existingPhones.has(lf.phone)) {
+          farmers.push(lf);
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      count: farmers.length,
+      source,
+      farmers
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
