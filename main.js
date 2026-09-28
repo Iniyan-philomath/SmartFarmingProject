@@ -1414,25 +1414,6 @@ app.post("/stt", async (req, res) => {
     };
     const ext = extensionMap[safeMime] || "webm";
 
-    // Indian Multilingual Prompt to anchor Whisper to Indian dialects & agricultural vocabulary
-    const INDIAN_LANG_PROMPT = "Sahakar Vaani: Indian agricultural and cooperative governance advisory. Spoken in Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, English. Namaskar, Vanakkam, Namaskara, PACS, KCC loan, PM-KISAN, PMFBY, Urea, DAP, FCO 1985, fertilizer quota, Seed Act, MSP, kheti, சாகுபடி, விவசாயம், రైతు, കൃഷി, નમસ્તે, ખેડૂત, ਪੰਜਾਬੀ.";
-
-    // Map incoming languageCode to ISO 639-1 code if specified and valid
-    const cleanLangCode = String(languageCode || "").trim().toLowerCase();
-    const isoCode = cleanLangCode.split("-")[0];
-    const validWhisperLangs = ["hi", "ta", "te", "kn", "ml", "bn", "mr", "gu", "pa", "en", "ur", "or"];
-
-    const whisperParams = {
-      model: "whisper-large-v3-turbo",
-      response_format: "verbose_json",
-      temperature: 0.0,
-      prompt: INDIAN_LANG_PROMPT
-    };
-
-    if (cleanLangCode && cleanLangCode !== "auto" && cleanLangCode !== "all" && validWhisperLangs.includes(isoCode)) {
-      whisperParams.language = isoCode;
-    }
-
     let transcriptResp;
     try {
       // In-memory file object
@@ -2150,29 +2131,22 @@ async function saveLocalFarmers(list) {
   }
 }
 
-// 1. Officer Login Endpoint (akshaykumar@PACs.gov.in / 987654321)
+// 1. Officer Login Endpoint (Accepts any ID and Password)
 app.post("/api/admin/login", (req, res) => {
   const { id, password } = req.body || {};
-  const cleanId = String(id || "").trim().toLowerCase();
-  const cleanPass = String(password || "").trim();
+  const cleanId = String(id || "officer@pacs.gov.in").trim();
+  const officerName = cleanId.includes('@') ? cleanId.split('@')[0] : (cleanId || "Authorized Officer");
 
-  if (cleanId === "akshaykumar@pacs.gov.in" && cleanPass === "987654321") {
-    res.json({
-      success: true,
-      officer: {
-        id: "akshaykumar@PACs.gov.in",
-        name: "Akshay Kumar",
-        designation: "PACS Senior Regulatory Inspector & Secretary",
-        jurisdiction: "Ministry of Cooperation / Central Cooperative Hub"
-      },
-      token: "pacs_token_" + Date.now()
-    });
-  } else {
-    res.status(401).json({
-      success: false,
-      error: "Wrong credentials"
-    });
-  }
+  res.json({
+    success: true,
+    officer: {
+      id: cleanId,
+      name: officerName,
+      designation: "PACS Senior Regulatory Inspector & Secretary",
+      jurisdiction: "Ministry of Cooperation / Central Cooperative Hub"
+    },
+    token: "pacs_token_" + Date.now()
+  });
 });
 
 // 2. Register Farmer Endpoint (Supabase Cloud + Local File Backup)

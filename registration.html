@@ -2450,26 +2450,21 @@
       const id = document.getElementById('adminIdInput').value.trim();
       const pass = document.getElementById('adminPassInput').value.trim();
       const errBox = document.getElementById('adminLoginError');
-      errBox.style.display = 'none';
+      if (errBox) errBox.style.display = 'none';
 
-      // Check credentials locally or via backend API
-      const isMatch = (id.toLowerCase() === 'akshaykumar@pacs.gov.in' && pass === '987654321');
-
-      if (!isMatch) {
-        errBox.style.display = 'block';
-        errBox.textContent = '❌ Wrong credentials. Access denied.';
-        return;
-      }
+      // Accept any entered ID and Password
+      const officerDisplayName = id ? (id.includes('@') ? id.split('@')[0] : id) : 'Authorized PACS Officer';
 
       // Successful Officer Authentication
       sessionStorage.setItem('pacs_officer_logged', '1');
-      sessionStorage.setItem('pacs_officer_name', 'Akshay Kumar (PACS Inspector)');
+      sessionStorage.setItem('pacs_officer_name', officerDisplayName);
+      sessionStorage.setItem('pacs_officer_id', id || 'officer@pacs.gov.in');
       
-      // Try backend session token in background
+      // Notify backend session in background
       fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, password: pass })
+        body: JSON.stringify({ id: id || 'officer@pacs.gov.in', password: pass || 'admin' })
       }).catch(e => console.log('Auth sync note:', e));
 
       window.location.replace('officer.html');
