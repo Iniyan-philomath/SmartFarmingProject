@@ -4116,8 +4116,10 @@
       trimChatHistory();
       saveChatHistory();
       addBubble(sentTxt, 'user', sentImg);
-      updateUndoChatBtn();
       if (inp) inp.value = ''; clearImg();
+      micBaseText = '';
+      micFinalText = '';
+      micInterimText = '';
       loading = true; document.getElementById('sendBtn').disabled = true; updateUndoChatBtn();
       const tid = addTyping();
       try {
@@ -5802,6 +5804,9 @@ try {
       applySpeechText();
       const input = document.getElementById('msgInput');
       const text = input ? input.value.trim() : '';
+      micBaseText = '';
+      micFinalText = '';
+      micInterimText = '';
 
       if (text) {
         // Auto-detect language & sync language selector (Condition 2)
@@ -5819,7 +5824,12 @@ try {
     function startMicRecognition() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       const input = document.getElementById('msgInput');
-      input.focus();
+      if (input) input.value = '';
+      micBaseText = '';
+      micFinalText = '';
+      micInterimText = '';
+      stopSpeech();
+      if (input) input.focus();
       recognition = new SR();
       const activeLang = getActiveLang() || 'en-IN';
       micCurrentLang = activeLang;
