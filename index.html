@@ -3506,8 +3506,8 @@
             </div>
           </button>
           <div class="alexa-orb-status" id="alexaOrbStatus">
-            <span class="status-primary">🎙️ Tap to Speak / பேச தட்டவும்</span>
-            <span class="status-sub">Listens in Tamil, Hindi, Telugu, English & all Indian languages</span>
+            <span class="status-primary">🎙️ Tap to Speak</span>
+            <span class="status-sub">Listens in your chosen language</span>
           </div>
         </div>
 
@@ -4214,17 +4214,92 @@
     let micFallbackStream = null;
     let micFallbackChunks = [];
 
+    const MIC_STATUS_DICTS = {
+      'ta': {
+        idle: '🎙️ பேச தட்டவும்',
+        sub: 'தமிழ் மற்றும் அனைத்து இந்திய மொழிகளிலும் கேட்கும்',
+        listening: '🔴 கேட்கிறது… உங்கள் கேள்வியைப் பேசுங்கள்',
+        listenSub: 'பேசி முடித்ததும் தானாகவே பதிலளிக்கும்…'
+      },
+      'hi': {
+        idle: '🎙️ बोलने के लिए टैप करें',
+        sub: 'हिन्दी व सभी भारतीय भाषाओं में बोलें',
+        listening: '🔴 सुन रहा हूँ… अपना प्रश्न बोलें',
+        listenSub: 'बोलने के बाद स्वतः उत्तर मिलेगा…'
+      },
+      'en': {
+        idle: '🎙️ Tap to Speak',
+        sub: 'Listens in English, Tamil, Hindi, Telugu & all Indian languages',
+        listening: '🔴 Listening… Speak your question now',
+        listenSub: 'Answers automatically after speech…'
+      },
+      'te': {
+        idle: '🎙️ మాట్లాడటానికి నొక్కండి',
+        sub: 'తెలుగు మరియు అన్ని భారతీయ భాషలలో వింటుంది',
+        listening: '🔴 వింటున్నాను… మీ ప్రశ్న మాట్లాడండి',
+        listenSub: 'మాట్లాడిన తర్వాత స్వయంచாலకంగా సమాధానం ఇస్తుంది…'
+      },
+      'kn': {
+        idle: '🎙️ ಮಾತನಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ',
+        sub: 'ಕನ್ನಡ ಹಾಗೂ ಎಲ್ಲಾ ಭಾರತೀಯ ಭಾಷೆಗಳಲ್ಲಿ ಆಲಿಸುತ್ತದೆ',
+        listening: '🔴 ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದ್ದೇನೆ… ನಿಮ್ಮ ಪ್ರಶ್ನೆ ಹೇಳಿ',
+        listenSub: 'ಮಾತನಾಡಿದ ನಂತರ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಉತ್ತರಿಸುತ್ತದೆ…'
+      },
+      'ml': {
+        idle: '🎙️ സംസാരിക്കാൻ ടാപ്പ് ചെയ്യുക',
+        sub: 'മലയാളത്തിലും മറ്റ് ഇന്ത്യൻ ഭാഷകളിലും കേൾക്കുന്നു',
+        listening: '🔴 കേൾക്കുന്നു… നിങ്ങളുടെ ചോദ്യം ചോദിക്കൂ',
+        listenSub: 'സംസാരിച്ചു കഴിഞ്ഞാൽ സ്വയമേവ മറുപടി നൽകും…'
+      },
+      'mr': {
+        idle: '🎙️ बोलण्यासाठी टॅप करा',
+        sub: 'मराठी आणि सर्व भारतीय भाषांमध्ये ऐकते',
+        listening: '🔴 ऐकत आहे… तुमचा प्रश्न विचारा',
+        listenSub: 'बोलल्यानंतर आपोआप उत्तर मिळेल…'
+      },
+      'bn': {
+        idle: '🎙️ কথা বলতে ট্যাপ করুন',
+        sub: 'বাংলা ও সকল ভারতীয় ভাষায় শুনবে',
+        listening: '🔴 শুনছি… আপনার প্রশ্ন বলুন',
+        listenSub: 'কথা শেষ হলে স্বয়ংক্রিয়ভাবে উত্তর পাবেন…'
+      },
+      'gu': {
+        idle: '🎙️ બોલવા માટે ટેપ કરો',
+        sub: 'ગુજરાતી અને તમામ ભારતીય ભાષાઓમાં સાંભળે છે',
+        listening: '🔴 સાંભળી રહ્યો છું… તમારો પ્રશ્ન બોલો',
+        listenSub: 'બોલ્યા પછી આપમેળે જવાબ મળશે…'
+      },
+      'pa': {
+        idle: '🎙️ ਬੋਲਣ ਲਈ ਟੈਪ ਕਰੋ',
+        sub: 'ਪੰਜਾਬੀ ਅਤੇ ਸਾਰੀਆਂ ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਸੁਣਦਾ ਹੈ',
+        listening: '🔴 ਸੁਣ ਰਿਹਾ ਹਾਂ… ਆਪਣਾ ਸਵਾਲ ਬੋਲੋ',
+        listenSub: 'ਬੋਲਣ ਤੋਂ ਬਾਅਦ ਆਪਣੇ ਆਪ ਜਵਾਬ ਮਿਲੇਗਾ…'
+      },
+      'or': {
+        idle: '🎙️ କହିବା ପାଇଁ ଟ୍ୟାପ୍ କରନ୍ତୁ',
+        sub: 'ଓଡ଼ିଆ ଏବଂ ସମସ୍ତ ଭାରତୀୟ ଭାଷାରେ ଶୁଣିଥାଏ',
+        listening: '🔴 ଶୁଣୁଛି… ଆପଣଙ୍କ ପ୍ରଶ୍ନ କୁହନ୍ତୁ',
+        listenSub: 'କହିବା ପରେ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଉତ୍ତର ମିଳିବ…'
+      }
+    };
+
     function updateMicUi(active, placeholderText) {
       const orb = document.getElementById('alexaMicOrb');
       const orbStatus = document.getElementById('alexaOrbStatus');
+      const rawLang = (typeof getActiveLang === 'function' ? getActiveLang() : localStorage.getItem('preferredLang')) || 'ta-IN';
+      const shortLang = String(rawLang).substring(0, 2).toLowerCase();
+      const texts = MIC_STATUS_DICTS[shortLang] || MIC_STATUS_DICTS['en'];
+
       if (orb) {
         orb.classList.toggle('listening', active);
       }
       if (orbStatus) {
-        if (active) {
-          orbStatus.innerHTML = '<span class="status-primary" style="color:#ef4444;font-weight:700;">🔴 Listening… Speak your question now (கேட்கிறது…)</span><span class="status-sub">Listens in any language... tap orb again to stop and get answer</span>';
+        if (placeholderText) {
+          orbStatus.innerHTML = `<span class="status-primary" style="color:var(--gold);font-weight:700;">${placeholderText}</span><span class="status-sub">${texts.listenSub}</span>`;
+        } else if (active) {
+          orbStatus.innerHTML = `<span class="status-primary" style="color:#ef4444;font-weight:700;">${texts.listening}</span><span class="status-sub">${texts.listenSub}</span>`;
         } else {
-          orbStatus.innerHTML = '<span class="status-primary">🎙️ Tap to Speak / பேச தட்டவும்</span><span class="status-sub">Listens in Tamil, Hindi, Telugu, English & all Indian languages</span>';
+          orbStatus.innerHTML = `<span class="status-primary">${texts.idle}</span><span class="status-sub">${texts.sub}</span>`;
         }
       }
 
@@ -4239,9 +4314,9 @@
         if (placeholderText) {
           input.placeholder = placeholderText;
         } else if (active) {
-          input.placeholder = "🔴 Listening... Speak in ANY language (Tamil, Hindi, Telugu, English...)";
+          input.placeholder = texts.listening;
         } else if (!input.value) {
-          input.placeholder = "Type or speak your question…";
+          input.placeholder = (typeof UI_DICTIONARIES !== 'undefined' && UI_DICTIONARIES[rawLang]?.inputPlaceholder) || "Type or speak your question…";
         }
       }
     }
@@ -5412,6 +5487,8 @@ function applyUiDictionary(normalized) {
 
   const msgInput = document.getElementById('msgInput');
   if (msgInput && dict.inputPlaceholder) msgInput.placeholder = dict.inputPlaceholder;
+
+  if (typeof updateMicUi === 'function') updateMicUi(false);
 }
 
 let isTranslatingHistory = false;
@@ -5989,15 +6066,14 @@ function toggleMic() {
     return;
   }
 
-  // Primary: Omnilingual Groq Whisper STT (whisper-large-v3-turbo)
-  // Automatically detects spoken language (Tamil, Hindi, Telugu, English, etc.) in real time
-  // and transcribes in native script without being locked or overwritten by Google Translate.
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  // 1. Primary: Browser Native SpeechRecognition (Instant, 0-latency live streaming in user's active language)
+  if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+    startMicRecognition();
+  } else if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // 2. Secondary: Groq Whisper Large-v3 Turbo (Server STT)
     startServerMicCapture();
   } else if (window.SpeechSDK) {
     startAzureSpeechRecognition();
-  } else if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-    startMicRecognition();
   } else {
     alert("Microphone access is not supported in this browser.");
   }
@@ -8834,7 +8910,12 @@ ${escapeHtml(bodyText)}
       // 4. Save to localStorage
       localStorage.setItem('preferredLang', bcp47Code);
 
-      // 5. Close modal
+      // 5. Update mic UI labels to active language
+      if (typeof updateMicUi === 'function') {
+        updateMicUi(false);
+      }
+
+      // 6. Close modal
       closeLangModalDirect();
     }
 
@@ -9184,6 +9265,8 @@ ${escapeHtml(bodyText)}
         <div style="text-align:center;padding:40px;color:var(--muted)">Loading advisories...</div>
       </div>
     </div>
+  </div>
+
   <!-- NATIVE MULTILINGUAL MODAL (Requirement 3) -->
   <div class="lang-modal-overlay" id="langModalOverlay" onclick="closeLangModal(event)">
     <div class="lang-modal-box" onclick="event.stopPropagation()">

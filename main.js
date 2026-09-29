@@ -1414,6 +1414,30 @@ app.post("/stt", async (req, res) => {
     };
     const ext = extensionMap[safeMime] || "webm";
 
+    const validWhisperLangs = ["en", "hi", "ta", "te", "kn", "ml", "mr", "gu", "bn", "pa", "ur", "ne", "es", "fr", "de", "ar"];
+    
+    // Map incoming languageCode (e.g. 'ta-IN', 'ta', 'tamil') to Whisper 2-letter ISO code
+    let isoCode = null;
+    if (languageCode && languageCode !== "auto") {
+      const cleanLang = String(languageCode).toLowerCase().split("-")[0].trim();
+      if (validWhisperLangs.includes(cleanLang)) {
+        isoCode = cleanLang;
+      }
+    }
+
+    const whisperPrompt = "Namaskar, Vanakkam, Kisan, farmer, PACS, KCC, fertilizer, subsidy, crop, agriculture, Tamil, Hindi, English, agricultural loan.";
+
+    const whisperParams = {
+      model: "whisper-large-v3-turbo",
+      response_format: "verbose_json",
+      temperature: 0.0,
+      prompt: whisperPrompt
+    };
+
+    if (isoCode) {
+      whisperParams.language = isoCode;
+    }
+
     let transcriptResp;
     try {
       // In-memory file object
